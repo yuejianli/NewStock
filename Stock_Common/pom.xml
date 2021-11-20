@@ -10,9 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.yueshushu</groupId>
-    <artifactId>stock_Common</artifactId>
+    <artifactId>Stock_Common</artifactId>
     <version>1.0</version>
-    <name>stock_Common</name>
+    <name>Stock_Common</name>
     <description>两个蝴蝶飞-公共类</description>
     <properties>
         <java.version>1.8</java.version>
