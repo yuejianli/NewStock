@@ -34,4 +34,17 @@
     <delete id="deleteAll">
         delete from stock  where 1=1
     </delete>
+    <select id="selectByKeyword" resultMap="stockMap">
+        select t.id,t.code,t.name,t.exchange,t.full_code from stock t
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (
+                t.code like concat('%',concat(#{keyword},'%'))
+                or t.full_code like concat('%',concat(#{keyword},'%'))
+                or t.name like concat('%',concat(#{keyword},'%'))
+                )
+            </if>
+        </where>
+        order by t.code+0 asc
+    </select>
 </mapper>

@@ -32,7 +32,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     @Override
     public OutputResult list(StockRo stockRo) {
         PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
-        List<Stock> stockInfoList= stockMapper.selectByCodeAndType(stockRo.getCode(),stockRo.getExchange());
+        List<Stock> stockInfoList= stockMapper.selectByKeyword(stockRo.getKeyword());
         PageInfo pageInfo=new PageInfo<Stock>(stockInfoList);
        return OutputResult.success(new PageResponse<Stock>(pageInfo.getTotal(),
                pageInfo.getList()));

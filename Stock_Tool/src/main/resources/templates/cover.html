@@ -4,7 +4,7 @@
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>股票小工具-清仓计算器</title>
+    <title>股票小工具-补仓计算器</title>
 
     <link rel="StyleSheet" href="../webjars/bootstrap/3.4.1/css/bootstrap.css" type="text/css">
     <link rel="StyleSheet" href="../static/plugins/bootstrap-table/bootstrap-table.min.css" type="text/css"/>
@@ -23,11 +23,15 @@
          font-size:18px;
          color:red;
      }
+     .showInfo{
+         font-size: 18px;
+         color: #F66;
+     }
  </style>
 </head>
 <body class="page-bg container">
 <p class="mar-hor">
-<h2 style="color:#EC7C00">计算金额小工具</h2>
+<h2 style="color:#EC7C00">补仓计算小工具</h2>
 <hr/>
 <div class="modal-body row col-sm-5">
     <form class="form-horizontal" role="form">
@@ -43,13 +47,13 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-4 control-label">买入时价位:</label>
+            <label class="col-sm-4 control-label">第一次买入时价位:</label>
             <div class="col-sm-6">
-                <input type="text" class="underline_input" id="price" value="50.810"/>
+                <input type="text" class="underline_input" id="price" value="50"/>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-4 control-label">买入股票数(整百):</label>
+            <label class="col-sm-4 control-label">第一次买入股票数(整百):</label>
             <div class="col-sm-6">
                 <input type="text" class="underline_input" id="number" value="100"/>
             </div>
@@ -85,29 +89,37 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-4 control-label">(>=)填写预期所赚:</label>
+            <label class="col-sm-4 control-label">第二次买入股票数(整百):</label>
+            <div class="col-sm-6">
+                <input type="text" class="underline_input" id="secnumber" value="100"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label">(>=)准备买入后的价格:</label>
             <div class="col-sm-5">
-                <input type="text" class="underline_input" id="make_money" value="56.85"/>
+                <input type="text" class="underline_input" id="sec_price" value="100"/>
             </div>
             <div class="row">
                 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-success" id="money_submit">
-                预期金额计算
+                预计买入计算
             </button>
             </div>
         </div>
+
         <div class="form-group">
-            <label class="col-sm-4 control-label">(>=)填写预期价位:</label>
+            <label class="col-sm-4 control-label">(>=)填写预期平均后价位:</label>
             <div class="col-sm-5">
-                <input type="text" class="underline_input" id="make_price" value="51.530"/>
+                <input type="text" class="underline_input" id="make_price" value="75"/>
             </div>
             <div class="row">
                 &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-success"
-                                                             id="price_submit">预期价位计算
+                                                             id="price_submit">预期持仓计算
             </button>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-4 control-label">(>=)填写预期比例(%):</label>
+        <div class="form-group proportion_submit_div">
+            <label class="col-sm-4 control-label">(>=)填写平均后的比例(%):</label>
             <div class="col-sm-5">
                 <input type="text" class="underline_input" id="make_proportion" value="1.12"/>
             </div>
@@ -187,31 +199,47 @@
 
 </div>
 <div class="modal-body row col-sm-offset-6">
-    <div class="row" style="height:360px;">
+    <div class="row" style="height:500px;">
         <div class="form-group" style="margin-bottom: 30px;">
             <p style="font-size: 18px;color: deeppink">手续费信息:</p>
         </div>
         <div class="row">
             <table class="table table-no-bordered">
                 <tr>
-                    <td>买入手续费:</td> <td> <span id="buyCharge" class="info"></span></td>
-                    <td>买入过户费:</td> <td> <span id="buyTransferFee" class="info"></span></td>
+                    <td colspan="4" class="showInfo">第一次买入:</td>
                 </tr>
                 <tr>
-                    <td>买入通讯费:</td> <td>  <span id="buyCommunications" class="info"></span></td>
-                    <td>卖出印花税:</td> <td>   <span id="sellStampDuty" class="info"></span></td>
+                    <td>买入手续费:</td> <td> <span id="buyCharge1" class="info"></span></td>
+                    <td>买入过户费:</td> <td> <span id="buyTransferFee1" class="info"></span></td>
                 </tr>
                 <tr>
-                    <td>卖出手续费:</td> <td>   <span id="sellCharge" class="info"></span></span></td>
-                    <td>卖出过户费:</td> <td>    <span id="sellTransferFee" class="info"></span></td>
+                    <td>买入通讯费:</td> <td>  <span id="buyCommunications1" class="info"></span></td>
+                    <td>买入金额:</td> <td>  <span id="dealMoney1" class="info"></span></td>
                 </tr>
                 <tr>
-                    <td>卖出通讯费:</td> <td>     <span id="sellCommunications" class="info"></span></span></td>
+                    <td>总的买入手续费:</td> <td>  <span id="totalBuyCharge1" class="info"></span></td>
+
+                </tr>
+                <tr>
+                    <td colspan="4" class="showInfo">第二次买入:</td>
+                </tr>
+                <tr>
+                    <td>买入手续费:</td> <td> <span id="buyCharge2" class="info"></span></td>
+                    <td>买入过户费:</td> <td> <span id="buyTransferFee2" class="info"></span></td>
+                </tr>
+                <tr>
+                    <td>买入通讯费:</td> <td>  <span id="buyCommunications2" class="info"></span></td>
+                    <td>买入金额:</td> <td>  <span id="dealMoney2" class="info"></span></td>
+                </tr>
+                <tr>
+                    <td>总的买入手续费:</td> <td>  <span id="totalBuyCharge2" class="info"></span></td>
+
+                </tr>
+                <tr>
+                    <td colspan="4" class="showInfo">合计:</td>
+                </tr>
+                <tr>
                     <td>总的买入费用:</td> <td>     <span id="totalBuyCharge" class="info focus-info"></span></td>
-                </tr>
-                <tr>
-                    <td>总的卖出费用:</td> <td>   <span id="totalSellCharge" class="info focus-info"></span></span></td>
-                    <td>总的手续费用:</td> <td>    <span id="totalCharge" class="info focus-info"></span></td>
                 </tr>
             </table>
         </div>
@@ -224,28 +252,12 @@
         <div class="row">
             <table class="table table-no-bordered">
                 <tr>
-                    <td>买入金额:</td> <td>  <span id="buyMoney" class="info"></span></td>
+                    <td>目前数量:</td> <td>  <span id="totalNum" class="info"></span></td>
+                    <td>目前金额:</td> <td>  <span id="totalMoney" class="info"></span></td>
                 </tr>
                 <tr>
-                    <td>卖出金额:</td> <td>     <span id="sellMoney" class="info"></span></td>
-                </tr>
-                <tr>
-                    <td>买入发生金额:</td> <td>  <span id="buyActualMoney" class="info"></span></td>
-                </tr>
-                <tr>
-                    <td>实际到账:</td> <td>  <span id="destMoney" class="info focus-info"></span></td>
-                </tr>
-                <tr>
-                    <td>不卖，赚钱数:</td> <td>  <span id="noSellMoney" class="info focus-info"></span></td>
-                </tr>
-                <tr>
-                    <td>实际所得:</td> <td>  <span id="realMoney" class="info focus-info"></span></td>
-                </tr>
-                <tr>
-                    <td>操作价格:</td> <td>  <span id="realPrice" class="info"></span></td>
-                </tr>
-                <tr>
-                    <td>操作比例(%):</td> <td>  <span id="realProportion" class="info"></span></td>
+                    <td>本次操作价格:</td> <td>  <span id="nowOperationPrice" class="info"></span></td>
+                    <td>平均持仓价格:</td> <td>  <span id="avgPrice" class="info"></span></td>
                 </tr>
             </table>
         </div>
@@ -256,7 +268,7 @@
 <script type="text/javascript" src="../static/plugins/bootstrap-table/bootstrap-table.js"></script>
 <script type="text/javascript" src="../static/plugins/bootstrap-select/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="../static/plugins/flavr/flavr.min.js"></script>
-<script type="text/javascript" src="../money.js"></script>
+<script type="text/javascript" src="../cover.js"></script>
 
 </body>
 </html>

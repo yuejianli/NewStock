@@ -82,7 +82,7 @@ function queryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码
-        "code":keyword
+        "keyword":keyword
     }
    return query;
 }

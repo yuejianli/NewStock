@@ -93,7 +93,7 @@
         </dependency>
         <dependency>
             <groupId>top.yueshushu</groupId>
-            <artifactId>stockCommon</artifactId>
+            <artifactId>Stock_Common</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>

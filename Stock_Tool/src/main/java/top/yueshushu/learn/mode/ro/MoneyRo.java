@@ -51,4 +51,14 @@ public class MoneyRo {
      * @param type 类型
      */
     private Integer type;
+
+    /*清仓时添加*/
+    /**
+     * @param secPrice 第二次操作时的价格
+     */
+    private Double secPrice;
+    /**
+     * @param secNumber 第二次操作时股票数
+     */
+    private Integer secNumber;
 }

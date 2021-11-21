@@ -12,7 +12,7 @@ import top.yueshushu.learn.service.MoneyService;
 
 /**
  * @ClassName:MoneyController
- * @Description 小工具--计算金额
+ * @Description 小工具--清仓计算器
  * @Author 岳建立
  * @Date 2021/11/6 10:38
  * @Version 1.0
@@ -29,5 +29,23 @@ public class MoneyController {
     @PostMapping("/calcMoney")
     public OutputResult calcMoney(@RequestBody MoneyRo moneyRo){
         return moneyService.calcMoney(moneyRo);
+    }
+
+    /**
+     * 补仓位
+     * @return
+     */
+    @PostMapping("/coverMoney")
+    public OutputResult coverMoney(@RequestBody MoneyRo moneyRo){
+        return moneyService.coverMoney(moneyRo);
+    }
+
+    /**
+     * 减仓
+     * @return
+     */
+    @PostMapping("/reduceMoney")
+    public OutputResult reduceMoney(@RequestBody MoneyRo moneyRo){
+        return moneyService.reduceMoney(moneyRo);
     }
 }

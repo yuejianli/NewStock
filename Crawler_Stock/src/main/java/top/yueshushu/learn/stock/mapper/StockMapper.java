@@ -28,4 +28,12 @@ public interface StockMapper extends BaseMapper<Stock> {
      * 全部删除
      */
     void deleteAll();
+
+    /**
+     * 根据关键字进行查询
+     *
+     * @param keyword
+     * @return
+     */
+    List<Stock> selectByKeyword(@Param("keyword") String keyword);
 }

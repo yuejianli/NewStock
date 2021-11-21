@@ -20,9 +20,7 @@ default:
     fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61
     &klt=101&fqt=1&secid={}&beg={}&end={}
   stock_history_download_url: >
-    http://quotes.money.163.com/service/chddata.html?code={0}&start={1}&end={2}&fields=TCLOSE;HIGH;LOW;TOPEN;
-    LCLOSE;CHG;PCHG;VOTURNOVER;VATURNOVER
-  # 下载该股票的信息
+    http://quotes.money.163.com/service/chddata.html?code={0}&start={1}&end={2}&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP
   #k线图
   min_url: http://image.sinajs.cn/newchart/min/n/{0}.gif
   daily_url: http://image.sinajs.cn/newchart/daily/n/{0}.gif
@@ -33,8 +31,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/stock?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
-    username: root
-    password: abc123
+    username: fund
+    password: fund
     type: com.alibaba.druid.pool.DruidDataSource
   #配置上传的文件信息
   servlet:

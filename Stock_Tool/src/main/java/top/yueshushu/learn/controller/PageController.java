@@ -31,6 +31,24 @@ public class PageController {
     }
 
     /**
+     * 跳转到补仓金额页
+     * @return
+     */
+    @RequestMapping("/tool/cover")
+    public String cover(){
+        return "cover";
+    }
+
+    /**
+     * 跳转到减仓金额页
+     * @return
+     */
+    @RequestMapping("/tool/reduce")
+    public String reduce(){
+        return "reduce";
+    }
+
+    /**
      * 跳转到股票的相关页面
      * @return
      */
@@ -38,4 +56,8 @@ public class PageController {
     public String stock(){
         return "stock";
     }
+
+
+
+
 }

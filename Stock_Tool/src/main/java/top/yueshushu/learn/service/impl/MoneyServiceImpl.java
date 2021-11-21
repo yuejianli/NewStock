@@ -1,11 +1,15 @@
 package top.yueshushu.learn.service.impl;
 
+import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.enumtype.ExchangeType;
 import top.yueshushu.learn.enumtype.NameOperationType;
 import top.yueshushu.learn.enumtype.TradingAreaType;
 import top.yueshushu.learn.mode.ro.MoneyRo;
+import top.yueshushu.learn.mode.vo.CalcBuyMoneyVo;
+import top.yueshushu.learn.mode.vo.CalcMoneyVo;
+import top.yueshushu.learn.mode.vo.CalcSellMoneyVo;
 import top.yueshushu.learn.mode.vo.MoneyVo;
 import top.yueshushu.learn.model.dto.PoundageCalcDto;
 import top.yueshushu.learn.model.dto.PoundageDto;
@@ -17,6 +21,8 @@ import top.yueshushu.learn.util.MathUtil;
 import top.yueshushu.learn.util.PoundageCalcUtil;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ClassName:MoneyServiceImpl
@@ -42,6 +48,407 @@ public class MoneyServiceImpl implements MoneyService {
         MoneyVo moneyVo=assemblyMoneyVo(moneyRo);
         return OutputResult.success(moneyVo);
     }
+
+    @Override
+    public OutputResult coverMoney(MoneyRo moneyRo) {
+        //1. 进行验证
+        OutputResult validateResponse=validateRo(moneyRo);
+        if(null!=validateResponse){
+            return validateResponse;
+        }
+        //2. 组装数据,处理预期的价格,也就是卖的价格.
+        Double makePrice=handlerCovertPrice(moneyRo);
+        moneyRo.setSecPrice(makePrice);
+        //3. 获取数据
+        CalcMoneyVo calcMoneyVo=coverCalcMoneyVo(moneyRo);
+        return OutputResult.success(calcMoneyVo);
+    }
+
+    @Override
+    public OutputResult reduceMoney(MoneyRo moneyRo) {
+        //1. 进行验证
+        OutputResult validateResponse=validateRo(moneyRo);
+        if(null!=validateResponse){
+            return validateResponse;
+        }
+        //2. 组装数据,处理预期的价格,也就是卖的价格.
+        Double makePrice=handlerReducePrice(moneyRo);
+        moneyRo.setSecPrice(makePrice);
+        //3. 获取数据
+        CalcMoneyVo calcMoneyVo=reduceCalcMoneyVo(moneyRo);
+        return OutputResult.success(calcMoneyVo);
+    }
+
+    private CalcMoneyVo reduceCalcMoneyVo(MoneyRo moneyRo) {
+        CalcMoneyVo result=new CalcMoneyVo();
+        //填充基本的信息
+        result.setCode(moneyRo.getCode());
+        result.setName("暂时不实现");
+        //填写买入的信息
+        reduceCalcBuyMoneyList(result,moneyRo);
+        //没有卖出,为空
+        reduceCalcSellMoneyList(result,moneyRo);
+        //处理总计
+        calcReduceMoneyVo(result);
+        result.setNowOperationPrice(String.valueOf(moneyRo.getSecPrice()));
+        return result;
+
+    }
+
+    private void calcReduceMoneyVo(CalcMoneyVo result) {
+        List<CalcBuyMoneyVo> calcBuyMoneyVoList = result.getCalcBuyMoneyVoList();
+        List<CalcSellMoneyVo> calcSellMoneyVoList = result.getCalcSellMoneyVoList();
+
+
+        //计算总的买入费用
+        BigDecimal totalBuyCharge=SystemConst.DEFAULT_EMPTY;
+        BigDecimal totalSellCharge=SystemConst.DEFAULT_EMPTY;
+        BigDecimal totalCharge=SystemConst.DEFAULT_EMPTY;
+        int totalNum=0;
+        BigDecimal totalMoney=SystemConst.DEFAULT_EMPTY;
+        for(CalcBuyMoneyVo calcBuyMoneyVo:calcBuyMoneyVoList){
+            totalBuyCharge= totalBuyCharge.add(
+                    BigDecimalUtil.toBigDecimal( calcBuyMoneyVo.getTotalBuyCharge())
+            );
+            totalNum+=calcBuyMoneyVo.getNumber();
+            totalMoney=totalMoney.add(
+                    BigDecimalUtil.toBigDecimal(
+                            calcBuyMoneyVo.getPrice(),
+                            calcBuyMoneyVo.getNumber()+""
+                    )
+            );
+        }
+
+        for(CalcSellMoneyVo calcSellMoneyVo:calcSellMoneyVoList){
+            totalSellCharge= totalSellCharge.add(
+                    BigDecimalUtil.toBigDecimal( calcSellMoneyVo.getTotalSellCharge())
+            );
+            totalNum-=calcSellMoneyVo.getNumber();
+            totalMoney=totalMoney.subtract(
+                    BigDecimalUtil.toBigDecimal(
+                            calcSellMoneyVo.getPrice(),
+                            calcSellMoneyVo.getNumber()+""
+                    )
+            );
+        }
+        totalCharge=BigDecimalUtil.addBigDecimal(totalSellCharge,totalBuyCharge);
+        result.setTotalBuyCharge(BigDecimalUtil.toString(totalBuyCharge));
+        result.setTotalSellCharge(BigDecimalUtil.toString(totalSellCharge));
+        result.setTotalCharge(BigDecimalUtil.toString(totalCharge));
+        result.setTotalNum(totalNum);
+        result.setTotalMoney(BigDecimalUtil.toString(totalMoney));
+        //处理平均价格
+        if(totalNum==0){
+            result.setAvgPrice(BigDecimalUtil.toString(
+                    SystemConst.DEFAULT_EMPTY
+            ));
+        }else{
+            result.setAvgPrice(
+                    BigDecimalUtil.divBigDecimal(totalMoney,
+                            new BigDecimal(totalNum))
+            );
+        }
+
+    }
+
+    private void reduceCalcSellMoneyList(CalcMoneyVo result, MoneyRo moneyRo) {
+        //计算买入的费用
+        Double secondPrice = moneyRo.getSecPrice();
+        int secondNumber=moneyRo.getSecNumber();
+        List<CalcSellMoneyVo> calcSellMoneyVoList=new ArrayList<>();
+        calcSellMoneyVoList.add(getCalcSellMoneyVo(moneyRo,secondPrice,secondNumber));
+        result.setCalcSellMoneyVoList(calcSellMoneyVoList);
+
+    }
+
+    private CalcSellMoneyVo getCalcSellMoneyVo(MoneyRo moneyRo, Double price, int num) {
+
+        PoundageDto poundageDto=new PoundageDto();
+        poundageDto.setPlatformFee(BigDecimalUtil.toBigDecimal(moneyRo.getPlatformFee()));
+        poundageDto.setTradingAreaType(TradingAreaType.getExchangeType(moneyRo.getTradingArea()));
+        poundageDto.setBuyPrice(BigDecimalUtil.toBigDecimal(price));
+        poundageDto.setSellPrice(BigDecimalUtil.toBigDecimal(price));
+        poundageDto.setBuyNumber(num);
+        poundageDto.setSellNumber(num);
+        poundageDto.setExchangeType(ExchangeType.prefix(moneyRo.getCode().substring(0,2)));
+        poundageDto.setNameOperationType(NameOperationType.getNameType(moneyRo.getNameType()));
+        //第一次买入的计算结果
+        PoundageCalcDto calc = PoundageCalcUtil.calc(poundageDto);
+
+        CalcSellMoneyVo result=new CalcSellMoneyVo();
+        result.setPrice(String.valueOf(price));
+        result.setNumber(num);
+        result.setSellStampDuty(BigDecimalUtil.toString(calc.getSellStampDuty()));
+        result.setSellCharge(BigDecimalUtil.toString(calc.getSellCharge()));
+        result.setSellTransferFee(BigDecimalUtil.toString(calc.getSellTransferFee()));
+        result.setSellCommunications(BigDecimalUtil.toString(calc.getSellCommunications()));
+        result.setTotalSellCharge(BigDecimalUtil.toString(calc.getTotalSellCharge()));
+        result.setSellMoney(
+            BigDecimalUtil.toString(
+                   BigDecimalUtil.subBigDecimal(
+                           BigDecimalUtil.toBigDecimal(
+                                   price,Double.valueOf(
+                                           num+""
+                                   )
+                           ),
+                           calc.getTotalSellCharge()
+                   )
+            )
+        );
+        return result;
+    }
+
+    private void reduceCalcBuyMoneyList(CalcMoneyVo result, MoneyRo moneyRo) {
+        //计算买入的费用
+        Double firstPrice = moneyRo.getPrice();
+        int firstNum=moneyRo.getNumber();
+        List<CalcBuyMoneyVo> calcBuyMoneyVoList=new ArrayList<>();
+        calcBuyMoneyVoList.add(getCalcBuyMoneyVo(moneyRo,firstPrice,firstNum));
+        result.setCalcBuyMoneyVoList(calcBuyMoneyVoList);
+    }
+
+    private Double handlerReducePrice(MoneyRo moneyRo) {
+        Double result=0.0d;
+        switch (moneyRo.getType()){
+            case 1:{
+                result=moneyRo.getSecPrice();
+                break;
+            }
+            case 2:{
+                result=reduceMoneyToPrice(moneyRo);
+                break;
+            }
+            case 3:{
+                result=covertPatternToPrice(moneyRo);
+                break;
+            }
+            default:{
+                break;
+            }
+        }
+        return result;
+
+
+    }
+
+    private Double reduceMoneyToPrice(MoneyRo moneyRo) {
+        /**
+         * 平均*总数量=总价钱=第1价格-第2价钱
+         * 第二价钱= 第一价格-平均*总数量
+         * 第二价格= 第二价钱/第二数量
+         *
+         */
+        //现在想要的总的价钱
+        BigDecimal totalPrice= BigDecimalUtil.toBigDecimal(
+                moneyRo.getMakePrice(),Double.parseDouble(
+                        String.valueOf(moneyRo.getNumber())
+                )
+        );
+        //以前的买的第一次价格
+        BigDecimal firstTotalPrice=BigDecimalUtil.toBigDecimal(
+                moneyRo.getPrice(),Double.parseDouble(
+                        moneyRo.getNumber()+""
+                )
+        );
+        BigDecimal secondTotalPrice=firstTotalPrice.subtract(totalPrice);
+        //这次买入需要花费的金额是
+        String buyPrice=BigDecimalUtil.divBigDecimal(
+                secondTotalPrice,
+                new BigDecimal(moneyRo.getSecNumber())
+        );
+        return Double.valueOf(buyPrice);
+
+    }
+
+
+    /**
+     * 计算补仓位的相关信息
+     * @param moneyRo
+     * @return
+     */
+    private CalcMoneyVo coverCalcMoneyVo(MoneyRo moneyRo) {
+        CalcMoneyVo result=new CalcMoneyVo();
+        //填充基本的信息
+        result.setCode(moneyRo.getCode());
+        result.setName("暂时不实现");
+        //填写买入的信息
+        calcBuyMoneyList(result,moneyRo);
+        //没有卖出,为空
+        result.setCalcSellMoneyVoList(new ArrayList<>());
+
+        //处理总计
+        calcMoneyVo(result);
+        result.setNowOperationPrice(String.valueOf(moneyRo.getSecPrice()));
+        return result;
+    }
+
+    private void calcMoneyVo(CalcMoneyVo result) {
+
+        List<CalcBuyMoneyVo> calcBuyMoneyVoList = result.getCalcBuyMoneyVoList();
+        //计算总的买入费用
+        BigDecimal totalBuyCharge=SystemConst.DEFAULT_EMPTY;
+        BigDecimal totalCharge=SystemConst.DEFAULT_EMPTY;
+        int totalNum=0;
+        BigDecimal totalMoney=SystemConst.DEFAULT_EMPTY;
+        BigDecimal avgPrice=SystemConst.DEFAULT_EMPTY;
+        for(CalcBuyMoneyVo calcBuyMoneyVo:calcBuyMoneyVoList){
+            totalBuyCharge= totalBuyCharge.add(
+                   BigDecimalUtil.toBigDecimal( calcBuyMoneyVo.getTotalBuyCharge())
+            );
+            totalCharge=totalCharge.add(
+                    BigDecimalUtil.toBigDecimal( calcBuyMoneyVo.getTotalBuyCharge())
+            );
+            totalNum+=calcBuyMoneyVo.getNumber();
+            totalMoney=totalMoney.add(
+                   BigDecimalUtil.toBigDecimal( calcBuyMoneyVo.getDealMoney())
+            );
+        }
+
+
+        result.setTotalBuyCharge(BigDecimalUtil.toString(totalBuyCharge));
+        result.setTotalCharge(BigDecimalUtil.toString(totalCharge));
+        result.setTotalNum(totalNum);
+        result.setTotalMoney(BigDecimalUtil.toString(totalMoney));
+        //处理平均价格
+        result.setAvgPrice(
+                BigDecimalUtil.divBigDecimal(totalMoney,
+                        new BigDecimal(totalNum))
+        );
+    }
+
+    /**
+     * 计算买入的相关信息
+     * @param result
+     * @param moneyRo
+     */
+    private void calcBuyMoneyList(CalcMoneyVo result, MoneyRo moneyRo) {
+        //计算买入的费用
+        Double firstPrice = moneyRo.getPrice();
+        int firstNum=moneyRo.getNumber();
+        //第二次的操作
+        Double secondPrice=moneyRo.getSecPrice();
+        int secondNum=moneyRo.getSecNumber();
+
+        //
+        List<CalcBuyMoneyVo> calcBuyMoneyVoList=new ArrayList<>();
+        calcBuyMoneyVoList.add(getCalcBuyMoneyVo(moneyRo,firstPrice,firstNum));
+        calcBuyMoneyVoList.add(getCalcBuyMoneyVo(moneyRo,secondPrice,secondNum));
+        result.setCalcBuyMoneyVoList(calcBuyMoneyVoList);
+    }
+
+    public CalcBuyMoneyVo getCalcBuyMoneyVo(MoneyRo moneyRo,Double price,int num){
+        PoundageDto poundageDto=new PoundageDto();
+        poundageDto.setPlatformFee(BigDecimalUtil.toBigDecimal(moneyRo.getPlatformFee()));
+        poundageDto.setTradingAreaType(TradingAreaType.getExchangeType(moneyRo.getTradingArea()));
+        poundageDto.setBuyPrice(BigDecimalUtil.toBigDecimal(price));
+        poundageDto.setSellPrice(BigDecimalUtil.toBigDecimal(price));
+        poundageDto.setBuyNumber(num);
+        poundageDto.setSellNumber(num);
+        poundageDto.setExchangeType(ExchangeType.prefix(moneyRo.getCode().substring(0,2)));
+        poundageDto.setNameOperationType(NameOperationType.getNameType(moneyRo.getNameType()));
+        //第一次买入的计算结果
+        PoundageCalcDto calc = PoundageCalcUtil.calc(poundageDto);
+
+        CalcBuyMoneyVo result=new CalcBuyMoneyVo();
+        result.setPrice(String.valueOf(price));
+        result.setNumber(num);
+        result.setBuyCharge(BigDecimalUtil.toString(calc.getBuyCharge()));
+        result.setBuyTransferFee(BigDecimalUtil.toString(calc.getBuyTransferFee()));
+        result.setBuyCommunications(BigDecimalUtil.toString(calc.getBuyCommunications()));
+        result.setTotalBuyCharge(BigDecimalUtil.toString(calc.getTotalBuyCharge()));
+        result.setDealMoney(
+                BigDecimalUtil.toString(
+                        BigDecimalUtil.toBigDecimal(
+                                price,Double.valueOf(num+"")
+                        )
+                )
+        );
+        //买入的交易费
+        result.setBuyMoney(
+                BigDecimalUtil.toString(
+                        calc.getTotalBuyCharge().add(
+                                BigDecimalUtil.toBigDecimal(
+                                        price,Double.valueOf(num+"")
+                                )
+                        )
+                )
+        );
+        return result;
+    }
+
+    /**
+     * 处理补仓位的价格
+     * @param moneyRo
+     * @return
+     */
+    private Double handlerCovertPrice(MoneyRo moneyRo) {
+        Double result=0.0d;
+        switch (moneyRo.getType()){
+            case 1:{
+                result=moneyRo.getSecPrice();
+                break;
+            }
+            case 2:{
+                result=coverMoneyToPrice(moneyRo);
+                break;
+            }
+            case 3:{
+                result=covertPatternToPrice(moneyRo);
+                break;
+            }
+            default:{
+                break;
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * 补仓位时，将比例转换成金额.
+     * @param moneyRo
+     * @return
+     */
+    private Double covertPatternToPrice(MoneyRo moneyRo) {
+        return null;
+    }
+
+    /**
+     * 补仓位的最后价格转换成相应的买入价格
+     * @param moneyRo
+     * @return
+     */
+    private Double coverMoneyToPrice(MoneyRo moneyRo) {
+        /**
+         * 平均*总数量=总价钱=第1价格+第2价钱
+         * 第二价钱= 平均*总数量-第一价格
+         * 第二价格= 第二价钱/第二数量
+         *
+         */
+        //现在想要的总的价钱
+        BigDecimal totalPrice= BigDecimalUtil.toBigDecimal(
+                moneyRo.getMakePrice(),Double.parseDouble(
+                        String.valueOf(
+                                moneyRo.getNumber()
+                                +moneyRo.getSecNumber()
+                        )
+                )
+        );
+        //以前的买的第一次价格
+        BigDecimal firstTotalPrice=BigDecimalUtil.toBigDecimal(
+                moneyRo.getPrice(),Double.parseDouble(
+                        moneyRo.getNumber()+""
+                )
+        );
+        BigDecimal secondTotalPrice=totalPrice.subtract(firstTotalPrice);
+        //这次买入需要花费的金额是
+        String buyPrice=BigDecimalUtil.divBigDecimal(
+                secondTotalPrice,
+                new BigDecimal(moneyRo.getSecNumber())
+        );
+        return Double.valueOf(buyPrice);
+    }
+
 
     /**
      * 处理预期的价格

@@ -13,9 +13,23 @@ import top.yueshushu.learn.response.OutputResult;
  **/
 public interface MoneyService {
     /**
-     * 计算金额
+     * 计算清仓的信息金额
      * @param moneyRo
      * @return
      */
     OutputResult calcMoney(MoneyRo moneyRo);
+
+    /**
+     * 计算补仓的信息金额
+     * @param moneyRo
+     * @return
+     */
+    OutputResult coverMoney(MoneyRo moneyRo);
+
+    /**
+     * 计算减仓的信息金额
+     * @param moneyRo
+     * @return
+     */
+    OutputResult reduceMoney(MoneyRo moneyRo);
 }

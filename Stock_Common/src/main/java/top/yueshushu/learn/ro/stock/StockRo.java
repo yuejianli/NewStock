@@ -36,4 +36,8 @@ public class StockRo  extends PageRo {
      * 结束日期
      */
     private String endDate;
+    /**
+     * 搜索的关键字
+     */
+    private String keyword;
 }
