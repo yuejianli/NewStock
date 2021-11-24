@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author xuxueli 2017-04-28
  */
-@Configuration
+//@Configuration
 public class XxlJobConfig {
     private Logger logger = LoggerFactory.getLogger(XxlJobConfig.class);
 
@@ -43,7 +43,7 @@ public class XxlJobConfig {
         logger.info(">>>>>>>>>>> xxl-job config init.");
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(adminAddresses);
-        xxlJobSpringExecutor.setAppname(appName);
+        xxlJobSpringExecutor.setAppName(appName);
         xxlJobSpringExecutor.setIp(ip);
         xxlJobSpringExecutor.setPort(port);
         xxlJobSpringExecutor.setAccessToken(accessToken);
