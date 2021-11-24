@@ -221,6 +221,18 @@
                         <button id="syncHistoryBtn" type="button" class="btn btn-info">
                             <i class="fa fa-cloud-download"></i>&nbsp;&nbsp;同步股票历史交易信息
                         </button>
+                        <!--放置日期-->
+                        <div class="form-group" style="width: 450px;">
+                            <label class="col-sm-3  control-label">查询范围：</label>
+                            <div class="col-sm-9 ">
+                                <input type="text" id="historyDateRange" class="form-control">
+                                <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                <div>
+                                    <input type="hidden" id="historyStartDate">
+                                    <input type="hidden" id="historyEndDate">
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
                 <div id="custom-his_custom-toolbar">

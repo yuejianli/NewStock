@@ -1,5 +1,5 @@
 server:
-  port: 8071
+  port: 8082
   servlet:
     context-path: /Crawler
   #设置头的大小
@@ -30,9 +30,11 @@ default:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/springboot?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
-    username: root
-    password: Zkong_1234
+    url: >
+         jdbc:mysql://localhost:3306/stock?serverTimezone=GMT%2B8
+         &useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
+    username: fund
+    password: fund
     type: com.alibaba.druid.pool.DruidDataSource
   #配置上传的文件信息
   servlet:

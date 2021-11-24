@@ -118,7 +118,7 @@ public class StockServiceImpl implements StockService {
                                 stockRo.getStartDate(),
                                 "yyyy-MM-dd HH:mm:ss"
                         )
-                ,"yyyy-MM-dd");
+                ,Date_formatter);
                 endDate= DateUtil.format(
                         DateUtil.parse(
                                 stockRo.getEndDate(),

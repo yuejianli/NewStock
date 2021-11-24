@@ -52,7 +52,6 @@ public class StockController {
     }
     @PostMapping("/getStockHistory")
     public OutputResult getStockHistory(@RequestBody StockRo stockRo){
-        PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
         return stockHistoryService.getStockHistory(stockRo);
     }
 

@@ -51,4 +51,15 @@
         and curr_date &lt;=#{endDate,jdbcType=TIMESTAMP}
 <!--        <![CDATA[ when t.curr_date >=#{startDate} and t.curr_date <=#{endDate} ]]>-->
     </delete>
+    <select id="getStockHistoryAndDate" resultMap="stockHistoryVoMap">
+        select <include refid="baseSql"/> from stock_history t
+        where t.code=#{code}
+        <if test="startDate!=null">
+            and curr_date &gt;=#{startDate,jdbcType=TIMESTAMP}
+        </if>
+        <if test="endDate!=null">
+            and curr_date &lt;=#{endDate,jdbcType=TIMESTAMP}
+        </if>
+        order by t.curr_date desc
+    </select>
 </mapper>

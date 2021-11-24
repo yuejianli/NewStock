@@ -1,5 +1,6 @@
 package top.yueshushu.learn.stock.mapper;
 
+import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import top.yueshushu.learn.ro.stock.StockRo;
@@ -26,4 +27,15 @@ public interface StockHistoryMapper extends BaseMapper<StockHistory> {
     List<StockHistoryVo> getStockHistory(@Param("code") String code);
 
     void deleteAsyncData(@Param("code") String code, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    /**
+     * 查询股票的历史交易记录，有日期
+     *
+     * @param code
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<StockHistoryVo> getStockHistoryAndDate(@Param("code") String code, @Param("startDate") DateTime startDate,
+                                                @Param("endDate") DateTime endDate);
 }

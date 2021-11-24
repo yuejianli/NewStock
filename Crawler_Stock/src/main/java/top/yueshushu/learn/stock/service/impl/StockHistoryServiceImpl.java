@@ -34,7 +34,14 @@ public class StockHistoryServiceImpl extends ServiceImpl<StockHistoryMapper,
     @Override
     public OutputResult getStockHistory(StockRo stockRo) {
         PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
-       List<StockHistoryVo> stockHistoryList= stockHistoryMapper.getStockHistory(stockRo.getCode());
+      // List<StockHistoryVo> stockHistoryList= stockHistoryMapper.getStockHistory(stockRo.getCode());
+       List<StockHistoryVo> stockHistoryList= stockHistoryMapper.getStockHistoryAndDate(stockRo.getCode()
+               , DateUtil.parse(
+                       stockRo.getStartDate(),"yyyy-MM-dd"
+               ),
+               DateUtil.parse(
+                       stockRo.getEndDate(),"yyyy-MM-dd"
+               ));
        PageInfo pageInfo=new PageInfo<StockHistoryVo>(stockHistoryList);
        return OutputResult.success(new PageResponse<>(
                pageInfo.getTotal(),pageInfo.getList()

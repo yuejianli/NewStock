@@ -411,7 +411,9 @@ function queryHistoryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码
-        "code":historyCode
+        "code":historyCode,
+        "startDate":$("#historyStartDate").val(),
+        "endDate":$("#historyEndDate").val()
     }
     return query;
 }
@@ -525,3 +527,44 @@ function formatTime(shijian){
     second=second < 10 ? ('0' + second) : second;
     return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
 };
+function formatDate(shijian){
+    let date = new Date(shijian)
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    return y + '-' + m + '-' + d;
+};
+
+$("#historyDateRange").daterangepicker({
+        showDropdowns: true,
+        autoUpdateInput: false,
+        "locale": {
+            format: 'YYYY-MM-DD',
+            applyLabel: "应用",
+            cancelLabel: "取消",
+            resetLabel: "重置",
+        }
+    },
+    function(start, end, label) {
+        if(!this.startDate){
+            this.element.val('');
+        }else{
+            this.element.val(this.startDate.format(this.locale.format));
+        }
+    }
+);
+$('#historyDateRange').on('apply.daterangepicker', function(ev, picker) {
+    $("#historyStartDate").val(picker.startDate.format('YYYY-MM-DD'));
+    $("#historyEndDate").val(picker.endDate.format('YYYY-MM-DD'));
+    $("#stock_history_table").bootstrapTable('refresh', '{silent: true}');
+});
+//更改选取器的选定日期范围
+var now = new Date(new Date().setDate(new Date().getDate() + 0));
+var oneMonthBefore = new Date(new Date().setDate(new Date().getDate() -30));
+$('#historyDateRange').data('daterangepicker').setStartDate(oneMonthBefore);
+$('#historyDateRange').data('daterangepicker').setEndDate(now);
+$("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now))
+$("#historyStartDate").val(formatDate(oneMonthBefore));
+$("#historyEndDate").val(formatDate(now));
