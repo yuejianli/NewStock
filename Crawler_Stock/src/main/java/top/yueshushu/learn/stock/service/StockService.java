@@ -31,4 +31,11 @@ public interface StockService extends IService<Stock>{
      * @return
      */
     Stock selectByCode(String code);
+
+    /**
+     * 是否存在着这个股票
+     * @param code
+     * @return
+     */
+    boolean existStockCode(String code);
 }

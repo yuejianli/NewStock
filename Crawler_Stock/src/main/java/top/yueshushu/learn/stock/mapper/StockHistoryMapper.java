@@ -38,4 +38,13 @@ public interface StockHistoryMapper extends BaseMapper<StockHistory> {
      */
     List<StockHistoryVo> getStockHistoryAndDate(@Param("code") String code, @Param("startDate") DateTime startDate,
                                                 @Param("endDate") DateTime endDate);
+
+    /**
+     * 获取股票那一天的信息
+     *
+     * @param code
+     * @param currDate
+     * @return
+     */
+    StockHistoryVo getStockForDate(@Param("code") String code, @Param("currDate") DateTime currDate);
 }

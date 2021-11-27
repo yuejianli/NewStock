@@ -57,7 +57,12 @@ public class PageController {
         return "stock";
     }
 
-
-
-
+    /**
+     * 跳转到股票统计的相关信息
+     * @return
+     */
+    @RequestMapping("/tool/stockStatistics")
+    public String stockStatistics(){
+        return "stockStatistics";
+    }
 }

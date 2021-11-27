@@ -47,19 +47,25 @@
     </select>
     <delete id="deleteAsyncData">
         delete from stock_history where code=#{code}
-        and curr_date &gt;=#{startDate,jdbcType=TIMESTAMP}
-        and curr_date &lt;=#{endDate,jdbcType=TIMESTAMP}
+        and date_format(curr_date,'%Y%m%d') &gt;=date_format( #{startDate,jdbcType=TIMESTAMP},'%Y%m%d')
+        and date_format(curr_date,'%Y%m%d') &lt;=date_format( #{endDate,jdbcType=TIMESTAMP},'%Y%m%d')
 <!--        <![CDATA[ when t.curr_date >=#{startDate} and t.curr_date <=#{endDate} ]]>-->
     </delete>
     <select id="getStockHistoryAndDate" resultMap="stockHistoryVoMap">
         select <include refid="baseSql"/> from stock_history t
         where t.code=#{code}
         <if test="startDate!=null">
-            and curr_date &gt;=#{startDate,jdbcType=TIMESTAMP}
+            and date_format(curr_date,'%Y%m%d') &gt;=date_format( #{startDate,jdbcType=TIMESTAMP},'%Y%m%d')
         </if>
         <if test="endDate!=null">
-            and curr_date &lt;=#{endDate,jdbcType=TIMESTAMP}
+            and date_format(curr_date,'%Y%m%d') &lt;=date_format( #{endDate,jdbcType=TIMESTAMP},'%Y%m%d')
         </if>
-        order by t.curr_date desc
+        order by t.curr_date asc
+    </select>
+    <select id="getStockForDate" resultMap="stockHistoryVoMap">
+        select <include refid="baseSql"/> from stock_history t
+        where t.code=#{code}
+        and date_format(curr_date,'%Y%m%d') =date_format( #{currDate,jdbcType=TIMESTAMP},'%Y%m%d')
+        limit 1
     </select>
 </mapper>

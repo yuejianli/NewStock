@@ -3,6 +3,7 @@ package top.yueshushu.learn.stock.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.stock.pojo.StockHistory;
 
 /**
@@ -20,4 +21,18 @@ public interface StockHistoryService extends IService<StockHistory> {
      * @param stockRo
      */
     void deleteAsyncData(StockRo stockRo);
+
+    /**
+     * 查询股票的相关的周记录信息
+     * @param stockStatRo
+     * @return
+     */
+    OutputResult getWeekStat(StockStatRo stockStatRo);
+
+    /**
+     * 展示股票的相关的记录信息
+     * @param stockStatRo
+     * @return
+     */
+    OutputResult getCharStat(StockStatRo stockStatRo);
 }

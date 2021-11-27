@@ -9,6 +9,7 @@ import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockService;
 
 /**
@@ -49,5 +50,15 @@ public class StockController {
     @PostMapping("/history")
     public OutputResult history(@RequestBody StockRo stockRo){
         return stockService.history(stockRo);
+    }
+
+
+    @PostMapping("/getWeekStat")
+    public OutputResult getWeekStat(@RequestBody StockStatRo stockStatRo){
+        return stockService.getWeekStat(stockStatRo);
+    }
+    @PostMapping("/getCharStat")
+    public OutputResult getCharStat(@RequestBody StockStatRo stockStatRo){
+        return stockService.getCharStat(stockStatRo);
     }
 }

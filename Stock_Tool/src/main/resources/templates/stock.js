@@ -565,6 +565,6 @@ var now = new Date(new Date().setDate(new Date().getDate() + 0));
 var oneMonthBefore = new Date(new Date().setDate(new Date().getDate() -30));
 $('#historyDateRange').data('daterangepicker').setStartDate(oneMonthBefore);
 $('#historyDateRange').data('daterangepicker').setEndDate(now);
-$("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now))
+$("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now));
 $("#historyStartDate").val(formatDate(oneMonthBefore));
 $("#historyEndDate").val(formatDate(now));

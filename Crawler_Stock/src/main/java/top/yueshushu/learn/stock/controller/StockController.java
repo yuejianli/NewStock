@@ -6,7 +6,10 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.yueshushu.learn.response.OutputResult;
+import top.yueshushu.learn.response.ResultCode;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
+import top.yueshushu.learn.stock.pojo.Stock;
 import top.yueshushu.learn.stock.service.CrawlerStockService;
 import top.yueshushu.learn.stock.service.StockHistoryService;
 import top.yueshushu.learn.stock.service.StockService;
@@ -53,6 +56,29 @@ public class StockController {
     @PostMapping("/getStockHistory")
     public OutputResult getStockHistory(@RequestBody StockRo stockRo){
         return stockHistoryService.getStockHistory(stockRo);
+    }
+
+    /**
+     * 股票统计时，展示的近一周，近一两周的相关信息
+     * @param stockStatRo
+     * @return
+     */
+    @PostMapping("/getWeekStat")
+    public OutputResult getWeekStat(@RequestBody StockStatRo stockStatRo){
+        Stock stock=stockService.selectByCode(stockStatRo.getCode());
+        if(stock==null){
+            return OutputResult.alert(ResultCode.STOCK_CODE_ERROR);
+        }
+        return stockHistoryService.getWeekStat(stockStatRo);
+    }
+
+    @PostMapping("/getCharStat")
+    public OutputResult getCharStat(@RequestBody StockStatRo stockStatRo){
+        Stock stock=stockService.selectByCode(stockStatRo.getCode());
+        if(stock==null){
+            return OutputResult.alert(ResultCode.STOCK_CODE_ERROR);
+        }
+        return stockHistoryService.getCharStat(stockStatRo);
     }
 
 }

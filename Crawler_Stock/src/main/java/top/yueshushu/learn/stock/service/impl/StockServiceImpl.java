@@ -51,4 +51,13 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         }
         return stockList.get(stockList.size()-1);
     }
+
+    @Override
+    public boolean existStockCode(String code) {
+        List<Stock> stockList = stockMapper.selectByCodeAndType(code, null);
+        if(CollectionUtils.isEmpty(stockList)){
+            return false;
+        }
+        return true;
+    }
 }

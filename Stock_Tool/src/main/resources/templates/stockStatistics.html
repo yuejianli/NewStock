@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票小工具-处理股票信息</title>
+
+    <link rel="StyleSheet" href="../webjars/bootstrap/3.4.1/css/bootstrap.css" type="text/css">
+    <link rel="StyleSheet" href="../static/plugins/bootstrap-table/bootstrap-table.min.css" type="text/css"/>
+    <link rel="StyleSheet" href="../static/plugins/bootstrap-select/bootstrap-select.min.css" type="text/css"/>
+    <link rel="StyleSheet" href="../static/plugins/font-awesome/css/font-awesome.min.css" type="text/css">
+    <link rel="StyleSheet" href="../static/plugins/flavr/flavr.css" type="text/css"/>
+    <link rel="StyleSheet" href="../static/plugins/bootstrap-table/bootstrap-table.min.css" type="text/css"/>
+    <link rel="StyleSheet" href="../static/css/common/common.css" type="text/css"/>
+    <link rel="StyleSheet" href="../static/plugins/bootstrap-daterangepicker/daterangepicker.css" type="text/css"/>
+    <link rel="icon" href="../static/favicon.ico" type="image/x-icon"/>
+    <link rel="bookmark" href="../static/favicon.ico" type="image/x-icon"/>
+    <style type="text/css">
+        .mar30{
+            margin-top:30px;
+        }
+        .mar45{
+            margin-top:30px;
+        }
+        td
+        {
+            text-align:center;
+        }
+        .kui{
+            color:green;
+        }
+        .zhuan{
+            color:red;
+        }
+    </style>
+</head>
+<body class="page-bg container">
+    <div class="row mar45">
+        <div class="col-md-12 column">
+            <form class="form-inline">
+                <div class="col-sm-4">
+                    <label class="col-sm-4  control-label">股票编号：</label>
+                    <input type="text" class="form-control" id="searchCode" value="" placeholder="股票的6位数字代码"/>
+                </div>
+                <div class="col-sm-3">
+                    <button id="stockSearch" type="button" class="btn btn-info"
+                            data-toggle="tooltip" data-placement="top" title="请先进行同步">
+                        <i class="fa fa-search"></i>&nbsp;查询
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row mar30">
+        <div class="col-md-6 column">
+            <h3 class="staHeader">股票基本信息</h3>
+            <div class="row">
+                <table class="table table-no-bordered">
+                    <tr>
+                        <td>股票编码:</td> <td> <span id="code" class="info"></span></td>
+                        <td>股票名称:</td> <td> <span id="name" class="info"></span></td>
+                    </tr>
+                    <tr>
+                        <td>开盘价:</td> <td>  <span id="openingPrice" class="info"></span></td>
+                        <td>当前价:</td> <td>  <span id="nowPrice" class="info"></span></td>
+                    </tr>
+                    <tr>
+                        <td>最高价:</td> <td>  <span id="highestPrice" class="info"></span></td>
+                        <td>最低价:</td> <td>   <span id="lowestPrice" class="info"></span></td>
+                    </tr>
+                    <tr>
+                        <td>涨跌幅:</td> <td>   <span id="amplitude" class="info"></span></td>
+                        <td>涨跌百分比:</td> <td>   <span id="amplitudeProportion" class="info"></span></td>
+                    </tr>
+                    <tr>
+                        <td>成交量:</td> <td>   <span id="tradingVolume" class="info"></span></td>
+                        <td>成交金额:</td> <td>   <span id="tradingValue" class="info"></span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6 column">
+            <h3 class="staHeader">股票的涨幅度信息</h3>
+            <div class="row">
+                <table class="table table-no-bordered">
+                    <thead>
+                        <tr>
+                            <td>范围:</td>
+                            <td>价位:</td>
+                            <td>幅度:</td>
+                        </tr>
+                    </thead>
+                    <tbody id="weekStatBody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h3 class="staHeader">股票价格信息</h3>
+            <div>
+                <form class="form-inline">
+                    <div class="col-sm-4 hide">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox1" value="option1"> 最高价
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox2" value="option2"> 最低价
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox3" value="option3"> 开盘价
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="inlineCheckbox4" value="option3"> 收盘价
+                        </label>
+                    </div>
+                    <div class="col-sm-5 col-sm-offset-5">
+                        <label class="col-sm-5  control-label">时间范围：</label>
+                        <div class="col-sm-7">
+                            <input type="text" id="staDateRange" class="form-control">
+                            <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                            <div>
+                                <input type="hidden" id="staStartDate">
+                                <input type="hidden" id="staEndDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-1 col-sm-offset-1">
+                        <button id="statisticsBtn" type="button" class="btn btn-info"
+                                data-toggle="tooltip" data-placement="top" title="请先进行同步">
+                            <i class="fa fa-search"></i>&nbsp;价格统计
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div style="margin-top:60px;">
+                <div id="stockCharts" style="width: 1200px;height:500px;">
+
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript" src="../webjars/jquery/3.5.1/jquery.js"></script>
+<script type="text/javascript" src="../webjars/bootstrap/3.4.1/js/bootstrap.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap-select/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="../static/plugins/flavr/flavr.min.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap-daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="../static/plugins/bootstrap-daterangepicker/daterangepicker.zh-CN.js"></script>
+<script type="text/javascript" src="../static/plugins/echarts/echarts.common.js"></script>
+<script type="text/javascript" src="../static/plugins/echarts/echarts.js"></script>
+<script type="text/javascript" src="../stockStatistics.js"></script>
+
+</body>
+</html>

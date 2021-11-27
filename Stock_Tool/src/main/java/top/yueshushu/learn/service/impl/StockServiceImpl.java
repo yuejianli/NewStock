@@ -13,6 +13,7 @@ import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockService;
 
 import java.util.Date;
@@ -90,6 +91,30 @@ public class StockServiceImpl implements StockService {
         String url= crawlerUrl+"getStockHistory";
         return restTemplate.postForEntity(
                 url,stockRo,
+                OutputResult.class
+        ).getBody();
+    }
+
+    @Override
+    public OutputResult getWeekStat(StockStatRo stockStatRo) {
+        if(StringUtils.isBlank(stockStatRo.getCode())){
+            return OutputResult.success();
+        }
+        String url= crawlerUrl+"getWeekStat";
+        return restTemplate.postForEntity(
+                url,stockStatRo,
+                OutputResult.class
+        ).getBody();
+    }
+
+    @Override
+    public OutputResult getCharStat(StockStatRo stockStatRo) {
+        if(StringUtils.isBlank(stockStatRo.getCode())){
+            return OutputResult.success();
+        }
+        String url= crawlerUrl+"getCharStat";
+        return restTemplate.postForEntity(
+                url,stockStatRo,
                 OutputResult.class
         ).getBody();
     }

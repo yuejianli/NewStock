@@ -4,6 +4,7 @@ import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
 
 /**
  * @ClassName:StockService
@@ -41,7 +42,31 @@ public interface StockService {
      */
     OutputResult<String> stockAsync(StockRo stockRo);
 
+    /**
+     * 同步股票的历史记录
+     * @param stockRo
+     * @return
+     */
     OutputResult stockHistoryAsync(StockRo stockRo);
 
+    /**
+     * 查询股票的历史记录
+     * @param stockRo
+     * @return
+     */
     OutputResult history(StockRo stockRo);
+
+    /**
+     * 获取股票的近一个月的相关信息
+     * @param stockStatRo
+     * @return
+     */
+    OutputResult getWeekStat(StockStatRo stockStatRo);
+
+    /**
+     * 获取股票的展示信息
+     * @param stockStatRo
+     * @return
+     */
+    OutputResult getCharStat(StockStatRo stockStatRo);
 }
