@@ -4,6 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import top.yueshushu.log.EnableMyLog;
 
 /**
@@ -17,6 +18,8 @@ import top.yueshushu.log.EnableMyLog;
 @MapperScan("top.yueshushu.learn.mapper")
 @Log4j2
 @EnableMyLog
+//开启缓存
+@EnableCaching
 public class StockApplication {
     public static void main(String[] args) {
         SpringApplication.run(StockApplication.class,args);

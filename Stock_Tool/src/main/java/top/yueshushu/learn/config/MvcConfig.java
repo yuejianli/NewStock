@@ -24,6 +24,9 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         //映射 static 目录
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        //favicon.ico
+        registry.addResourceHandler("/favicon.ico")
+                .addResourceLocations("classpath:/static/");
         //放置其他 业务页面资源
         registry.addResourceHandler("/**").addResourceLocations("classpath:/templates/");
     }

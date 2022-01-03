@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.yueshushu.learn.mapper.HolidayCalendarMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="top.yueshushu.learn.pojo.HolidayCalendar">
+        <id column="id" property="id" />
+        <result column="holiday_date" property="holidayDate" />
+        <result column="create_time" property="createTime" />
+        <result column="date_type" property="dateType" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, holiday_date, create_time, date_type
+    </sql>
+    <select id="selectByYear" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from holiday_calendar t
+        where year(t.holiday_date)=#{year}
+        order by holiday_date asc
+    </select>
+    <delete id="deleteByYear">
+        delete from holiday_calendar
+        where year(holiday_date)=#{year}
+    </delete>
+
+</mapper>

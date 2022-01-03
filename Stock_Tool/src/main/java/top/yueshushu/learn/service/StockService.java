@@ -1,72 +1,46 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.model.info.StockInfo;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.pojo.Stock;
+import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 
 /**
- * @ClassName:StockService
- * @Description TODO
- * @Author 岳建立
- * @Date 2021/11/12 23:06
- * @Version 1.0
- **/
-public interface StockService {
+ * <p>
+ * 股票信息基本表 自定义的
+ * </p>
+ *
+ * @author 岳建立
+ * @since 2022-01-02
+ */
+public interface StockService extends IService<Stock> {
     /**
-     * 查看股票的列表信息
+     * 查询所有的股票记录
      * @param stockRo
      * @return
      */
-    OutputResult<StockInfo> list(StockRo stockRo);
+    OutputResult<StockInfo> listStock(StockRo stockRo);
 
     /**
-     * 获取股票的相关信息
-     * @param stockRo
+     * 查询股票的信息
+     * @param code
      * @return
      */
-    OutputResult<StockShowInfo> getStockInfo(StockRo stockRo);
+    Stock selectByCode(String code);
 
     /**
-     * 查看股票的K线
-     * @param stockRo
+     * 是否存在着这个股票
+     * @param code
      * @return
      */
-    OutputResult<String> getStockKline(StockRo stockRo);
+    boolean existStockCode(String code);
 
     /**
-     * 股票同步
-     * @param stockRo
+     * 根据股票的编码，查询股票的信息
+     * @param code
      * @return
      */
-    OutputResult<String> stockAsync(StockRo stockRo);
-
-    /**
-     * 同步股票的历史记录
-     * @param stockRo
-     * @return
-     */
-    OutputResult stockHistoryAsync(StockRo stockRo);
-
-    /**
-     * 查询股票的历史记录
-     * @param stockRo
-     * @return
-     */
-    OutputResult history(StockRo stockRo);
-
-    /**
-     * 获取股票的近一个月的相关信息
-     * @param stockStatRo
-     * @return
-     */
-    OutputResult getWeekStat(StockStatRo stockStatRo);
-
-    /**
-     * 获取股票的展示信息
-     * @param stockStatRo
-     * @return
-     */
-    OutputResult getCharStat(StockStatRo stockStatRo);
+    OutputResult<StockVo> getStockInfo(String code);
 }

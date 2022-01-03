@@ -1,9 +1,9 @@
 /*处理url跳转的问题*/
-var getStockInfo_url="../stock/getStockInfo";
-var getStockKline_url="../stock/getStockKline";
-var getStockHistory_url="../stock/getStockHistory";
-var getStockAsync_url="../stock/stockAsync";
-var getStockHisAsync_url="../stock/stockHistoryAsync";
+var getStockInfo_url="../stockCrawler/getStockInfo";
+var getStockKline_url="../stockCrawler/getStockKline";
+var getStockHistory_url="../stockCrawler/getStockHistory";
+var getStockAsync_url="../stockCrawler/stockAsync";
+var getStockHisAsync_url="../stockCrawler/stockHistoryAsync";
 
 //展示的查看历史的股票代码
 var historyCode="";
@@ -112,6 +112,8 @@ function operationFormatter(value, row, index) {
         '<i class="fa fa-info"></i>&nbsp;查看详细信息&nbsp;&nbsp;</a>',
         '<a class="history text-primary" href="javascript:void(0)" data-toggle="tooltip" title="查看基金的历史">',
         '<i class="fa fa-history"></i>&nbsp;查看历史&nbsp;&nbsp;</a>',
+        '<a class="selfSelect text-primary" href="javascript:void(0)" data-toggle="tooltip" title="加入自选">',
+        '<i class="fa fa-history"></i>&nbsp;加入自选&nbsp;&nbsp;</a>',
         '<a class="min text-danger" href="javascript:void(0)" data-toggle="tooltip" title="查看分钟K线">',
         '<i class="fa fa-line-chart"></i>&nbsp;分钟k线&nbsp;&nbsp;</a>',
         '<a class="daily text-danger" href="javascript:void(0)" data-toggle="tooltip" title="查看天K线">',
@@ -139,6 +141,17 @@ window.operationEvents={
         clickRow=row;
         $("#history_popup").modal('show');
     },
+    //加入自选
+    'click .selfSelect' : function(e, value, row, index) {
+        new $.flavr({
+            content     : "您确定将该股票【"+row.name+"】加入自选吗 ？",
+            dialog      : 'confirm',
+            onConfirm   : function(){
+                addSelfSelect(row.code);
+            }
+        });
+    },
+
     //查看分钟线
     'click .min' : function(e, value, row, index) {
         //处理信息，并展示.
@@ -378,7 +391,7 @@ var stock_history_table_column=[
 
 $('#stock_history_table').bootstrapTable({
     method : 'post',
-    url : "../stock/history",//请求路径
+    url : "../stockHistory/history",//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -490,8 +503,11 @@ $("#codeHistorySync").click(function(){
     //执行同步的操作
     let type=$("#syncHistorySelect").val();
     const info = getFillInfo(clickRow.code,type,clickRow.exchange);
-    info.startDate=formatTime($("#selfStartDate").val());
-    info.endDate=formatTime($("#selfEndDate").val());
+    if(type=='0'){
+        info.startDate=formatTime($("#selfStartDate").val());
+        info.endDate=formatTime($("#selfEndDate").val());
+    }
+    info.exchange=0;
     $.ajax({
         async:false,
         type:"post",
@@ -568,3 +584,23 @@ $('#historyDateRange').data('daterangepicker').setEndDate(now);
 $("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now));
 $("#historyStartDate").val(formatDate(oneMonthBefore));
 $("#historyEndDate").val(formatDate(now));
+
+
+//  加入自选
+function addSelfSelect(code){
+    if(isEmpty(code)){
+        Flavr.falert("请先选择加入自选的股票")
+        return false;
+    }
+    //进行请求
+   let postResponse = postAjax(
+        "../stockSelected/add",
+        {"stockCode":code}
+    );
+    //如果成功，那么就是登录成功.
+    if(postResponse.success){
+        Flavr.falert("添加自选成功");
+    }else{
+        Flavr.falert(postResponse.message);
+    }
+}

@@ -1,195 +1,73 @@
 package top.yueshushu.learn.service.impl;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import top.yueshushu.learn.enumtype.SyncStockHistoryType;
+import org.springframework.util.CollectionUtils;
+import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.model.info.StockInfo;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.pojo.Stock;
+import top.yueshushu.learn.mapper.StockMapper;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.List;
 
 /**
- * @ClassName:StockServiceImpl
- * @Description TODO
- * @Author 岳建立
- * @Date 2021/11/12 23:07
- * @Version 1.0
- **/
+ * <p>
+ * 股票信息基本表 自定义的
+ * </p>
+ *
+ * @author 岳建立
+ * @since 2022-01-02
+ */
 @Service
-public class StockServiceImpl implements StockService {
+@Log4j2
+public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService {
     @Autowired
-    private RestTemplate restTemplate;
-    @Value("${restUrl.crawlerUrl}")
-    private String crawlerUrl;
+    private StockMapper stockMapper;
     @Override
-    public OutputResult<StockInfo> list(StockRo stockRo) {
-        String url= crawlerUrl+"list";
-        return restTemplate.postForEntity(
-               url,stockRo,
-                OutputResult.class
-        ).getBody();
+    public OutputResult listStock(StockRo stockRo) {
+        PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
+        List<Stock> stockInfoList= stockMapper.selectByKeyword(stockRo.getKeyword());
+        PageInfo pageInfo=new PageInfo<Stock>(stockInfoList);
+        return OutputResult.success(new PageResponse<Stock>(pageInfo.getTotal(),
+                pageInfo.getList()));
     }
-
     @Override
-    public OutputResult<StockShowInfo> getStockInfo(StockRo stockRo) {
-        String url= crawlerUrl+"getStockInfo";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-    @Override
-    public OutputResult<String> getStockKline(StockRo stockRo) {
-        String url= crawlerUrl+"getStockKline";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-    @Override
-    public OutputResult<String> stockAsync(StockRo stockRo) {
-        String url= crawlerUrl+"stockAsync";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-    @Override
-    public OutputResult stockHistoryAsync(StockRo stockRo) {
-        //处理日期信息
-        OutputResult handlerResult=handlerDate(stockRo);
-        if(null!=handlerResult){
-            return handlerResult;
+    public Stock selectByCode(String code) {
+        List<Stock> stockList = stockMapper.selectByCodeAndType(code, null);
+        if(CollectionUtils.isEmpty(stockList)){
+            return null;
         }
-        String url= crawlerUrl+"stockHistoryAsync";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-
-
-    @Override
-    public OutputResult history(StockRo stockRo) {
-        if(StringUtils.isBlank(stockRo.getCode())){
-            return OutputResult.success();
-        }
-        String url= crawlerUrl+"getStockHistory";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
+        return stockList.get(stockList.size()-1);
     }
 
     @Override
-    public OutputResult getWeekStat(StockStatRo stockStatRo) {
-        if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.success();
+    public boolean existStockCode(String code) {
+        List<Stock> stockList = stockMapper.selectByCodeAndType(code, null);
+        if(CollectionUtils.isEmpty(stockList)){
+            return false;
         }
-        String url= crawlerUrl+"getWeekStat";
-        return restTemplate.postForEntity(
-                url,stockStatRo,
-                OutputResult.class
-        ).getBody();
+        return true;
     }
 
     @Override
-    public OutputResult getCharStat(StockStatRo stockStatRo) {
-        if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.success();
+    public OutputResult<StockVo> getStockInfo(String code) {
+        List<Stock> stockInfoList= stockMapper.selectByKeyword(code);
+        if(CollectionUtils.isEmpty(stockInfoList)){
+            return OutputResult.alert("没有此股票代码信息");
         }
-        String url= crawlerUrl+"getCharStat";
-        return restTemplate.postForEntity(
-                url,stockStatRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-    /**
-     * 历史交易信息同步时，处理日期.
-     * @param stockRo
-     */
-    private OutputResult handlerDate(StockRo stockRo) {
-        SyncStockHistoryType syncRangeType = SyncStockHistoryType.getSyncRangeType(stockRo.getType());
-        if(syncRangeType==null){
-            return OutputResult.alert("不支持的同步交易范围");
-        }
-        final String Date_formatter="yyyyMMdd";
-        Date now=DateUtil.date();
-        String startDate=DateUtil.format(
-                now,Date_formatter
-        );
-        String endDate=DateUtil.format(
-                now,Date_formatter
-        );;
-        switch (syncRangeType){
-            case SELF:{
-               startDate= DateUtil.format(
-                        DateUtil.parse(
-                                stockRo.getStartDate(),
-                                "yyyy-MM-dd HH:mm:ss"
-                        )
-                ,Date_formatter);
-                endDate= DateUtil.format(
-                        DateUtil.parse(
-                                stockRo.getEndDate(),
-                                "yyyy-MM-dd HH:mm:ss"
-                        )
-                        ,Date_formatter);
-                break;
-            }
-            case WEEK:{
-                DateTime dateTime = DateUtil.offsetWeek(now, -1);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case MONTH:{
-                DateTime dateTime = DateUtil.offsetMonth(now, -1);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case YEAR:{
-                DateTime dateTime = DateUtil.offsetMonth(now, -1*12);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case THREE_YEAR:{
-                DateTime dateTime = DateUtil.offsetMonth(now, -1*12*3);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case FIVE_YEAR:{
-                DateTime dateTime = DateUtil.offsetMonth(now, -1*12*5);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case TEN_YEAR:{
-                DateTime dateTime = DateUtil.offsetMonth(now, -1*12*10);
-                startDate=DateUtil.format(dateTime,Date_formatter);
-                break;
-            }
-            case ALL:{
-               // 1984年11月18日 中国第一个股票交易
-                startDate="19841118";
-                break;
-            }
-        }
-        stockRo.setStartDate(startDate);
-        stockRo.setEndDate(endDate);
-        return null;
+        Stock stock = stockInfoList.get(stockInfoList.size()-1);
+        //获取信息
+        StockVo stockVo = new StockVo();
+        BeanUtils.copyProperties(stock,stockVo);
+        return OutputResult.success(stockVo);
     }
 }

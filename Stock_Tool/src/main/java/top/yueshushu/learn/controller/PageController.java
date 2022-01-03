@@ -1,6 +1,7 @@
 package top.yueshushu.learn.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -21,48 +22,16 @@ public class PageController {
         return "index";
     }
 
-    /**
-     * 跳转到计算金额页
-     * @return
-     */
-    @RequestMapping("/tool/money")
-    public String money(){
-        return "money";
+    @RequestMapping("/favicon.ico")
+    public String favicon(){
+        return "../static/favicon.ico";
     }
-
-    /**
-     * 跳转到补仓金额页
-     * @return
-     */
-    @RequestMapping("/tool/cover")
-    public String cover(){
-        return "cover";
-    }
-
-    /**
-     * 跳转到减仓金额页
-     * @return
-     */
-    @RequestMapping("/tool/reduce")
-    public String reduce(){
-        return "reduce";
-    }
-
-    /**
-     * 跳转到股票的相关页面
-     * @return
-     */
-    @RequestMapping("/tool/stock")
-    public String stock(){
-        return "stock";
-    }
-
     /**
      * 跳转到股票统计的相关信息
      * @return
      */
-    @RequestMapping("/tool/stockStatistics")
-    public String stockStatistics(){
-        return "stockStatistics";
+    @RequestMapping("/{page}")
+    public String page(@PathVariable("page") String page){
+        return page;
     }
 }

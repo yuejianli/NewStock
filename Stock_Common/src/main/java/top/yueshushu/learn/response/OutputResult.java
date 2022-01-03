@@ -17,11 +17,13 @@ import java.util.Map;
 public class OutputResult<T> implements Serializable {
     /**
      * @param code 响应代码
+     * @param success 是否成功  true 为成功  false 为不成功
      * @param message 响应信息
      * @param exceptionMessage 异常信息
      * @param data 响应的数据
      */
     private Integer code;
+    private Boolean success;
     private String message;
     private String exceptionMessage;
     private Map<String,T> data=new HashMap<String,T>();
@@ -44,6 +46,7 @@ public class OutputResult<T> implements Serializable {
     public static OutputResult success(){
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_SUCCESS.getCode();
+        outputResult.success=true;
         outputResult.message=DEFAULT_SUCCESS.getDesc();
         outputResult.data.put("result","{}");
         return outputResult;
@@ -58,6 +61,7 @@ public class OutputResult<T> implements Serializable {
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_SUCCESS.getCode();
         outputResult.message=DEFAULT_SUCCESS.getDesc();
+        outputResult.success=true;
         outputResult.data.put("result",data);
         return outputResult;
     }
@@ -70,6 +74,7 @@ public class OutputResult<T> implements Serializable {
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_ALERT.getCode();
         outputResult.message=DEFAULT_ALERT.getDesc();
+        outputResult.success=false;
         outputResult.data.put("result","{}");
         return outputResult;
     }
@@ -82,8 +87,9 @@ public class OutputResult<T> implements Serializable {
     public  static OutputResult alert(Object data){
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_ALERT.getCode();
-        outputResult.message=DEFAULT_ALERT.getDesc();
+        outputResult.message=data.toString();
         outputResult.data.put("result",data);
+        outputResult.success=false;
         return outputResult;
     }
 
@@ -94,8 +100,9 @@ public class OutputResult<T> implements Serializable {
     public static OutputResult error(){
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_FAIL.getCode();
-        outputResult.code=DEFAULT_FAIL.getCode();
+        outputResult.message=DEFAULT_FAIL.getDesc();
         outputResult.data.put("result","{}");
+        outputResult.success=false;
         return outputResult;
     }
 
@@ -107,7 +114,8 @@ public class OutputResult<T> implements Serializable {
     public static OutputResult error(Object data){
         OutputResult outputResult=new OutputResult();
         outputResult.code=DEFAULT_FAIL.getCode();
-        outputResult.code=DEFAULT_FAIL.getCode();
+        outputResult.message=data.toString();
+        outputResult.success=false;
         outputResult.data.put("result",data);
         return outputResult;
     }

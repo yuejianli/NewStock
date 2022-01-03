@@ -23,6 +23,19 @@ spring:
     username: fund
     password: fund
     type: com.alibaba.druid.pool.DruidDataSource
+  # 配置Redis的使用
+  redis:
+    database: 8 # 所使用的数据库  默认是0
+    host: 127.0.0.1  #所使用的redis的主机地址
+    port: 6379  # 端口号  默认是 6379
+    password:  # 密码
+    timeout: 5000 # 超时时间  5000毫秒
+    # 连接池 lettuce 的配置
+    lettuce:
+      pool:
+        max-active: 100
+        min-idle: 10
+        max-wait: 100000
   # 配置thymeleaf的相关信息
   thymeleaf:
     # 开启视图解析
@@ -40,17 +53,30 @@ spring:
     # 配置类型
     servlet:
       content-type: text/html
-mybatis:
-  #包别名
-  type-aliases-package: top.yueshushu.learn.pojo
-  #映射文件路径
+#整合mybatis时使用的。   去掉整合 MyBatis的配置信息
+mybatis-plus:
+  # 配置 mapper文件的位置
   mapper-locations: classpath:mybatis/mapper/**/*.xml
+  # 配置日志
   configuration:
-    #日志信息
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true #  配置数据库表的列别名设置
+  global-config:
+    db-config:
+      table-underline: true # 驼峰方式转换
+#分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 #配置日志文件
 logging:
   config: classpath:log4j2spring.xml
 #配置访问stock的地址信息
 restUrl:
   crawlerUrl: http://localhost:8082/Crawler/stock/
+mylog:
+  exc-full-show: false
+  run-time: 0
+  result-length: 500

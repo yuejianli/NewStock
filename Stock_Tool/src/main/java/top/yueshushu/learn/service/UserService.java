@@ -1,17 +1,29 @@
 package top.yueshushu.learn.service;
 
-import com.github.pagehelper.PageInfo;
+import top.yueshushu.learn.mode.ro.UserRo;
 import top.yueshushu.learn.pojo.User;
-
-import java.util.List;
+import com.baomidou.mybatisplus.extension.service.IService;
+import top.yueshushu.learn.response.OutputResult;
 
 /**
- * @ClassName:UserService
- * @Description TODO
- * @Author 岳建立
- * @Date 2021/4/24 20:05
- * @Version 1.0
- **/
-public interface UserService {
-
+ * <p>
+ * 登录用户表 自定义的
+ * </p>
+ *
+ * @author 岳建立
+ * @since 2022-01-02
+ */
+public interface UserService extends IService<User> {
+    /**
+     * 用户登录信息
+     * @param userRo
+     * @return
+     */
+    OutputResult login(UserRo userRo);
+    /**
+     * 转换登录用户的密码信息
+     * @param password
+     * @return
+     */
+    OutputResult convertPs(String password);
 }

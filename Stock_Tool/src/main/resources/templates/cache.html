@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../static/myjs/commonCss.js"></script>
+ <style type="text/css">
+
+ </style>
+</head>
+<body class="page-bg container">
+<div class="modal fade" id="update_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">更新缓存信息</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">key值:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="key" value="" disabled/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">新值:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="value" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="update_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div>
+        <form class="form-inline">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="keywords" value="" placeholder="缓存key的前缀"/>
+            </div>
+        </form>
+    </div>
+    <!-- 表格-开始  -->
+    <table id="cache_table" data-toggle="table"
+           class="table-striped table-bordered table-hover">
+    </table>
+</div>
+<script type="text/javascript" src="../static/myjs/commonJs.js"></script>
+
+</body>
+</html>

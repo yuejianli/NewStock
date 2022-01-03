@@ -1,18 +1,16 @@
 package top.yueshushu.learn.mapper;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import top.yueshushu.learn.pojo.User;
-
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * @ClassName:UserMapper
- * @Description TODO
- * @Author yjl
- * @Date 2021/5/18 17:51
- * @Version 1.0
- **/
-public interface UserMapper {
+ * <p>
+ * 登录用户表 Mapper 接口
+ * </p>
+ *
+ * @author 岳建立  自定义的
+ * @since 2022-01-02
+ */
+public interface UserMapper extends BaseMapper<User> {
 
 }
