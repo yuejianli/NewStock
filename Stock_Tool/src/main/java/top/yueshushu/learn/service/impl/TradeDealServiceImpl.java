@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.api.TradeResultVo;
+import top.yueshushu.learn.api.request.GetDealDataRequest;
 import top.yueshushu.learn.api.request.GetStockListRequest;
 import top.yueshushu.learn.api.response.GetDealDataResponse;
 import top.yueshushu.learn.api.response.GetStockListResponse;
@@ -96,7 +97,7 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
      * @return
      */
     private TradeResultVo<GetDealDataResponse> getDealDataResponse(Integer userId) {
-        GetStockListRequest request = new GetStockListRequest(userId);
+        GetDealDataRequest request = new GetDealDataRequest(userId);
         String url = tradeUtil.getUrl(request);
         Map<String, String> header = tradeUtil.getHeader(request);
 

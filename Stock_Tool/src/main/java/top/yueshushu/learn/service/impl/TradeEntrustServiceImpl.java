@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.api.TradeResultVo;
+import top.yueshushu.learn.api.request.GetOrdersDataRequest;
 import top.yueshushu.learn.api.request.GetStockListRequest;
 import top.yueshushu.learn.api.response.GetOrdersDataResponse;
 import top.yueshushu.learn.api.response.GetStockListResponse;
@@ -95,7 +96,7 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
      * @return
      */
     private TradeResultVo<GetOrdersDataResponse> getOrdersDataResponse(Integer userId) {
-        GetStockListRequest request = new GetStockListRequest(userId);
+        GetOrdersDataRequest request = new GetOrdersDataRequest(userId);
         String url = tradeUtil.getUrl(request);
         Map<String, String> header = tradeUtil.getHeader(request);
         Map<String, Object> params = null;

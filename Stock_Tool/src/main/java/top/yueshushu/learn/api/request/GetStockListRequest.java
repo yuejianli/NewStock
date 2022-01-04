@@ -8,7 +8,8 @@ import top.yueshushu.learn.enumtype.TradeMethodType;
  */
 @Data
 public class GetStockListRequest extends BaseTradeRequest {
-
+    private Integer qqhs =1000;
+    private Integer dwc;
     public GetStockListRequest(int userId) {
         super(userId);
     }
