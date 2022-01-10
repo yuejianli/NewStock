@@ -1,7 +1,6 @@
 package top.yueshushu.learn.stock.crawler.impl;
 
 import cn.hutool.core.codec.Base64;
-import cn.hutool.core.io.FileUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import top.yueshushu.learn.model.info.DailyTradingInfo;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.stock.crawler.CrawlerService;
 import top.yueshushu.learn.stock.entity.DownloadStockInfo;
@@ -20,7 +18,7 @@ import top.yueshushu.learn.stock.parse.StockShowInfoParse;
 import top.yueshushu.learn.stock.properties.DefaultProperties;
 import top.yueshushu.learn.stock.util.HttpUtil;
 import top.yueshushu.learn.stock.util.ImageUtil;
-import top.yueshushu.learn.stock.util.StockUtil;
+import top.yueshushu.learn.util.StockUtil;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
@@ -193,6 +191,21 @@ public class DefaultCrawlerServiceImpl implements CrawlerService {
         }catch (Exception e){
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public String sinaGetPrice(String fullCode) {
+        //处理，拼接成信息
+        String url= MessageFormat.format(defaultProperties.getShowDayUrl(),fullCode);
+        log.info(">>>访问地址:"+url);
+        try{
+            //获取内容
+            String content = HttpUtil.sendGet(httpClient,url, "gbk");
+            //将内容直接按照 ,号进行拆分
+            return content.split("\\,")[3];
+        }catch (Exception e){
+          return "0.00";
         }
     }
 

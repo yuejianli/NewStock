@@ -14,6 +14,11 @@ public class SystemConst {
      * 默认空返回值
      */
     public static final BigDecimal DEFAULT_EMPTY=BigDecimal.valueOf(0.0d);
+    public static final BigDecimal DEFAULT_DEAL_PRICE =BigDecimal.valueOf(0.1d);
+    /**
+     * 空的比例
+     */
+    public static final String DEFAULT_PROPORTION="0.00%";
     /**
      * 默认的100 值
      */

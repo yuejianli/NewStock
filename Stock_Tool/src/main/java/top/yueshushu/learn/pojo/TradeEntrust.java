@@ -82,6 +82,33 @@ public class TradeEntrust implements Serializable {
     private String entrustCode;
 
     /**
+     * 可用金额
+     */
+    @TableField("use_money")
+    private BigDecimal useMoney;
+    /**
+     * 可取金额
+     */
+    @TableField("takeout_money")
+    private BigDecimal takeoutMoney;
+
+    /**
+     * 委托费用，即交易费用
+     */
+    @TableField("entrust_money")
+    private BigDecimal entrustMoney;
+    /**
+     * 手续费
+     */
+    @TableField("hand_money")
+    private BigDecimal handMoney;
+
+    /**
+     * 总的金额
+     */
+    @TableField("total_money")
+    private BigDecimal totalMoney;
+    /**
      * 关联用户
      */
     @TableField("user_id")

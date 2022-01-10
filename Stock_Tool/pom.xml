@@ -175,6 +175,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+        <!--添加xxl-job的依赖信息-->
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>2.1.2</version>
+        </dependency>
     </dependencies>
     <build>
         <!--将该目录下的文件全部打包成类的路径-->

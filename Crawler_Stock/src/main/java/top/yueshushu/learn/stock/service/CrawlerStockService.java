@@ -30,4 +30,11 @@ public interface CrawlerStockService {
      * @return
      */
     OutputResult stockHistoryAsync(StockRo stockRo);
+
+    /**
+     * 获取股票当前的价格，是实时性的.
+     * @param stockRo
+     * @return
+     */
+    OutputResult getStockPrice(StockRo stockRo);
 }

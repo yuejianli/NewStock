@@ -51,8 +51,8 @@ public class TradePosition implements Serializable {
     /**
      * 可用数量
      */
-    @TableField("use_amont")
-    private Integer useAmont;
+    @TableField("use_amount")
+    private Integer useAmount;
 
     /**
      * 成本价

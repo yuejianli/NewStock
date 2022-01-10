@@ -1,10 +1,9 @@
-package top.yueshushu.learn.stock.xxljob;
+package top.yueshushu.learn.xxljob;
 
 import cn.hutool.core.date.DateUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +15,6 @@ import org.springframework.stereotype.Component;
  * @Version 1.0
  * @Since 1.0
  **/
-/**
- 这样调用是不对的。
- */
 @Component
 @JobHandler("helloXxlJobHandler")
 @Log4j2

@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.enumtype.KType;
-import top.yueshushu.learn.model.info.DailyTradingInfo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.response.ResultCode;
 import top.yueshushu.learn.ro.stock.StockRo;
@@ -23,7 +21,6 @@ import top.yueshushu.learn.stock.pojo.StockHistory;
 import top.yueshushu.learn.stock.service.CrawlerStockService;
 import top.yueshushu.learn.stock.service.StockHistoryService;
 import top.yueshushu.learn.stock.service.StockService;
-import top.yueshushu.learn.stock.util.StockUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -178,5 +175,17 @@ public class CrawlerStockServiceImpl implements CrawlerStockService {
         stockHistoryService.saveBatch(stockHistoryList,100);
         log.info("同步信息到数据库共用时 {}",timer.intervalMs());
         return OutputResult.success(ResultCode.STOCK_HIS_ASYNC_SUCCESS);
+    }
+
+    /**
+     * 获取股票当前的价格, 传入 的是 full_code
+     * @param stockRo
+     * @return
+     */
+    @Override
+    public OutputResult getStockPrice(StockRo stockRo) {
+        return OutputResult.success(
+                crawlerService.sinaGetPrice(stockRo.getCode())
+        );
     }
 }

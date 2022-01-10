@@ -9,6 +9,8 @@
         <result column="stock_name" property="stockName" />
         <result column="user_id" property="userId" />
         <result column="create_time" property="createTime" />
+        <result column="job_id" property="jobId" />
+        <result column="flag" property="flag" />
     </resultMap>
     <resultMap id="selectdVoMap" type="top.yueshushu.learn.mode.ro.StockSelectedVo">
         <id column="id" property="id" />
@@ -18,7 +20,7 @@
     </resultMap>
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, stock_code,stock_name, user_id, create_time
+        id, stock_code,stock_name, user_id, create_time,job_id,flag
     </sql>
     <select id="selectByKeyword" resultMap="selectdVoMap">
         select <include refid="Base_Column_List"/> from stock_selected t
@@ -32,8 +34,15 @@
                 or t.stock_name like concat('%',concat(#{keyword},'%'))
                 )
             </if>
+            <if test="1==1">
+                and flag=1
+            </if>
         </where>
         order by t.create_time asc
+    </select>
+    <select id="findCodeList" resultType="java.lang.String">
+        select distinct stock_code as code
+        from stock_selected
     </select>
 
 </mapper>

@@ -3,20 +3,23 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockCrawlerService;
 import top.yueshushu.learn.service.StockService;
+import top.yueshushu.learn.util.BigDecimalUtil;
+import top.yueshushu.learn.util.StockRedisUtil;
+import top.yueshushu.learn.util.StockUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -30,6 +33,12 @@ import java.util.Date;
 public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private StockRedisUtil stockRedisUtil;
+    @Autowired
+    private StockService stockService;
+
     @Value("${restUrl.crawlerUrl}")
     private String crawlerUrl;
 
@@ -61,6 +70,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     }
 
     @Override
+    @Async
     public OutputResult stockHistoryAsync(StockRo stockRo) {
         //处理日期信息
         OutputResult handlerResult=handlerDate(stockRo);
@@ -173,5 +183,31 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         stockRo.setStartDate(startDate);
         stockRo.setEndDate(endDate);
         return null;
+    }
+
+    @Override
+    public void updateCodePrice(String code) {
+        StockRo stockRo = new StockRo();
+        //获取当前的股票
+        String fullCode = StockUtil.getFullCode(code);
+        stockRo.setCode(fullCode);
+        //获取当前的价格
+        String url= crawlerUrl+"getStockPrice";
+        OutputResult outputResult = restTemplate.postForEntity(
+                url,stockRo,
+                OutputResult.class
+        ).getBody();
+        //获取信息
+       String priceReturn = (String) outputResult.getData().getOrDefault(
+                "result",
+               "0.00"
+        );
+       //将这个信息进行转换，转换成对应的 BigDecimal
+        BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
+        //放置进去
+        stockRedisUtil.setPrice(
+                code,
+                price
+        );
     }
 }

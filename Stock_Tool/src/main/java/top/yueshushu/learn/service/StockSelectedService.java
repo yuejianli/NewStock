@@ -43,4 +43,15 @@ public interface StockSelectedService extends IService<StockSelected> {
      * @return
      */
     OutputResult deleteByCode(StockSelectedRo stockSelectedRo);
+
+    /**
+     * 更新历史表记录信息，
+     * 从自选表里面拿出数据。
+     */
+    void syncDayHistory();
+
+    /**
+     * 处理股票的收盘价信息
+     */
+    void cacheClosePrice();
 }

@@ -36,4 +36,12 @@ public class TradeEntrustController extends BaseController {
         tradeEntrustRo.setUserId(getUserId());
         return tradeEntrustService.listEntrust(tradeEntrustRo);
     }
+
+    @PostMapping("/history")
+    @ApiOperation("查询历史委托信息")
+    public OutputResult history(@RequestBody TradeEntrustRo tradeEntrustRo){
+        tradeEntrustRo.setUserId(getUserId());
+        return tradeEntrustService.history(tradeEntrustRo);
+    }
+
 }

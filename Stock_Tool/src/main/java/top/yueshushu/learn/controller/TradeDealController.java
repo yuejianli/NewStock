@@ -34,4 +34,10 @@ public class TradeDealController extends BaseController{
         tradeDealRo.setUserId(getUserId());
         return tradeDealService.listDeal(tradeDealRo);
     }
+    @PostMapping("/history")
+    @ApiOperation("查询历史成交")
+    public OutputResult history(@RequestBody TradeDealRo tradeDealRo){
+        tradeDealRo.setUserId(getUserId());
+        return tradeDealService.history(tradeDealRo);
+    }
 }

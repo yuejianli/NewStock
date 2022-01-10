@@ -68,6 +68,33 @@ public class TradeMoneyServiceImpl extends ServiceImpl<TradeMoneyMapper, TradeMo
         return realList(tradeMoneyRo);
     }
 
+    @Override
+    public void updateMoneyVoByid(TradeMoneyVo tradeMoneyVo) {
+        TradeMoney tradeMoney = new TradeMoney();
+        BeanUtils.copyProperties(tradeMoneyVo,tradeMoney);
+        //进行修改
+        tradeMoneyMapper.updateById(tradeMoney);
+    }
+
+    @Override
+    public TradeMoney getByUid(Integer userId, Integer mockType) {
+
+        QueryWrapper<TradeMoney> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id",userId);
+        queryWrapper.eq("mock_type",mockType);
+        //根据用户去查询信息
+        List<TradeMoney> tradeMoneyList = tradeMoneyMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeMoneyList)) {
+            return null;
+        }
+        return tradeMoneyList.get(0);
+    }
+
+    @Override
+    public void updateMoneyVoByid(TradeMoney tradeMoney) {
+        tradeMoneyMapper.updateById(tradeMoney);
+    }
+
     /**
      * 正式盘的处理方式
      * @param tradeMoneyRo

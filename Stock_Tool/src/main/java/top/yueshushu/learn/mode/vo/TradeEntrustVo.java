@@ -40,6 +40,16 @@ public class TradeEntrustVo implements Serializable {
     private Integer entrustStatus;
     @ApiModelProperty("委托编号")
     private String entrustCode;
+    @ApiModelProperty("可用金额")
+    private BigDecimal useMoney;
+    @ApiModelProperty("可取金额")
+    private BigDecimal takeoutMoney;
+    @ApiModelProperty("委托费用，即交易费用")
+    private BigDecimal entrustMoney;
+    @ApiModelProperty("手续费")
+    private BigDecimal handMoney;
+    @ApiModelProperty("总的金额")
+    private BigDecimal totalMoney;
     @ApiModelProperty("委托方式 1 手动 0 自动")
     private Integer entrustType;
     @ApiModelProperty("类型 1为虚拟 0为正式")

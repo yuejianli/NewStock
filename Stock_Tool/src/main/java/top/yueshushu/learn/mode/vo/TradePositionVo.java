@@ -29,7 +29,7 @@ public class TradePositionVo implements Serializable {
     @ApiModelProperty("总数量")
     private Integer allAmount;
     @ApiModelProperty("可用数量")
-    private Integer useAmont;
+    private Integer useAmount;
     @ApiModelProperty("成本价")
     private BigDecimal avgPrice;
     @ApiModelProperty("当前价")
@@ -42,4 +42,6 @@ public class TradePositionVo implements Serializable {
     private BigDecimal floatProportion;
     @ApiModelProperty("类型,1为虚拟 0为正式")
     private Integer mockType;
+    @ApiModelProperty("类型 1为持仓 2为自选")
+    private Integer selectType;
 }

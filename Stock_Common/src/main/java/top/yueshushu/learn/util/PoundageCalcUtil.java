@@ -83,7 +83,7 @@ public class PoundageCalcUtil {
      * @param poundageDto
      * @return
      */
-    private static BigDecimal calcSellStampDuty(PoundageDto poundageDto) {
+    public static BigDecimal calcSellStampDuty(PoundageDto poundageDto) {
         //1. 获取应该收取的费用
         return poundageDto.getSellPrice().multiply(
                 new BigDecimal(poundageDto.getSellNumber())
@@ -94,7 +94,7 @@ public class PoundageCalcUtil {
      * @param tradingAreaType
      * @return
      */
-    private static BigDecimal calcSellCommunications(TradingAreaType tradingAreaType) {
+    public static BigDecimal calcSellCommunications(TradingAreaType tradingAreaType) {
         return calcBuyCommunications(tradingAreaType);
     }
 
@@ -103,7 +103,7 @@ public class PoundageCalcUtil {
      * @param number
      * @return
      */
-    private static BigDecimal calcSellTransferFee(Integer number,
+    public static BigDecimal calcSellTransferFee(Integer number,
                                                   NameOperationType nameOperationType,
                                                   ExchangeType exchangeType) {
         return calcBuyTransferFee(number,nameOperationType,exchangeType);
@@ -114,7 +114,7 @@ public class PoundageCalcUtil {
      * @param poundageDto
      * @return
      */
-    private static BigDecimal calcSellCharge(PoundageDto poundageDto) {
+    public static BigDecimal calcSellCharge(PoundageDto poundageDto) {
         //1. 获取应该收取的费用
         BigDecimal result = poundageDto.getSellPrice().multiply(
                 new BigDecimal(poundageDto.getSellNumber())
@@ -192,7 +192,7 @@ public class PoundageCalcUtil {
      * @param poundageDto
      * @return
      */
-    private static BigDecimal calcBuyCharge(PoundageDto poundageDto) {
+    public static BigDecimal calcBuyCharge(PoundageDto poundageDto) {
         //1. 获取应该收取的费用
         BigDecimal result = poundageDto.getBuyPrice().multiply(
                 new BigDecimal(poundageDto.getBuyNumber())

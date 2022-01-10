@@ -81,4 +81,8 @@ public class StockController {
         return stockHistoryService.getCharStat(stockStatRo);
     }
 
+    @PostMapping("/getStockPrice")
+    public OutputResult getStockPrice(@RequestBody StockRo stockRo){
+        return crawlerStockService.getStockPrice(stockRo);
+    }
 }

@@ -68,4 +68,16 @@
         and date_format(curr_date,'%Y%m%d') =date_format( #{currDate,jdbcType=TIMESTAMP},'%Y%m%d')
         limit 1
     </select>
+    <select id="listClosePrice" resultType="top.yueshushu.learn.mode.dto.StockPriceCacheDto">
+        select code,price from stock_history t
+        where
+        1=1
+        <if test="codeList != null and codeList.size() != 0">
+           and code in
+            <foreach collection="codeList" open="(" close=")" separator="," item="code">
+                #{code}
+            </foreach>
+         </if>
+        and date_format(curr_date,'%Y%m%d') =date_format( #{currDate,jdbcType=TIMESTAMP},'%Y%m%d')
+    </select>
 </mapper>

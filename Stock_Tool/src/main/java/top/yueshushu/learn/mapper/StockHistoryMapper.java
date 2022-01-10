@@ -2,6 +2,7 @@ package top.yueshushu.learn.mapper;
 
 import cn.hutool.core.date.DateTime;
 import org.apache.ibatis.annotations.Param;
+import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.pojo.StockHistory;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import top.yueshushu.learn.vo.stock.StockHistoryVo;
@@ -47,4 +48,12 @@ public interface StockHistoryMapper extends BaseMapper<StockHistory> {
      * @return
      */
     StockHistoryVo getStockForDate(@Param("code") String code, @Param("currDate") DateTime currDate);
+
+    /**
+     * 查询股票对应的最近收盘价信息
+     *
+     * @param codeList
+     * @return
+     */
+    List<StockPriceCacheDto> listClosePrice(@Param("codeList") List<String> codeList, @Param("currDate") Date currDate);
 }

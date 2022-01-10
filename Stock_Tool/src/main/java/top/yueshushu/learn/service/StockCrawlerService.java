@@ -57,4 +57,11 @@ public interface StockCrawlerService {
      * @return
      */
     OutputResult getCharStat(StockStatRo stockStatRo);
+
+    /**
+     * 更新股票的当前价格，放置到 redis 缓存里面。
+     * @param code
+     */
+    void updateCodePrice(String code);
+
 }

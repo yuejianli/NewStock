@@ -66,6 +66,25 @@ public class BigDecimalUtil {
     }
 
     /**
+     * 两个数相除，获取对应的百分比
+     * @param bigDecimal1
+     * @param bigDecimal2
+     * @return
+     */
+    public static BigDecimal div(BigDecimal bigDecimal1,BigDecimal bigDecimal2){
+        Assert.notNull(bigDecimal1,"格式化的源 bigDecimal1 不能为空");
+        Assert.notNull(bigDecimal2,"格式化的源 bigDecimal2 不能为空");
+
+        BigDecimal devide =bigDecimal1.divide(bigDecimal2,4, RoundingMode.HALF_UP);
+        return devide;
+    }
+
+    public static BigDecimal convertFour(BigDecimal bigDecimal){
+        //转换成四位小数
+        return bigDecimal.setScale(4, BigDecimal.ROUND_HALF_UP);
+    }
+
+    /**
      * 两个数相加
      * @param bigDecimal1
      * @param bigDecimal2
@@ -74,7 +93,7 @@ public class BigDecimalUtil {
     public static BigDecimal addBigDecimal(BigDecimal bigDecimal1,BigDecimal bigDecimal2){
         Assert.notNull(bigDecimal1,"格式化的源 bigDecimal1 不能为空");
         Assert.notNull(bigDecimal2,"格式化的源 bigDecimal2 不能为空");
-        return bigDecimal1.add(bigDecimal2);
+        return convertFour(bigDecimal1.add(bigDecimal2));
     }
     /**
      * 两个数相减
@@ -85,7 +104,7 @@ public class BigDecimalUtil {
     public static BigDecimal subBigDecimal(BigDecimal bigDecimal1,BigDecimal bigDecimal2){
         Assert.notNull(bigDecimal1,"格式化的源 bigDecimal1 不能为空");
         Assert.notNull(bigDecimal2,"格式化的源 bigDecimal2 不能为空");
-        return bigDecimal1.subtract(bigDecimal2);
+        return convertFour(bigDecimal1.subtract(bigDecimal2));
     }
     /**
      * 转换，成四位小数的 BigDecimal

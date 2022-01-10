@@ -54,5 +54,17 @@ public class StockSelected implements Serializable {
     @TableField("create_time")
     private Date createTime;
 
+    /**
+     * 定时任务的id
+     */
+    @TableField("job_id")
+    private Integer jobId;
+
+    /**
+     * 是否删除 1为正常 2为删除
+     */
+    @TableField("flag")
+    private Integer flag;
+
 
 }

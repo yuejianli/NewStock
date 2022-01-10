@@ -1,8 +1,10 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.mode.ro.DealRo;
 import top.yueshushu.learn.mode.ro.TradeDealRo;
 import top.yueshushu.learn.pojo.TradeDeal;
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.yueshushu.learn.pojo.TradeEntrust;
 import top.yueshushu.learn.response.OutputResult;
 
 /**
@@ -20,4 +22,18 @@ public interface TradeDealService extends IService<TradeDeal> {
      * @return
      */
     OutputResult listDeal(TradeDealRo tradeDealRo);
+
+    /**
+     * 添加一条成交记录到成交表里面
+     * @param tradeEntrust
+     */
+    void addDealRecord(TradeEntrust tradeEntrust);
+
+    /**
+     * 查询历史成交记录信息
+     * @param tradeDealRo
+     * @return
+     */
+    OutputResult history(TradeDealRo tradeDealRo);
+
 }

@@ -48,8 +48,8 @@ public class TradeDeal implements Serializable {
     /**
      * 成交时间
      */
-    @TableField("deal_time")
-    private Date dealTime;
+    @TableField("deal_date")
+    private Date dealDate;
 
     /**
      * 成交类型 1为买 2为卖

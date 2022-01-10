@@ -24,4 +24,10 @@ public interface StockSelectedMapper extends BaseMapper<StockSelected> {
      * @return
      */
     List<StockSelectedVo> selectByKeyword(@Param("userId") Integer userId, @Param("keyword") String keyword);
+
+    /**
+     * 查询所有的股票代码编号，用于同步
+     * @return
+     */
+    List<String> findCodeList();
 }

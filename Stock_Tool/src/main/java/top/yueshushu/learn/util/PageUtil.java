@@ -1,5 +1,10 @@
 package top.yueshushu.learn.util;
 
+import top.yueshushu.learn.mode.vo.TradePositionVo;
+import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.pojo.Stock;
+import top.yueshushu.learn.response.OutputResult;
+
 import java.util.List;
 
 /**
@@ -54,4 +59,15 @@ public class PageUtil {
         return pageList;
     }
 
+    /**
+     * 进行返回
+     * @param list
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    public static OutputResult pageResult(List list, Integer pageNum, Integer pageSize) {
+        return OutputResult.success(new PageResponse((long) list.size(),
+                startPage(list,pageNum,pageSize)));
+    }
 }

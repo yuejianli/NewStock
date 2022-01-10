@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.pojo.StockHistory;
 import top.yueshushu.learn.mapper.StockHistoryMapper;
@@ -15,6 +16,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.vo.stock.StockHistoryVo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,6 +45,12 @@ public class StockHistoryServiceImpl extends ServiceImpl<StockHistoryMapper, Sto
         return OutputResult.success(new PageResponse<>(
                 pageInfo.getTotal(),pageInfo.getList()
         ));
+    }
+
+    @Override
+    public List<StockPriceCacheDto> listClosePrice(List<String> codeList) {
+        Date yesDate = DateUtil.yesterday();
+        return stockHistoryMapper.listClosePrice(codeList,yesDate);
     }
 
 

@@ -12,5 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2022-01-03
  */
 public interface TradePositionMapper extends BaseMapper<TradePosition> {
-
+    /**
+     * 持仓表里面，更新可用的股票数量
+     */
+    void syncUseAmountByXxlJob();
 }

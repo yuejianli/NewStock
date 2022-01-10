@@ -3,10 +3,9 @@ package top.yueshushu.learn.stock.parse.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.stereotype.Component;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.stock.entity.DownloadStockInfo;
 import top.yueshushu.learn.stock.parse.StockInfoParser;
-import top.yueshushu.learn.stock.util.StockUtil;
+import top.yueshushu.learn.util.StockUtil;
 
 import java.util.ArrayList;
 import java.util.List;

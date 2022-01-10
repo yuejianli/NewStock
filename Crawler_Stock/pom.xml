@@ -123,13 +123,6 @@
             <artifactId>pagehelper-spring-boot-starter</artifactId>
             <version>1.2.12</version>
         </dependency>
-        <!--添加xxl-job的依赖信息-->
-        <dependency>
-            <groupId>com.xuxueli</groupId>
-            <artifactId>xxl-job-core</artifactId>
-            <version>2.1.2</version>
-        </dependency>
-
         <!-- ********************** embed server: netty + gson ********************** -->
         <dependency>
             <groupId>io.netty</groupId>

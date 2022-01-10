@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../static/myjs/commonCss.js"></script>
+ <style type="text/css">
+
+ </style>
+</head>
+<body class="page-bg container">
+<div class="modal fade" id="buy_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">买入股票<span id="buy_codeName"></span></h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">股数:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="buy_amount" value=""/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">价格:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="buy_price" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="buy_submit">确定买入</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sell_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">卖出股票<span id="sell_codeName"></span></h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">股数:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="sell_amount" value=""/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">价格:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="sell_price" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="sell_submit">确定卖出</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="row mar30">
+        <table class="table table-no-bordered" id="showInfo" style="width:500px;">
+            <tr>
+                <td>总资产:</td> <td> <span id="totalMoney" class="info"></span></td>
+                <td>净值资产:</td> <td>  <span id="marketMoney" class="info focus-info"></span></td>
+            </tr>
+            <tr>
+                <td>可用资产:</td> <td>   <span id="useMoney" class="info focus-info"></span></span></td>
+                <td>可取资产:</td> <td>    <span id="takeoutMoney" class="info focus-info"></span></td>
+            </tr>
+        </table>
+    </div>
+    <div class="row mar30">
+       <div class="col-sm-3">
+           <select class='type selectpicker show-tick' id="selectType"
+                   data-size="10"
+                   data-width="100%" data-style="btn-primary">
+               <option value="0" selected>持仓和自选</option>
+               <option value="1">持仓</option>
+           </select>
+       </div>
+    </div>
+    <div id="custom-toolbar">
+    </div>
+    <!-- 表格-开始  -->
+    <table id="mockPosition_table" data-toggle="table"
+           class="table-striped table-bordered table-hover">
+    </table>
+</div>
+<script type="text/javascript" src="../static/myjs/commonJs.js"></script>
+</body>
+</html>

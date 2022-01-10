@@ -8,7 +8,7 @@
         <result column="code" property="code" />
         <result column="name" property="name" />
         <result column="all_amount" property="allAmount" />
-        <result column="use_amont" property="useAmont" />
+        <result column="use_amount" property="useAmount" />
         <result column="avg_price" property="avgPrice" />
         <result column="price" property="price" />
         <result column="all_money" property="allMoney" />
@@ -20,7 +20,11 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, code, name, all_amount, use_amont, avg_price, price, all_money, float_money, float_proportion, user_id, mock_type
+        id, code, name, all_amount, use_amount, avg_price, price, all_money, float_money, float_proportion, user_id, mock_type
     </sql>
+    <update id="syncUseAmountByXxlJob">
+        update trade_position set use_amount= all_amount
+        where 1=1
+    </update>
 
 </mapper>

@@ -44,4 +44,11 @@ public interface CrawlerService {
     public default String getMonthUrl(String code){
         return "";
     }
+
+    /**
+     * 新浪获取当前的价格
+     * @param fullCode
+     * @return
+     */
+    String sinaGetPrice(String fullCode);
 }

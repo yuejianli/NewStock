@@ -1,6 +1,7 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
+import top.yueshushu.learn.mode.vo.TradeMoneyVo;
 import top.yueshushu.learn.pojo.TradeMoney;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
@@ -20,4 +21,24 @@ public interface TradeMoneyService extends IService<TradeMoney> {
      * @return
      */
     OutputResult listMoney(TradeMoneyRo tradeMoneyRo);
+
+    /**
+     * 更新用户的资产信息
+     * @param tradeMoneyVo
+     */
+    void updateMoneyVoByid(TradeMoneyVo tradeMoneyVo);
+
+    /**
+     * 获取用户的资产信息
+     * @param userId
+     * @param mockType
+     * @return
+     */
+    TradeMoney getByUid(Integer userId, Integer mockType);
+
+    /**
+     * 更新用户的资产信息
+     * @param tradeMoney
+     */
+    void updateMoneyVoByid(TradeMoney tradeMoney);
 }

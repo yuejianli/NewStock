@@ -17,5 +17,6 @@ import java.io.Serializable;
 @Data
 @ApiModel("我的持仓展示信息")
 public class TradePositionRo extends TradeRo implements Serializable {
-
+    @ApiModelProperty("查询的类型 0为持仓和自选 1为只看持仓")
+    private Integer selectType;
 }

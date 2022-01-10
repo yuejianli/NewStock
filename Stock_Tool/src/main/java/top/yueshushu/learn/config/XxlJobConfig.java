@@ -1,4 +1,4 @@
-package top.yueshushu.learn.stock.config;
+package top.yueshushu.learn.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  *
  * @author xuxueli 2017-04-28
  */
-//@Configuration
+@Configuration
 public class XxlJobConfig {
     private Logger logger = LoggerFactory.getLogger(XxlJobConfig.class);
 

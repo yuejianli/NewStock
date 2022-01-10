@@ -28,7 +28,7 @@ public class TradeDealVo implements Serializable {
     @ApiModelProperty("名称")
     private String name;
     @ApiModelProperty("成交时间")
-    private Date dealTime;
+    private Date dealDate;
     @ApiModelProperty("成交类型 1为买 2为卖")
     private Integer dealType;
     @ApiModelProperty("成交数量")

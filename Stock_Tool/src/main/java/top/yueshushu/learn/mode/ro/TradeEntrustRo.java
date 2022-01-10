@@ -1,7 +1,10 @@
 package top.yueshushu.learn.mode.ro;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 /**
  * @ClassName:TradeEntrustRo
@@ -13,4 +16,5 @@ import lombok.Data;
 @Data
 @ApiModel("委托信息Ro")
 public class TradeEntrustRo extends TradeRo {
+
 }

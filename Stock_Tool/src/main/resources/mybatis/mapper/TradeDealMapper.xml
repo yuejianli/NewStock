@@ -7,7 +7,7 @@
         <id column="id" property="id" />
         <result column="code" property="code" />
         <result column="name" property="name" />
-        <result column="deal_time" property="dealTime" />
+        <result column="deal_date" property="dealDate" />
         <result column="deal_type" property="dealType" />
         <result column="deal_num" property="dealNum" />
         <result column="deal_price" property="dealPrice" />
@@ -21,7 +21,7 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, code, name, deal_time, deal_type, deal_num, deal_price, deal_money, deal_code, entrust_code, user_id, mock_type, flag
+        id, code, name, deal_date, deal_type, deal_num, deal_price, deal_money, deal_code, entrust_code, user_id, mock_type, flag
     </sql>
 
 </mapper>
