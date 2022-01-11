@@ -29,4 +29,14 @@ public interface HolidayCalendarMapper extends BaseMapper<HolidayCalendar> {
      * @param year
      */
     void deleteByYear(@Param("year") Integer year);
+
+    /**
+     * 根据年份获取假期数据
+     *
+     * @param year
+     * @return int
+     * @date 2022/1/11 20:00
+     * @author zk_yjl
+     */
+    int countByYear(@Param("year") Integer year);
 }

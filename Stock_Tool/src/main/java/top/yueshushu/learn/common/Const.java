@@ -21,6 +21,7 @@ public class Const {
     public static final String ID_TOKEN = "id_token";
     public static final String TOKEN_USER = CACHE_KEY_PREFIX+"token_user:";
     public static final String STOCK_PRICE = CACHE_KEY_PREFIX;
+    public static final String STOCK_YES_PRICE = CACHE_KEY_PREFIX+"yes:";
 
 
 

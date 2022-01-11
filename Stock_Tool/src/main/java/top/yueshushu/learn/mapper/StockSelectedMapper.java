@@ -27,7 +27,8 @@ public interface StockSelectedMapper extends BaseMapper<StockSelected> {
 
     /**
      * 查询所有的股票代码编号，用于同步
+     *
      * @return
      */
-    List<String> findCodeList();
+    List<String> findCodeList(@Param("userId") Integer userId);
 }

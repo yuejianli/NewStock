@@ -29,10 +29,20 @@ public class StockRedisUtil {
      */
     public boolean setPrice(String code,BigDecimal price){
         //放置股票的信息
-        return redisUtil.set(buildKey(code),
-                price);
+       return setKeyValue(buildKey(code),price);
     }
 
+    private boolean setKeyValue(String key,BigDecimal price){
+        return redisUtil.set(key,
+                price);
+    }
+    private BigDecimal getKey(String key){
+        //放置股票的信息
+        return (BigDecimal) Optional.ofNullable(redisUtil.get(key))
+                .orElse(
+                        SystemConst.DEFAULT_EMPTY
+                );
+    }
     /**
      * 获取股票的价格信息
      * @param code
@@ -40,10 +50,7 @@ public class StockRedisUtil {
      */
     public BigDecimal getPrice(String code){
         //放置股票的信息
-        return (BigDecimal) Optional.ofNullable(redisUtil.get(buildKey(code)))
-                .orElse(
-                        SystemConst.DEFAULT_EMPTY
-                );
+        return getKey(buildKey(code));
     }
     /**
      * 移除价钱
@@ -52,9 +59,33 @@ public class StockRedisUtil {
      */
     public Boolean removePrice(String code){
         //放置股票的信息
-        return redisUtil.remove(buildKey(code));
+        return removeKey(buildKey(code));
     }
     private String buildKey(String code){
         return Const.STOCK_PRICE+code;
+    }
+
+    private String buildYesKey(String code){
+        return Const.STOCK_YES_PRICE+code;
+    }
+
+    public void setYesPrice(String code, BigDecimal price) {
+        //放置股票昨天的价格信息
+        setKeyValue(buildYesKey(code),price);
+    }
+    public BigDecimal getYesPrice(String code) {
+        return getKey(buildYesKey(code));
+    }
+    /**
+     * 移除价钱
+     * @param code
+     * @return
+     */
+    public Boolean removeYesPrice(String code){
+        //放置股票的信息
+        return removeKey(buildYesKey(code));
+    }
+    private Boolean removeKey(String key){
+        return redisUtil.remove(key);
     }
 }

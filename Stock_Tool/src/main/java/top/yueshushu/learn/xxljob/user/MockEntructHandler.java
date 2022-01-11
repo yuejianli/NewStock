@@ -7,8 +7,13 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.enumtype.MockType;
+import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.DealRo;
+import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.service.BuyService;
 import top.yueshushu.learn.service.DealService;
+import top.yueshushu.learn.service.TradeEntrustService;
+import top.yueshushu.learn.service.TradeStrategyService;
 
 /**
  * @ClassName:MockEntructHandler
@@ -22,15 +27,15 @@ import top.yueshushu.learn.service.DealService;
 @Log4j2
 public class MockEntructHandler extends IJobHandler {
     @Autowired
-    private DealService dealService;
+    private TradeStrategyService tradeStrategyService;
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
         log.info(">>>扫描当前的用户id 为{}",s);
-        DealRo dealRo = new DealRo();
-        dealRo.setMockType(MockType.MOCK.getCode());
-        dealRo.setUserId(Integer.parseInt(s));
-        dealService.mockDealXxlJob(dealRo);
+        BuyRo buyRo = new BuyRo();
+        buyRo.setMockType(MockType.MOCK.getCode());
+        buyRo.setUserId(Integer.parseInt(s));
+        tradeStrategyService.mockEntructXxlJob(buyRo);
         return ReturnT.SUCCESS;
     }
 }

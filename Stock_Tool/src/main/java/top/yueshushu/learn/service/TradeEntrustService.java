@@ -1,5 +1,6 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
 import top.yueshushu.learn.pojo.TradeEntrust;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -36,4 +37,5 @@ public interface TradeEntrustService extends IService<TradeEntrust> {
      * @return
      */
     List<TradeEntrust> listNowRunEntruct(Integer userId, Integer mockType);
+
 }

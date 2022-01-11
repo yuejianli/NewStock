@@ -20,6 +20,10 @@
         where year(t.holiday_date)=#{year}
         order by holiday_date asc
     </select>
+    <select id="countByYear" resultType="java.lang.Integer">
+        select count(1) as c from holiday_calendar
+        where year(holiday_date)=#{year}
+    </select>
     <delete id="deleteByYear">
         delete from holiday_calendar
         where year(holiday_date)=#{year}

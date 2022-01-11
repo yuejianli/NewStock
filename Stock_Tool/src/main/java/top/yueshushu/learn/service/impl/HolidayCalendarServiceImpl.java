@@ -3,6 +3,7 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
@@ -20,6 +21,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
  * @since 2022-01-02
  */
 @Service
+@Log4j2(topic = "日历同步")
 public class HolidayCalendarServiceImpl extends ServiceImpl<HolidayCalendarMapper, HolidayCalendar> implements HolidayCalendarService {
     @Autowired
     private HolidayCalendarMapper holidayCalendarMapper;
@@ -40,12 +43,18 @@ public class HolidayCalendarServiceImpl extends ServiceImpl<HolidayCalendarMappe
     public OutputResult listHoliday(HolidayRo holidayRo) {
         PageHelper.startPage(holidayRo.getPageNum(),holidayRo.getPageSize());
         List<HolidayCalendar> holidayCalendarList= holidayCalendarMapper.selectByYear(holidayRo.getYear());
-        PageInfo pageInfo=new PageInfo<HolidayCalendar>(holidayCalendarList);
+        PageInfo pageInfo=new PageInfo<>(holidayCalendarList);
         return OutputResult.success(new PageResponse<HolidayCalendar>(pageInfo.getTotal(),
                 pageInfo.getList()));
     }
     @Override
     public OutputResult syncYear(Integer year) {
+        //看是否存在天数.
+        int count = Optional.of(holidayCalendarMapper.countByYear(year)).orElse(0);
+        if(count>0){
+            log.info(">>>已经存在 {}年的假期数据，不需要同步");
+            return OutputResult.alert("已经存在数据数据");
+        }
         Map<?, ?> data = restTemplate.getForObject("http://tool.bitefu.net/jiari/?d=" + year, Map.class);
 
         @SuppressWarnings("unchecked")
@@ -63,7 +72,6 @@ public class HolidayCalendarServiceImpl extends ServiceImpl<HolidayCalendarMappe
             holidayCalendar.setDateType(3);
             return holidayCalendar;
         }).collect(Collectors.toList());
-        holidayCalendarMapper.deleteByYear(year);
         saveBatch(list);
         return OutputResult.success();
     }

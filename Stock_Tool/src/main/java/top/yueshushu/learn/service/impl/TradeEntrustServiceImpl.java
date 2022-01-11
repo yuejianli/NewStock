@@ -20,6 +20,7 @@ import top.yueshushu.learn.config.TradeClient;
 import top.yueshushu.learn.enumtype.EntrustStatusType;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mapper.TradePositionMapper;
+import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.mode.vo.TradeEntrustVo;

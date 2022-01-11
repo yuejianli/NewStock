@@ -27,7 +27,7 @@ public class PositionUseAmountHandler extends IJobHandler {
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
-        log.info(">>>同步可用数量");
+        log.info(">>>同步股票可用数量");
         tradePositionService.syncUseAmountByXxlJob();
         return ReturnT.SUCCESS;
     }

@@ -43,6 +43,11 @@
     <select id="findCodeList" resultType="java.lang.String">
         select distinct stock_code as code
         from stock_selected
+        <where>
+            <if test="userId != null">
+                user_id =#{userId}
+            </if>
+        </where>
     </select>
 
 </mapper>

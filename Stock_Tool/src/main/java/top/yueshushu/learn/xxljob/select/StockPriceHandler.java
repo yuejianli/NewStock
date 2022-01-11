@@ -1,5 +1,6 @@
 package top.yueshushu.learn.xxljob.select;
 
+import cn.hutool.core.date.DateUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
@@ -11,6 +12,9 @@ import top.yueshushu.learn.service.StockCrawlerService;
 import top.yueshushu.learn.service.StockSelectedService;
 import top.yueshushu.learn.service.StockService;
 import top.yueshushu.learn.service.TradePositionService;
+import top.yueshushu.learn.util.MyDateUtil;
+
+import java.util.Date;
 
 /**
  * @ClassName:StockPriceHandler
@@ -29,6 +33,10 @@ public class StockPriceHandler extends IJobHandler {
     public ReturnT<String> execute(String s) throws Exception {
         //获取当前的股票信息。取第一个值.
         String code = s;
+        Date now = DateUtil.date();
+        if(!MyDateUtil.between930And15()){
+            return ReturnT.SUCCESS;
+        }
         stockCrawlerService.updateCodePrice(code);
         return ReturnT.SUCCESS;
     }

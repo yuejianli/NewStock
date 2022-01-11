@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.common.XxlJobConst;
 import top.yueshushu.learn.enumtype.ConfigCodeType;
 import top.yueshushu.learn.enumtype.DataFlagType;
+import top.yueshushu.learn.enumtype.ExchangeType;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.IdRo;
@@ -27,6 +28,7 @@ import top.yueshushu.learn.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.StockRedisUtil;
+import top.yueshushu.learn.util.StockUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -198,23 +200,24 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
     @Override
     public void syncDayHistory() {
         //查询出所有的自选表里面的股票记录信息
-        List<String> codeList = stockSelectedMapper.findCodeList();
-        //对股票进行同步
-        StockRo stockRo = new StockRo();
-        stockRo.setType(
-                SyncStockHistoryType.SELF.getCode()
-        );
-        Date now = DateUtil.date();
-        //获取上一天的记录
-        Date beforeOne = DateUtil.offsetDay(now,-1);
-        stockRo.setStartDate(
-                DateUtil.format(beforeOne,"yyyy-MM-dd hh:mm:ss")
-        );
-        stockRo.setEndDate(
-                DateUtil.format(now,"yyyy-MM-dd hh:mm:ss")
-        );
+        List<String> codeList = stockSelectedMapper.findCodeList(null);
         for(String code:codeList){
+            //对股票进行同步
+            StockRo stockRo = new StockRo();
+            stockRo.setType(
+                    SyncStockHistoryType.SELF.getCode()
+            );
+            Date now = DateUtil.date();
+            //获取上一天的记录
+            Date beforeOne = DateUtil.offsetDay(now,-1);
+            stockRo.setStartDate(
+                    DateUtil.format(beforeOne,"yyyy-MM-dd hh:mm:ss")
+            );
+            stockRo.setEndDate(
+                    DateUtil.format(now,"yyyy-MM-dd hh:mm:ss")
+            );
             stockRo.setCode(code);
+            stockRo.setExchange(ExchangeType.SH.getCode());
             stockCrawlerService.stockHistoryAsync(
                     stockRo
             );
@@ -224,9 +227,17 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
     @Override
     public void cacheClosePrice() {
         //查询出所有的自选表里面的股票记录信息
-        List<String> codeList = stockSelectedMapper.findCodeList();
+        List<String> codeList = stockSelectedMapper.findCodeList(null);
         //获取相关的信息，进行处理。
        List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
+       //循环设置缓存信息
+        if(CollectionUtils.isEmpty(priceCacheDtoList)){
+            log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}",codeList);
+            return ;
+        }
+        for(StockPriceCacheDto priceCacheDto:priceCacheDtoList){
+            stockRedisUtil.setYesPrice(priceCacheDto.getCode(),priceCacheDto.getPrice());
+        }
     }
 
     // Integer addJob(String cron, String jobDesc, Integer group,
