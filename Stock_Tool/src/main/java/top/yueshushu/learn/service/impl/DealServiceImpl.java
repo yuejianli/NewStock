@@ -95,6 +95,10 @@ public class DealServiceImpl implements DealService {
                     BeanUtils.copyProperties(dealRo,newRo);
                     newRo.setId(tradeEntrust.getId());
                     deal(newRo);
+                    //重置昨天的价格 为当天买入的价格.
+                    stockRedisUtil.setYesPrice(
+                            code,price
+                    );
                 }
             }else{
                 //买的时候，  当前价格 > 卖出价格，则成交.
@@ -103,6 +107,10 @@ public class DealServiceImpl implements DealService {
                     BeanUtils.copyProperties(dealRo,newRo);
                     newRo.setId(tradeEntrust.getId());
                     deal(newRo);
+                    //重置昨天的价格 为当天买入的价格.
+                    stockRedisUtil.setYesPrice(
+                            code,price
+                    );
                 }
             }
         }

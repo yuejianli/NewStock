@@ -9,7 +9,7 @@ package top.yueshushu.learn.common;
  **/
 public class XxlJobConst {
     //每隔5s 获取一下股票的价格
-    public static final String SELECTED_SCAN_CRON = "* * 9,10,11,12,13,14 * * 2,3,4,5,6";
+    public static final String SELECTED_SCAN_CRON = "* * 9,10,11,12,13,14,15 * * ?";
     // 系统组
     public static final Integer JOB_SYSTEM_GROUP = 2;
     //自选组

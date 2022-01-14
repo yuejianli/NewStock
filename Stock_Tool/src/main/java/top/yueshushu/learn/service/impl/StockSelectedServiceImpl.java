@@ -30,10 +30,7 @@ import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.StockRedisUtil;
 import top.yueshushu.learn.util.StockUtil;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalLong;
+import java.util.*;
 
 /**
  * <p>
@@ -92,6 +89,18 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
             stockSelected.setJobId(jobId);
             stockSelected.setFlag(DataFlagType.NORMAL.getCode());
             stockSelectedMapper.insert(stockSelected);
+            //设置历史记录
+            //获取相关的信息，进行处理。
+            List<String> codeList = new ArrayList<>();
+            codeList.add(stockSelectedRo.getStockCode());
+            List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
+            //循环设置缓存信息
+            if(CollectionUtils.isEmpty(priceCacheDtoList)){
+                log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}",codeList);
+            }
+            for(StockPriceCacheDto priceCacheDto:priceCacheDtoList){
+                stockRedisUtil.setYesPrice(priceCacheDto.getCode(),priceCacheDto.getPrice());
+            }
         }else{
             log.info("有股票自选记录 {}，进行修改",stockSelectedRo.getStockCode());
             stockSelected.setCreateTime(DateUtil.date());
