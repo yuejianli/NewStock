@@ -43,6 +43,15 @@ function getToken(){
     return sessionStorage.getItem(Authorization)|| "";
 }
 
+function bind_bootstrap_select_data(data, target, value, text) {
+    target.empty();
+    $.each(data, function(idx, item) {
+        var val = item[value], txt = item[text];
+        jQuery("<option value='" + val + "'>" + txt + "</option>").appendTo(
+            target);
+    });
+}
+
 //判断字符是否为空的方法
 function isEmpty(obj){
     if(typeof obj == "undefined" || obj == null || obj == ""){

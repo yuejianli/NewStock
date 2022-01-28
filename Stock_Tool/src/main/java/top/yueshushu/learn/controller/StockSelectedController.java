@@ -10,11 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.mode.ro.IdRo;
-import top.yueshushu.learn.mode.ro.TradeUserRo;
-import top.yueshushu.learn.mode.vo.StockSelectedRo;
+import top.yueshushu.learn.mode.ro.StockSelectedRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.StockSelectedService;
-import top.yueshushu.learn.service.TradeUserService;
 
 /**
  * <p>

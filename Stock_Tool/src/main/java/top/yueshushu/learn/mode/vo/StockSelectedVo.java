@@ -1,4 +1,4 @@
-package top.yueshushu.learn.mode.ro;
+package top.yueshushu.learn.mode.vo;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;

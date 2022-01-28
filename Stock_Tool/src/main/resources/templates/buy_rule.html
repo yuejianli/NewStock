@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../static/myjs/commonCss.js"></script>
+ <style type="text/css">
+
+ </style>
+</head>
+<body class="page-bg container">
+<!--添加买入规则-->
+<div class="modal fade" id="add_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">添加规则</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">规则名称:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="add_name" value=""/>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">选择条件:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="add_conditionCode"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">对应类型:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="add_ruleValueType"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                            <option value="1" selected>金额</option>
+                            <option value="2">比例</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">对应关系值:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="add_ruleValue" value=""/>
+                    </div>
+                </div>
+
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易股票数:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="add_tradeNum" value=""/>
+                    </div>
+                </div>
+
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易差值类型:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="add_tradeValueType"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                            <option value="1" selected>金额</option>
+                            <option value="2">比例</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易差值:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="add_tradePrice" value=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="add_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改买入规则-->
+<div class="modal fade" id="update_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">修改规则</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">规则名称:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="update_name" value=""/>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">选择条件:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="update_conditionCode"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">对应类型:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="update_ruleValueType"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                            <option value="1" selected>金额</option>
+                            <option value="2">比例</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">对应关系值:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="update_ruleValue" value=""/>
+                    </div>
+                </div>
+
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易股票数:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="update_tradeNum" value=""/>
+                    </div>
+                </div>
+
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易类型:</label>
+                    <div class="col-sm-6">
+                        <select class='type selectpicker show-tick' id="update_tradeValueType"
+                                data-size="10"
+                                data-width="100%" data-style="btn-primary" >
+                            <option value="1" selected>金额</option>
+                            <option value="2">比例</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group mar30">
+                    <label class="col-sm-4 control-label">交易差值:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="update_tradePrice" value=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="update_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改买入规则-->
+<div class="modal fade" id="config_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">配置适用股票信息</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <table id="rulestock_table" data-toggle="table"
+                       class="table-striped table-bordered table-hover">
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="config_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div id="custom-toolbar">
+        <button id="add" type="button" class="btn btn-unified">
+            <i class="fa fa-add"></i>&nbsp;&nbsp;添加买入规则
+        </button>
+    </div>
+    <!-- 表格-开始  -->
+    <table id="buyrule_table" data-toggle="table"
+           class="table-striped table-bordered table-hover">
+    </table>
+</div>
+<script type="text/javascript" src="../static/myjs/commonJs.js"></script>
+
+</body>
+</html>

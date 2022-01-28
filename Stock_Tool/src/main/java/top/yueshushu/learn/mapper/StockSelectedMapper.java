@@ -1,7 +1,7 @@
 package top.yueshushu.learn.mapper;
 
 import org.apache.ibatis.annotations.Param;
-import top.yueshushu.learn.mode.ro.StockSelectedVo;
+import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.pojo.StockSelected;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 

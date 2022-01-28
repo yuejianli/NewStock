@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="../static/myjs/commonCss.js"></script>
+ <style type="text/css">
+
+ </style>
+</head>
+<body class="page-bg container">
+<!-- 修改关键字信息 -->
+<div class="modal fade" id="update_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">修改规则支持条件信息</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">条件名称:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="name" value=""/>
+                        </div>
+                    </div>
+                    <div class="form-group" id="stockNameGroup" style="margin-top: 30px;">
+                        <label class="col-sm-4 control-label">条件描述:</label>
+                        <div class="col-sm-6">
+                           <textarea id="description" class="underline_input"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="update_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <!-- 表格-开始  -->
+    <table id="condition_table" data-toggle="table"
+           class="table-striped table-bordered table-hover">
+    </table>
+</div>
+<script type="text/javascript" src="../static/myjs/commonJs.js"></script>
+
+</body>
+</html>

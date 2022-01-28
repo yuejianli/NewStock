@@ -15,8 +15,8 @@ import top.yueshushu.learn.enumtype.ExchangeType;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.IdRo;
-import top.yueshushu.learn.mode.ro.StockSelectedVo;
-import top.yueshushu.learn.mode.vo.StockSelectedRo;
+import top.yueshushu.learn.mode.vo.StockSelectedVo;
+import top.yueshushu.learn.mode.ro.StockSelectedRo;
 import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.pojo.Config;
 import top.yueshushu.learn.pojo.Stock;
@@ -28,7 +28,6 @@ import top.yueshushu.learn.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.StockRedisUtil;
-import top.yueshushu.learn.util.StockUtil;
 
 import java.util.*;
 
@@ -175,7 +174,7 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
         List<StockSelectedVo> stockInfoList=
                 stockSelectedMapper.selectByKeyword(stockSelectedRo.getUserId(),
                         stockSelectedRo.getKeyword());
-        PageInfo pageInfo=new PageInfo<StockSelectedVo>(stockInfoList);
+        PageInfo pageInfo=new PageInfo<>(stockInfoList);
         return OutputResult.success(new PageResponse<StockSelectedVo>(pageInfo.getTotal(),
                 pageInfo.getList()));
     }
@@ -249,6 +248,13 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
         }
     }
 
+    @Override
+    public List<StockSelectedVo> listSelf(Integer userId,String keyword) {
+        //查询所有的股票信息
+                return stockSelectedMapper.selectByKeyword(userId,
+                      keyword);
+
+    }
     // Integer addJob(String cron, String jobDesc, Integer group,
     // String jobHandler, String creator, Integer executorParam);
     /**

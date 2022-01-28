@@ -8,6 +8,7 @@ document.writeln('<script type="text/javascript" src="../static/plugins/bootstra
 document.writeln('<script type="text/javascript" src="../static/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>');
 document.writeln('<script type="text/javascript" src="../static/plugins/bootstrap-daterangepicker/daterangepicker.zh-CN.js"></script>');
 document.writeln('<script type="text/javascript" src="../static/myjs/myjs.js"></script>');
+document.writeln('<script type="text/javascript" src="../static/myjs/myArray.js"></script>');
 document.writeln('<script type="text/javascript" src="../static/myjs/commonUrl.js"></script>');
 let currentHtmlUseJs=pageName();
 document.writeln('<script type="text/javascript" src="'+currentHtmlUseJs+'.js"></script>');

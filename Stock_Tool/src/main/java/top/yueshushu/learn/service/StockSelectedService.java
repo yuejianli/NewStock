@@ -1,10 +1,13 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.mode.ro.IdRo;
-import top.yueshushu.learn.mode.vo.StockSelectedRo;
+import top.yueshushu.learn.mode.ro.StockSelectedRo;
+import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.pojo.StockSelected;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
+
+import java.util.List;
 
 /**
  * <p>
@@ -54,4 +57,13 @@ public interface StockSelectedService extends IService<StockSelected> {
      * 处理股票的收盘价信息
      */
     void cacheClosePrice();
+    /**
+     * 查询所有的股票信息
+     * @date 2022/1/27 14:16
+     * @author zk_yjl
+     * @param userId
+     * @return java.util.List<top.yueshushu.learn.mode.vo.StockSelectedVo>
+     */
+    List<StockSelectedVo> listSelf(Integer userId,String keyword);
+
 }
