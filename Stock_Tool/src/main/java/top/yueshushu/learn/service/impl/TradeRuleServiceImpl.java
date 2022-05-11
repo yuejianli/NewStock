@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
  * @since 2022-01-26
  */
 @Service
-@Log4j2
+@Slf4j
 public class TradeRuleServiceImpl extends ServiceImpl<TradeRuleMapper, TradeRule> implements TradeRuleService {
     @Autowired
     private TradeRuleStockService tradeRuleStockService;

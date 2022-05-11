@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 
 import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.enumtype.ExchangeType;
 import top.yueshushu.learn.enumtype.NameOperationType;
@@ -32,7 +33,7 @@ import java.util.List;
  * @Version 1.0
  **/
 @Service
-@Log4j2
+@Slf4j
 public class MoneyServiceImpl implements MoneyService {
     @Override
     public OutputResult calcMoney(MoneyRo moneyRo) {

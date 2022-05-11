@@ -1,9 +1,8 @@
 package top.yueshushu.learn.service.impl;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.mode.ro.CacheRo;
@@ -27,7 +26,7 @@ import java.util.Set;
  * @Version 1.0
  **/
 @Service
-@Log4j2
+@Slf4j
 public class CacheServiceImpl implements CacheService {
     @Autowired
     private RedisUtil redisUtil;

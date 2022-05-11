@@ -3,6 +3,7 @@ package top.yueshushu.learn.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -30,7 +31,7 @@ import java.util.List;
  * @since 2022-01-02
  */
 @Service
-@Log4j2
+@Slf4j
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService {
     @Autowired
     private StockMapper stockMapper;

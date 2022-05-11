@@ -30,7 +30,7 @@ default:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/stock?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
+    url: jdbc:mysql://www.yueshushu.top:3306/stock?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true
     username: fund
     password: fund
     type: com.alibaba.druid.pool.DruidDataSource
@@ -45,7 +45,7 @@ mybatis-plus:
   mapper-locations: classpath:mybatis/mapper/**/*.xml
   # 配置日志
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true #  配置数据库表的列别名设置
   global-config:
     db-config:

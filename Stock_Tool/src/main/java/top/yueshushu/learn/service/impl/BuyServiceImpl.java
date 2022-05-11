@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,7 @@ import java.math.BigDecimal;
  * @Version 1.0
  **/
 @Service
-@Log4j2(topic="买入股票:")
+@Slf4j(topic="买入股票:")
 @Transactional
 public class BuyServiceImpl implements BuyService {
     @Autowired

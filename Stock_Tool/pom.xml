@@ -22,6 +22,7 @@
         <swagger.annotations.version>1.5.21</swagger.annotations.version>
         <swagger.models.version>1.5.21</swagger.models.version>
         <swagger.bootstrapui.version>1.9.6</swagger.bootstrapui.version>
+        <skipTests>true</skipTests>
     </properties>
     <dependencies>
         <dependency>

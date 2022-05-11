@@ -1,6 +1,7 @@
 package top.yueshushu.learn.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -31,7 +32,7 @@ import java.util.List;
  * @Version 1.0
  **/
 @Service
-@Log4j2(topic = "成交委托单")
+@Slf4j(topic = "成交委托单")
 @Transactional
 public class DealServiceImpl implements DealService {
     @Autowired

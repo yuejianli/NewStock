@@ -1,12 +1,11 @@
 package top.yueshushu.learn;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
-import top.yueshushu.log.EnableMyLog;
 
 /**
  * @ClassName:StockApplication
@@ -17,8 +16,8 @@ import top.yueshushu.log.EnableMyLog;
  **/
 @SpringBootApplication
 @MapperScan("top.yueshushu.learn.mapper")
-@Log4j2
-@EnableMyLog
+@Slf4j
+//@EnableMyLog
 //开启缓存
 @EnableCaching
 @EnableAsync

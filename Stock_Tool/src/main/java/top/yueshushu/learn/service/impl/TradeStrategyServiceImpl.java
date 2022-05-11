@@ -1,6 +1,7 @@
 package top.yueshushu.learn.service.impl;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.mapper.StockSelectedMapper;
@@ -25,7 +26,7 @@ import java.util.List;
  * @Since 1.0
  **/
 @Service
-@Log4j2
+@Slf4j
 public class TradeStrategyServiceImpl implements TradeStrategyService {
     @Autowired
     private StockSelectedMapper stockSelectedMapper;

@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
  * @since 2022-01-03
  */
 @Service
-@Log4j2(topic = "持仓信息")
+@Slf4j(topic = "持仓信息")
 public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, TradePosition> implements TradePositionService {
     @Autowired
     private TradePositionMapper tradePositionMapper;

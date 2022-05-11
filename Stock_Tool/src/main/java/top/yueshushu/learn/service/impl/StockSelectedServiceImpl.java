@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.common.XxlJobConst;
@@ -40,7 +41,7 @@ import java.util.*;
  * @since 2022-01-02
  */
 @Service
-@Log4j2(topic = "自选股票")
+@Slf4j(topic = "自选股票")
 public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, StockSelected> implements StockSelectedService {
     @Autowired
     private StockSelectedMapper stockSelectedMapper;
@@ -195,7 +196,7 @@ public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, S
         stockSelected.setFlag(
                 DataFlagType.DELETE.getCode()
         );
-        stockSelectedMapper.updateById(stockSelected);
+        stockSelectedMapper.deleteById(stockSelected.getId());
         //需要暂停任务
         xxlJobService.disableJob(
                 stockSelected.getJobId()

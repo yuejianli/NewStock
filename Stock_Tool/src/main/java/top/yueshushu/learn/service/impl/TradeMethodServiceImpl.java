@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -23,7 +24,7 @@ import java.util.List;
  * @since 2022-01-02
  */
 @Service
-@Log4j2
+@Slf4j
 public class TradeMethodServiceImpl extends ServiceImpl<TradeMethodMapper, TradeMethod> implements TradeMethodService {
     @Autowired
     private TradeMethodMapper tradeMethodMapper;

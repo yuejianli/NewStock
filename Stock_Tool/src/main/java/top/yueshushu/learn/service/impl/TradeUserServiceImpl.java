@@ -3,6 +3,7 @@ package top.yueshushu.learn.service.impl;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +42,7 @@ import java.util.Map;
  * @since 2022-01-02
  */
 @Service
-@Log4j2
+@Slf4j
 public class TradeUserServiceImpl extends ServiceImpl<TradeUserMapper, TradeUser> implements TradeUserService {
     @Autowired
     private TradeUserMapper tradeUserMapper;

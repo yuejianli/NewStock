@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 2022-01-02
  */
 @Service
-@Log4j2(topic = "日历同步")
+@Slf4j(topic = "日历同步")
 public class HolidayCalendarServiceImpl extends ServiceImpl<HolidayCalendarMapper, HolidayCalendar> implements HolidayCalendarService {
     @Autowired
     private HolidayCalendarMapper holidayCalendarMapper;

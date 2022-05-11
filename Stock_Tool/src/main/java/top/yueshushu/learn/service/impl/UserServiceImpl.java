@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
@@ -34,7 +35,7 @@ import java.util.UUID;
  * @since 2022-01-02
  */
 @Service
-@Log4j2
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private UserMapper userMapper;
