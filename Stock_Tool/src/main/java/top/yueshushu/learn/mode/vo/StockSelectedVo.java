@@ -1,6 +1,5 @@
 package top.yueshushu.learn.mode.vo;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -9,11 +8,9 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @ClassName:StockSelectedVo
- * @Description TODO
+ * @Description 自选股票展示Vo
  * @Author 岳建立
  * @Date 2022/1/3 8:11
- * @Version 1.0
  **/
 @Data
 @ApiModel("股票自选展示Vo")

@@ -1,6 +1,6 @@
 package top.yueshushu.learn.mapper;
 
-import top.yueshushu.learn.pojo.TradeDeal;
+import top.yueshushu.learn.domain.TradeDealDo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 两个蝴蝶飞  自定义的
  * @since 2022-01-03
  */
-public interface TradeDealMapper extends BaseMapper<TradeDeal> {
+public interface TradeDealMapper extends BaseMapper<TradeDealDo> {
 
 }

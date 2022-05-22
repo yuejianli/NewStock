@@ -2,29 +2,24 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.digest.MD5;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import top.yueshushu.learn.assembler.UserAssembler;
 import top.yueshushu.learn.common.Const;
-import top.yueshushu.learn.enumtype.DataFlagType;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domainservice.UserDomainService;
+import top.yueshushu.learn.entity.User;
 import top.yueshushu.learn.mode.ro.UserRo;
-import top.yueshushu.learn.mode.vo.UserVo;
-import top.yueshushu.learn.pojo.User;
-import top.yueshushu.learn.mapper.UserMapper;
+import top.yueshushu.learn.domain.UserDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.UserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import top.yueshushu.learn.util.RedisUtil;
+import top.yueshushu.learn.service.cache.UserCacheService;
+import top.yueshushu.learn.util.JwtUtils;
 
-import java.util.List;
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * <p>
@@ -36,97 +31,85 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private RedisUtil redisUtil;
+public class UserServiceImpl implements UserService {
+    @Resource
+    private UserDomainService userDomainService;
+    @Resource
+    private UserAssembler userAssembler;
+    @Resource
+    private UserCacheService userCacheService;
+    @Resource
+    private JwtUtils jwtUtils;
     /**
      * 用户登录
      * @param userRo
      * @return
      */
     @Override
-    public OutputResult login(UserRo userRo) {
-        OutputResult validateResult = validLogin(userRo);
-        if(null!=validateResult){
-            return validateResult;
-        }
-        //进行登录操作, 根据账号进行查询
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("account",userRo.getAccount());
-        queryWrapper.eq("flag", DataFlagType.NORMAL.getCode());
-        //进行查询
-        List<User> userList = userMapper.selectList(queryWrapper);
-        if(CollectionUtils.isEmpty(userList)){
-            return OutputResult.error("用户名账号不正确");
-        }
-        //查询密码信息
-        User user = userList.get(0);
-        //查询密码
-        MD5 md5 = MD5.create();
-        md5.setSalt(Const.SALT.getBytes());
-        String encryPs = md5.digestHex16(userRo.getPassword().getBytes());
-        if(!encryPs.equals(user.getPassword())){
-            return OutputResult.error("用户名或者密码不正确");
-        }
-        //密码正确之后，返回用户的相关信息。
-        UserVo showUserVo = new UserVo();
-        BeanUtils.copyProperties(user,showUserVo);
-        String token = UUID.randomUUID().toString().replace("-", "");
-        showUserVo.setToken(token);
+    public User login(UserRo userRo) {
+        // 获取登录的用户
+        String account = userRo.getAccount();
+        User user = getUserByAccount(account);
 
+        // 创建新的token 值
+        Map<String, Object> map = new HashMap<>(2,1.0f);
+        map.put("timestamp", System.currentTimeMillis());
+        String token = jwtUtils.createJwt(user.getId(), account, map);
+        log.info("用户账号 {} 生成的 token is {}", account,token);
+        String oldToken = user.getToken();
+        user.setToken(token);
         //更新员工的信息
         user.setLastLoginTime(DateUtil.date());
-        user.setToken(token);
-        userMapper.updateById(user);
 
-        putTokenToRedis(user,token);
+        userDomainService.updateUser(
+                userAssembler.entityToDo(user)
+        );
+        log.info("更新用户 {}表信息成功",account);
+        //更新用户的缓存信息
 
-        return OutputResult.success(showUserVo);
+        userCacheService.refreshToken(user,oldToken);
+        log.info("更新用户{} 的Token缓存信息成功",account);
+
+       return user;
     }
 
     @Override
-    public OutputResult convertPs(String password) {
+    public OutputResult convertPassWord(String password) {
         if(!StringUtils.hasText(password)){
-            return OutputResult.alert("密码不能为空");
+            return OutputResult.buildAlert(
+                    ResultCode.PASSWORD_IS_EMPTY
+            );
         }
         MD5 md5 = MD5.create();
         md5.setSalt(Const.SALT.getBytes());
         String encryPs = md5.digestHex16(password.getBytes());
-        return OutputResult.success(encryPs);
+        return OutputResult.buildSucc(encryPs);
     }
 
+    @Override
+    public OutputResult validateUserRo(UserRo userRo) {
 
-    /**
-     * 验证用户登录
-     * @param userRo
-     * @return
-     */
-    private OutputResult validLogin(UserRo userRo){
-        return null;
-    }
-
-    public void putTokenToRedis(User user, String token) {
-        //获取该员工以前的token 值
-        String beforeToken = redisUtil.get(
-                Const.getCacheKeyPrefix(user.getId())+
-                Const.AUTH
-        );
-        //删除以前的token
-        if(StringUtils.hasText(beforeToken)){
-            redisUtil.delByKey(
-                    Const.TOKEN_USER+beforeToken
-            );
+        //进行账号验证
+        User user = getUserByAccount(userRo.getAccount());
+        if(null == user){
+            log.info("账号 {} 不存在",userRo.getAccount());
+            return OutputResult.buildAlert(ResultCode.ACCOUNT_NOT_EXIST);
         }
-        //设置员工对应的token
-        redisUtil.set(
-                Const.getCacheKeyPrefix(user.getId())+Const.AUTH,
-                token
-        );
-        redisUtil.set(
-                Const.TOKEN_USER+token,
-                user
+        //进行密码验证
+        MD5 md5 = MD5.create();
+        md5.setSalt(Const.SALT.getBytes());
+        String entryPs = md5.digestHex16(userRo.getPassword().getBytes());
+        if(!entryPs.equals(user.getPassword())){
+            log.info("账号 {} 所填写的密码与数据库的密码不一致",userRo.getAccount());
+            return OutputResult.buildAlert(ResultCode.PASSWORD_INCORRECT);
+        }
+        return OutputResult.buildSucc();
+    }
+
+    @Override
+    public User getUserByAccount(String account) {
+        return userAssembler.doToEntity(
+                userDomainService.getByAccount(account)
         );
     }
 }

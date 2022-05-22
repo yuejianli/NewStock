@@ -1,32 +1,25 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import org.apache.commons.beanutils.BeanUtilsBean;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.enumtype.ConfigCodeType;
 import top.yueshushu.learn.mode.ro.ConfigRo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.Config;
+import top.yueshushu.learn.domain.ConfigDo;
 import top.yueshushu.learn.mapper.ConfigMapper;
-import top.yueshushu.learn.pojo.Stock;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.ConfigService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.PageUtil;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,29 +31,29 @@ import java.util.stream.Collectors;
  * @since 2022-01-02
  */
 @Service
-public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> implements ConfigService {
+public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, ConfigDo> implements ConfigService {
     @Autowired
     private ConfigMapper configMapper;
     @Override
     public OutputResult listConfig(ConfigRo configRo) {
         //先查询系统全部的配置。 数据量不多 ，可以采用前端分页的方式.
-       List<Config> configDefaultList = configMapper.findByUid(
+       List<ConfigDo> configDoDefaultList = configMapper.findByUid(
                Const.DEFAULT_NO,null
        );
        //查询当前用户的信息
-        List<Config> configUserList = configMapper.findByUid(
+        List<ConfigDo> configDoUserList = configMapper.findByUid(
                 configRo.getUserId(),null
         );
-        if(!CollectionUtils.isEmpty(configUserList)){
+        if(!CollectionUtils.isEmpty(configDoUserList)){
             //将默认的，转换成对应的map 形式
-            Map<String,Config> configMap = configUserList.stream().collect(
+            Map<String, ConfigDo> configMap = configDoUserList.stream().collect(
                     Collectors.toMap(
-                            Config::getCode,
+                            ConfigDo::getCode,
                             n->n
                     )
             );
             //进行进行
-            configDefaultList.forEach(
+            configDoDefaultList.forEach(
                     n->{
                         if(configMap.containsKey(n.getCode())){
                             //进行复制,id 不复制
@@ -71,14 +64,14 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
                     }
             );
         }
-        List<Config> list = PageUtil.startPage(configDefaultList, configRo.getPageNum(),
+        List<ConfigDo> list = PageUtil.startPage(configDoDefaultList, configRo.getPageNum(),
                 configRo.getPageSize());
-        return OutputResult.success(new PageResponse<Config>((long) configDefaultList.size(),
+        return OutputResult.buildSucc(new PageResponse<ConfigDo>((long) configDoDefaultList.size(),
                 list));
     }
 
     @Override
-    public Config getConfig(Integer userId, ConfigCodeType configCodeType) {
+    public ConfigDo getConfig(Integer userId, ConfigCodeType configCodeType) {
         if(null==configCodeType){
             return null;
         }
@@ -86,68 +79,79 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
     }
 
     @Override
-    public Config getConfigByCode(Integer userId, String code) {
+    public ConfigDo getConfigByCode(Integer userId, String code) {
         if(!StringUtils.hasText(code)){
             return null;
         }
-        Config defaultConfig = configMapper.getConfig(
+        ConfigDo defaultConfigDo = configMapper.getConfig(
                 Const.DEFAULT_NO,code
         );
         //查询当前用户的配置
-        Config userConfig = configMapper.getConfig(
+        ConfigDo userConfigDo = configMapper.getConfig(
                 userId,code
         );
-        if(userConfig==null){
-            return defaultConfig;
+        if(userConfigDo ==null){
+            return defaultConfigDo;
         }
-        BeanUtils.copyProperties(userConfig,defaultConfig);
-        return defaultConfig;
+        BeanUtils.copyProperties(userConfigDo, defaultConfigDo);
+        return defaultConfigDo;
     }
 
     @Override
     public OutputResult update(ConfigRo configRo) {
         //根据id 去查询对应的记录信息
-        Config config =getById(configRo.getId());
-        if(null==config){
-            return OutputResult.alert("不存在此配置记录信息");
+        ConfigDo configDo =getById(configRo.getId());
+        if(null== configDo){
+            return OutputResult.buildAlert("不存在此配置记录信息");
         }
         //获取对应的code信息
-        Config userConfig = getConfigByCode(configRo.getUserId(),config.getCode());
+        ConfigDo userConfigDo = getConfigByCode(configRo.getUserId(), configDo.getCode());
         //如果是用户的配置，则进行更新
-        if(userConfig.isUserConfig()){
-            userConfig.setCodeValue(configRo.getCodeValue());
-            userConfig.setName(configRo.getName());
-            userConfig.setCreateTime(DateUtil.date());
-            configMapper.updateById(userConfig);
-            return OutputResult.success();
+        if(userConfigDo.isUserConfig()){
+            userConfigDo.setCodeValue(configRo.getCodeValue());
+            userConfigDo.setName(configRo.getName());
+            userConfigDo.setCreateTime(DateUtil.date());
+            configMapper.updateById(userConfigDo);
+            return OutputResult.buildSucc();
         }
         //不是用户配置，则重新添加一份.
-        Config addConfig = new Config();
-        BeanUtils.copyProperties(userConfig,addConfig);
-        addConfig.setId(null);
-        addConfig.setCodeValue(config.getCodeValue());
-        addConfig.setName(config.getName());
-        addConfig.setCreateTime(DateUtil.date());
-        addConfig.setUserId(configRo.getUserId());
-        configMapper.insert(addConfig);
-        return OutputResult.success();
+        ConfigDo addConfigDo = new ConfigDo();
+        BeanUtils.copyProperties(userConfigDo, addConfigDo);
+        addConfigDo.setId(null);
+        addConfigDo.setCodeValue(configDo.getCodeValue());
+        addConfigDo.setName(configDo.getName());
+        addConfigDo.setCreateTime(DateUtil.date());
+        addConfigDo.setUserId(configRo.getUserId());
+        configMapper.insert(addConfigDo);
+        return OutputResult.buildSucc();
     }
 
     @Override
     public OutputResult reset(ConfigRo configRo) {
         //根据id 去查询对应的记录信息
-        Config config =getById(configRo.getId());
-        if(null==config){
-            return OutputResult.alert("不存在此配置记录信息");
+        ConfigDo configDo =getById(configRo.getId());
+        if(null== configDo){
+            return OutputResult.buildAlert("不存在此配置记录信息");
         }
         //获取对应的code信息
-        Config userConfig = getConfigByCode(configRo.getUserId(),config.getCode());
+        ConfigDo userConfigDo = getConfigByCode(configRo.getUserId(), configDo.getCode());
         //如果是用户的配置，则进行更新
-        if(!userConfig.isUserConfig()){
-            return OutputResult.alert("已经是系统默认配置,无法删除");
+        if(!userConfigDo.isUserConfig()){
+            return OutputResult.buildAlert("已经是系统默认配置,无法删除");
         }
-        configMapper.deleteById(userConfig.getId());
+        configMapper.deleteById(userConfigDo.getId());
         //删除
-        return OutputResult.success();
+        return OutputResult.buildSucc();
+    }
+
+    @Override
+    public int getMaxSelectedNumByUserId(Integer userId) {
+        //获取配置信息
+        ConfigDo configDo = getConfigByCode(userId, ConfigCodeType.SELECT_MAX_NUM.getCode());
+        //获取信息
+        return Integer.parseInt(
+                Optional.ofNullable(configDo.getCodeValue())
+                        .orElse("20")
+        );
     }
 }

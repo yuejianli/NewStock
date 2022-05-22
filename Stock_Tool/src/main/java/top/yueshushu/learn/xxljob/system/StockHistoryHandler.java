@@ -3,13 +3,10 @@ package top.yueshushu.learn.xxljob.system;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.yueshushu.learn.pojo.StockSelected;
-import top.yueshushu.learn.service.StockCrawlerService;
 import top.yueshushu.learn.service.StockSelectedService;
-import top.yueshushu.learn.service.TradePositionService;
 
 /**
  * @ClassName:StockHistoryHandler
@@ -20,7 +17,7 @@ import top.yueshushu.learn.service.TradePositionService;
  **/
 @Component
 @JobHandler("stockHistoryHandler")
-@Log4j2(topic = "stockHistoryHandler")
+@Slf4j(topic = "stockHistoryHandler")
 public class StockHistoryHandler extends IJobHandler {
     @Autowired
     private StockSelectedService stockSelectedService;

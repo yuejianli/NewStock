@@ -2,7 +2,6 @@ package top.yueshushu.learn.mode.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.yueshushu.learn.pojo.StockSelected;
 
 import java.io.Serializable;
 import java.util.List;

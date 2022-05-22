@@ -5,14 +5,14 @@ import java.util.List;
 
 /**
  * @ClassName:Const
- * @Description TODO
+ * @Description 定义一些常量
  * @Author 岳建立
  * @Date 2022/1/2 10:51
  * @Version 1.0
  **/
 public class Const {
     public static final String SALT = "twoButterfly";
-    public static final String RANDNUM_PREFIX = "0.903";
+    public static final String RAND_NUMBER_PREFIX = "0.903";
     public static final String Authorization = "Authorization";
     public static final Integer DEFAULT_NO = 0;
     public static final Integer DEFAULT_USER_ID = 1;
@@ -23,8 +23,18 @@ public class Const {
     public static final String STOCK_PRICE = CACHE_KEY_PREFIX;
     public static final String STOCK_YES_PRICE = CACHE_KEY_PREFIX+"yes:";
 
+    public static final String X_REAL_IP = "x-real-ip";
+    public static final int TOKEN_EXPIRE_TIME = 7 * 24 * 3600;
+
+    /**定义日期的格式*/
+    public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
+    public static final String STOCK_DATE_FORMAT = "yyyyMMdd";
 
 
+
+    public static final String ASYNC_SERVICE_EXECUTOR_BEAN_NAME = "asyncServiceExecutor";
+    public static final String HOLIDAY_CALENDAR_CACHE = "holiday_calendar";
 
     public static final String KEY_AUTH_USER_ID = "user_id";
 

@@ -1,7 +1,6 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +10,8 @@ import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
 import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.pojo.Config;
-import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.domain.ConfigDo;
+import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.*;
 import top.yueshushu.learn.system.SystemConst;
@@ -42,13 +41,13 @@ public class BuyServiceImpl implements BuyService {
     public OutputResult buy(BuyRo buyRo) {
         //对非空的验证信息
         if(!StringUtils.hasText(buyRo.getCode())){
-            return OutputResult.alert("请传入买入的股票信息");
+            return OutputResult.buildAlert("请传入买入的股票信息");
         }
         if(buyRo.getAmount()==null){
-            return OutputResult.alert("请传入买入的股票股数信息");
+            return OutputResult.buildAlert("请传入买入的股票股数信息");
         }
         if(buyRo.getPrice()==null){
-            return OutputResult.alert("请传入买入的股票的价格信息");
+            return OutputResult.buildAlert("请传入买入的股票的价格信息");
         }
         //查询该员工对应的资产信息
         OutputResult moneyResult = getMoneyByUid(
@@ -60,9 +59,9 @@ public class BuyServiceImpl implements BuyService {
             return moneyResult;
         }
         //查询成功，获取对应的信息
-        TradeMoneyVo tradeMoney = (TradeMoneyVo) moneyResult.getData().get("result");
+        TradeMoneyVo tradeMoney = (TradeMoneyVo) moneyResult.getData();
         //获取对应的金额
-        Config priceConfig = configService.getConfigByCode(
+        ConfigDo priceConfigDo = configService.getConfigByCode(
                 buyRo.getUserId(),
                 ConfigCodeType.TRANPRICE.getCode()
         );
@@ -70,11 +69,11 @@ public class BuyServiceImpl implements BuyService {
         BigDecimal buyMoney = getBuyMoney(
                 buyRo.getAmount(),
                 buyRo.getPrice(),
-                BigDecimalUtil.toBigDecimal(priceConfig.getCodeValue())
+                BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
         );
         BigDecimal useMoney = tradeMoney.getUseMoney();
         if(useMoney.compareTo(buyMoney)<0){
-            return OutputResult.alert("你的资产不足,无法申请买入");
+            return OutputResult.buildAlert("你的资产不足,无法申请买入");
         }
         //处理资产信息表
         //计算出，可用的与可取的之间的差值信息.
@@ -109,38 +108,38 @@ public class BuyServiceImpl implements BuyService {
                 tradeMoney
         );
 
-        TradeEntrust tradeEntrust = new TradeEntrust();
-        tradeEntrust.setCode(buyRo.getCode());
-        tradeEntrust.setName(buyRo.getName());
-        tradeEntrust.setEntrustDate(DateUtil.date());
-        tradeEntrust.setDealType(DealType.BUY.getCode());
-        tradeEntrust.setEntrustNum(buyRo.getAmount());
-        tradeEntrust.setEntrustPrice(BigDecimalUtil.convertFour(buyRo.getPrice()));
-        tradeEntrust.setEntrustStatus(EntrustStatusType.ING.getCode());
-        tradeEntrust.setEntrustCode(StockUtil.generateEntrustCode());
-        tradeEntrust.setUseMoney(useMoneyChange);
-        tradeEntrust.setTakeoutMoney(takeoutMoneyChange);
-        tradeEntrust.setEntrustMoney(
+        TradeEntrustDo tradeEntrustDo = new TradeEntrustDo();
+        tradeEntrustDo.setCode(buyRo.getCode());
+        tradeEntrustDo.setName(buyRo.getName());
+        tradeEntrustDo.setEntrustDate(DateUtil.date());
+        tradeEntrustDo.setDealType(DealType.BUY.getCode());
+        tradeEntrustDo.setEntrustNum(buyRo.getAmount());
+        tradeEntrustDo.setEntrustPrice(BigDecimalUtil.convertFour(buyRo.getPrice()));
+        tradeEntrustDo.setEntrustStatus(EntrustStatusType.ING.getCode());
+        tradeEntrustDo.setEntrustCode(StockUtil.generateEntrustCode());
+        tradeEntrustDo.setUseMoney(useMoneyChange);
+        tradeEntrustDo.setTakeoutMoney(takeoutMoneyChange);
+        tradeEntrustDo.setEntrustMoney(
                StockUtil.allMoney(
                        buyRo.getAmount(),
                        buyRo.getPrice()
                )
         );
-        tradeEntrust.setHandMoney(
+        tradeEntrustDo.setHandMoney(
                 StockUtil.getBuyHandMoney(
                         buyRo.getAmount(),
                         buyRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfig.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
                 )
         );
-        tradeEntrust.setTotalMoney(buyMoney);
-        tradeEntrust.setUserId(buyRo.getUserId());
-        tradeEntrust.setEntrustType(EntrustType.HANDLER.getCode());
-        tradeEntrust.setMockType(buyRo.getMockType());
-        tradeEntrust.setFlag(DataFlagType.NORMAL.getCode());
+        tradeEntrustDo.setTotalMoney(buyMoney);
+        tradeEntrustDo.setUserId(buyRo.getUserId());
+        tradeEntrustDo.setEntrustType(EntrustType.HANDLER.getCode());
+        tradeEntrustDo.setMockType(buyRo.getMockType());
+        tradeEntrustDo.setFlag(DataFlagType.NORMAL.getCode());
         //放入一条记录到委托信息里面.
-        tradeEntrustService.save(tradeEntrust);
-        return OutputResult.success("买入股票委托成功");
+        tradeEntrustService.save(tradeEntrustDo);
+        return OutputResult.buildSucc("买入股票委托成功");
     }
 
     /**

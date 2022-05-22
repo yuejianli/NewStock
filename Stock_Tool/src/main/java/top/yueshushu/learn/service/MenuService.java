@@ -1,8 +1,7 @@
 package top.yueshushu.learn.service;
 
-import top.yueshushu.learn.mode.ro.IdRo;
 import top.yueshushu.learn.mode.vo.MenuVo;
-import top.yueshushu.learn.pojo.Menu;
+import top.yueshushu.learn.domain.MenuDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * @author 岳建立
  * @since 2022-01-02
  */
-public interface MenuService extends IService<Menu> {
+public interface MenuService {
     /**
      * 根据用户id, 获取对应的权限集合
      * @param userId

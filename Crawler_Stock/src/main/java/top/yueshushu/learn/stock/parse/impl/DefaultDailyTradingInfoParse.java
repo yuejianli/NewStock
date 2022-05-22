@@ -22,25 +22,27 @@ import java.util.List;
  **/
 @Service("defaultDailyTradingInfoParse")
 public class DefaultDailyTradingInfoParse implements DailyTradingInfoParse {
+
     @Value("${uploadFilePath:D:/upload/}")
     private String uploadFilePath;
+
     @Override
     public List<StockHistoryCsvInfo> parseStockHistoryList(InputStream inputStream) {
         //定义一个默认的文件路径
-        Long fileName= DateUtil.date().getTime();
-        if(!(uploadFilePath.endsWith("/")||uploadFilePath.endsWith("\\"))){
-            uploadFilePath=uploadFilePath+File.separator;
+        Long fileName = DateUtil.date().getTime();
+        if (!(uploadFilePath.endsWith("/") || uploadFilePath.endsWith("\\"))) {
+            uploadFilePath = uploadFilePath + File.separator;
         }
-        File downloadFile=new File(uploadFilePath+fileName+".csv");
+        File downloadFile = new File(uploadFilePath + fileName + ".csv");
         //将数据保存到文件里面
-        FileUtil.writeFromStream(inputStream,downloadFile);
+        FileUtil.writeFromStream(inputStream, downloadFile);
         //将文件写入进去
         List<StockHistoryCsvInfo> stockHistoryCsvInfos = null;
         try {
             stockHistoryCsvInfos = MyCsvUtil.readFile(downloadFile, StockHistoryCsvInfo.class);
             stockHistoryCsvInfos.stream().forEach(
-                    n->{
-                        n.setCode(n.getCode().replace("'",""));
+                    n -> {
+                        n.setCode(n.getCode().replace("'", ""));
                     }
             );
         } catch (Exception e) {

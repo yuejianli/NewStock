@@ -3,26 +3,32 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+import top.yueshushu.learn.assembler.HolidayCalendarAssembler;
+import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domain.StockDo;
+import top.yueshushu.learn.domainservice.HolidayCalendarDomainService;
 import top.yueshushu.learn.mode.ro.HolidayRo;
+import top.yueshushu.learn.mode.vo.HolidayCalendarVo;
+import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.HolidayCalendar;
-import top.yueshushu.learn.mapper.HolidayCalendarMapper;
-import top.yueshushu.learn.pojo.Stock;
+import top.yueshushu.learn.domain.HolidayCalendarDo;
+import top.yueshushu.learn.mapper.HolidayCalendarDoMapper;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.HolidayCalendarService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,45 +41,75 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j(topic = "日历同步")
-public class HolidayCalendarServiceImpl extends ServiceImpl<HolidayCalendarMapper, HolidayCalendar> implements HolidayCalendarService {
-    @Autowired
-    private HolidayCalendarMapper holidayCalendarMapper;
-    @Autowired
+public class HolidayCalendarServiceImpl implements HolidayCalendarService {
+    @Resource
+    private HolidayCalendarDomainService holidayCalendarDomainService;
+    @Resource
+    private HolidayCalendarAssembler holidayCalendarAssembler;
+    @Resource
     private RestTemplate restTemplate;
     @Override
     public OutputResult listHoliday(HolidayRo holidayRo) {
         PageHelper.startPage(holidayRo.getPageNum(),holidayRo.getPageSize());
-        List<HolidayCalendar> holidayCalendarList= holidayCalendarMapper.selectByYear(holidayRo.getYear());
-        PageInfo pageInfo=new PageInfo<>(holidayCalendarList);
-        return OutputResult.success(new PageResponse<HolidayCalendar>(pageInfo.getTotal(),
+        List<HolidayCalendarDo> holidayCalendarDoList = holidayCalendarDomainService.listByYear(holidayRo.getYear());
+        if (CollectionUtils.isEmpty(holidayCalendarDoList)){
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+
+        List<HolidayCalendarVo> pageResultList = new ArrayList<>(holidayCalendarDoList.size());
+        holidayCalendarDoList.forEach(
+                n->{
+                    pageResultList.add(
+                            holidayCalendarAssembler.entityToVo(
+                                    holidayCalendarAssembler.doToEntity(
+                                            n
+                                    )
+                            )
+                    );
+                }
+        );
+        PageInfo pageInfo=new PageInfo<>(pageResultList);
+        return OutputResult.buildSucc(new PageResponse<HolidayCalendarVo>(pageInfo.getTotal(),
                 pageInfo.getList()));
+
+
     }
     @Override
+    @CacheEvict(value= Const.HOLIDAY_CALENDAR_CACHE,key = "#year")
     public OutputResult syncYear(Integer year) {
         //看是否存在天数.
-        int count = Optional.of(holidayCalendarMapper.countByYear(year)).orElse(0);
+        int count = Optional.of(holidayCalendarDomainService.countByYear(year)).orElse(0);
         if(count>0){
-            log.info(">>>已经存在 {}年的假期数据，不需要同步");
-            return OutputResult.alert("已经存在数据数据");
+            log.info(">>>已经存在 {}年的假期数据，不需要同步",year);
+            return OutputResult.buildAlert(
+                    ResultCode.HOLIDAY_EXISTS
+            );
         }
-        Map<?, ?> data = restTemplate.getForObject("http://tool.bitefu.net/jiari/?d=" + year, Map.class);
-
+        Map<?, ?> data ;
+        try{
+            data = restTemplate.getForObject("http://tool.bitefu.net/jiari/?d=" + year, Map.class);
+        }catch (Exception e){
+            log.error("获取同步假期数据时出现异常",e);
+            return OutputResult.buildFail();
+        }
         @SuppressWarnings("unchecked")
         Map<String, Integer> dateInfo = (Map<String, Integer>) data.get(String.valueOf(year));
-        List<HolidayCalendar> list = dateInfo.entrySet().stream().filter(entry -> entry.getValue() != 0).map(entry -> {
+        List<HolidayCalendarDo> list = dateInfo.entrySet().stream().filter(entry -> entry.getValue() != 0).map(entry -> {
             Date date;
             try {
                 date = DateUtils.parseDate(year + entry.getKey(), "yyyyMMdd");
             } catch (ParseException e) {
                 throw new IllegalArgumentException(e);
             }
-            HolidayCalendar holidayCalendar = new HolidayCalendar();
-            holidayCalendar.setHolidayDate(date);
-            holidayCalendar.setCreateTime(DateUtil.date());
-            holidayCalendar.setDateType(3);
-            return holidayCalendar;
+            HolidayCalendarDo holidayCalendarDo = new HolidayCalendarDo();
+            holidayCalendarDo.setHolidayDate(date);
+            holidayCalendarDo.setCurrYear(year);
+            holidayCalendarDo.setDateType(3);
+            return holidayCalendarDo;
         }).collect(Collectors.toList());
-        saveBatch(list);
-        return OutputResult.success();
+        holidayCalendarDomainService.saveBatch(list);
+        return OutputResult.buildSucc();
     }
 }

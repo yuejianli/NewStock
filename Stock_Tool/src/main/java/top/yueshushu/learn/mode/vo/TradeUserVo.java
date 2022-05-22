@@ -20,5 +20,5 @@ public class TradeUserVo implements Serializable {
     @ApiModelProperty("交易用户id")
     private Integer userId;
     @ApiModelProperty("对应菜单id")
-    private List<MenuVo> menuVoList;
+    private List<MenuVo> menuList;
 }

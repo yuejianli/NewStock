@@ -2,7 +2,6 @@ package top.yueshushu.learn.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +10,23 @@ import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.AuthenticationRequest;
 import top.yueshushu.learn.api.response.AuthenticationResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
+import top.yueshushu.learn.assembler.TradeMethodAssembler;
+import top.yueshushu.learn.assembler.TradeUserAssembler;
 import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.config.TradeClient;
+import top.yueshushu.learn.domainservice.TradeMethodDomainService;
+import top.yueshushu.learn.domainservice.TradeUserDomainService;
+import top.yueshushu.learn.entity.TradeMethod;
+import top.yueshushu.learn.entity.TradeUser;
 import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.mode.ro.TradeUserRo;
 import top.yueshushu.learn.mode.vo.TradeUserVo;
-import top.yueshushu.learn.pojo.TradeMethod;
-import top.yueshushu.learn.pojo.TradeUser;
-import top.yueshushu.learn.mapper.TradeUserMapper;
+import top.yueshushu.learn.domain.TradeMethodDo;
+import top.yueshushu.learn.domain.TradeUserDo;
+import top.yueshushu.learn.mapper.TradeUserDoMapper;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.MenuService;
 import top.yueshushu.learn.service.TradeMethodService;
 import top.yueshushu.learn.service.TradeUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -43,91 +48,89 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class TradeUserServiceImpl extends ServiceImpl<TradeUserMapper, TradeUser> implements TradeUserService {
-    @Autowired
-    private TradeUserMapper tradeUserMapper;
-    @Autowired
-    private MenuService menuService;
-    @Autowired
-    private TradeMethodService tradeMethodService;
-    @Autowired
+public class TradeUserServiceImpl implements TradeUserService {
+    @Resource
+    private TradeUserDomainService tradeUserDomainService;
+    @Resource
+    private TradeUserAssembler tradeUserAssembler;
+    @Resource
+    private TradeMethodAssembler tradeMethodAssembler;
+    @Resource
+    private TradeMethodDomainService tradeMethodDomainService;
+
+    @Resource
     private TradeClient tradeClient;
     @Resource
     private DefaultResponseParser defaultResponseParser;
+
     @Override
     public OutputResult login(TradeUserRo tradeUserRo) {
-        //根据id,去获取对应的真实账户
-        OutputResult validateResult = validLogin(tradeUserRo);
-        if(null!=validateResult){
-            return validateResult;
-        }
         //根据id 去查询对应的交易账户
-        TradeUser tradeUser = getTradeUserById(tradeUserRo.getId());
-        if(null==tradeUser){
-            return OutputResult.error("没有关联交易用户");
+        TradeUser tradeUser = tradeUserAssembler.doToEntity(
+                tradeUserDomainService.getByUserId(tradeUserRo.getId())
+        );
+        if(null== tradeUser){
+            return OutputResult.buildFail(ResultCode.TRADE_USER_NO_RELATION);
         }
+
         //关联的用户
         AuthenticationRequest request = new AuthenticationRequest(tradeUser.getUserId());
+        //todo 密码不用前端输入形式
         request.setPassword(tradeUserRo.getPassword());
         request.setIdentifyCode(tradeUserRo.getIdentifyCode());
         request.setRandNumber(tradeUserRo.getRandNum());
         //获取登录验证的方法
-        TradeMethod tradeMethod = tradeMethodService.getMethodByCode(request.getMethod());
-
+        TradeMethod tradeMethod = tradeMethodAssembler.doToEntity(
+                tradeMethodDomainService.getMethodByCode(request.getMethod())
+        );
         Map<String, Object> params = getParams(request);
         params.put("userId", tradeUser.getAccount());
         TradeResultVo<AuthenticationResponse> resultVo = null;
+        log.info("系统用户{}登录时成功构建了登录请求信息",tradeUser.getUserId());
         try {
-            tradeClient.openSession();
-            String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
-            resultVo = defaultResponseParser.parse(content, new TypeReference<AuthenticationResponse>() {});
-            if (resultVo.getSuccess()) {
-                TradeMethod authCheckTradeMethod =
-                        tradeMethodService.getMethodByCode(TradeMethodType.AuthenticationCheckRequest.getCode());
+            //tradeClient.openSession();
+            //String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
+            //resultVo = defaultResponseParser.parse(content, new TypeReference<AuthenticationResponse>() {});
+            //if (resultVo.getSuccess()) {
+            //    log.info("系统用户{}登录请求成功",tradeUser.getUserId());
+            //    TradeMethodDo authCheckTradeMethodDo =
+            //            tradeMethodDomainService.getMethodByCode(TradeMethodType.AuthenticationCheckRequest.getCode());
+            //
+            //    String content2 = tradeClient.sendNewInstance(authCheckTradeMethodDo.getUrl(), new HashMap<>(2));
+            //    String validateKey = getValidateKey(content2);
+            //
+            //    AuthenticationResponse response = new AuthenticationResponse();
+            //    response.setCookie(tradeClient.getCurrentCookie());
+            //    response.setValidateKey(validateKey);
+            //    resultVo.setData(Arrays.asList(response));
+            //    log.info("系统用户{}响应数据成功",tradeUser.getUserId());
+            //}
+            resultVo = new TradeResultVo<AuthenticationResponse>();
+            resultVo.setSuccess(true);
 
-                String content2 = tradeClient.sendNewInstance(authCheckTradeMethod.getUrl(), new HashMap<>());
-                String validateKey = getValidateKey(content2);
-
-                AuthenticationResponse response = new AuthenticationResponse();
-                response.setCookie(tradeClient.getCurrentCookie());
-                response.setValidateKey(validateKey);
-                resultVo.setData(Arrays.asList(response));
-            }
-        } finally {
-            tradeClient.destoryCurrentSession();
+        } catch (Exception e){
+            log.error("系统用户{}登录请求失败",tradeUser.getUserId(),e);
+            return OutputResult.buildFail();
+        }finally {
+           // tradeClient.destoryCurrentSession();
         }
         TradeUserVo tradeUserVo = new TradeUserVo();
-        if (resultVo.getSuccess()) {
-            AuthenticationResponse response = resultVo.getData().get(0);
-            tradeUser.setCookie(response.getCookie());
-            tradeUser.setValidateKey(response.getValidateKey());
-            tradeUserMapper.updateById(tradeUser);
+        if (!resultVo.getSuccess()) {
+            log.info("系统用户{}未成功登录",tradeUser.getUserId());
+            return OutputResult.buildFail();
         }
+        //AuthenticationResponse response = resultVo.getData().get(0);
+        //tradeUser.setCookie(response.getCookie());
+        //tradeUser.setValidateKey(response.getValidateKey());
+        tradeUserDomainService.updateById(
+                tradeUserAssembler.entityToDo(
+                        tradeUser
+                )
+        );
+        log.info("系统用户{}更新cookie和validateKey成功",tradeUser.getUserId());
         tradeUserVo.setUserId(tradeUserRo.getId());
-        return OutputResult.success(tradeUserVo);
+        return OutputResult.buildSucc(tradeUserVo);
     }
-
-    @Override
-    public TradeUser getTradeUserById(int userId) {
-        QueryWrapper<TradeUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id",userId);
-        queryWrapper.eq("flag", DataFlagType.NORMAL.getCode());
-        List<TradeUser> tradeUseList = tradeUserMapper.selectList(queryWrapper);
-        if(CollectionUtils.isEmpty(tradeUseList)){
-           return null;
-        }
-        return tradeUseList.get(0);
-    }
-
-    /**
-     * 验证登录
-     * @param tradeUserRo
-     * @return
-     */
-    private OutputResult validLogin(TradeUserRo tradeUserRo) {
-        return null;
-    }
-
     /**
      * 组装参数
      * @param request

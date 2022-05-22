@@ -1,28 +1,21 @@
 package top.yueshushu.learn.stock;
 
-import cn.hutool.core.io.FileUtil;
-import com.sun.imageio.plugins.common.ImageUtil;
 import lombok.extern.log4j.Log4j2;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.stock.business.StockBusiness;
+import top.yueshushu.learn.stock.business.StockHistoryBusiness;
 import top.yueshushu.learn.stock.crawler.CrawlerService;
 import top.yueshushu.learn.stock.entity.DownloadStockInfo;
 import top.yueshushu.learn.stock.entity.StockHistoryCsvInfo;
-import top.yueshushu.learn.stock.service.CrawlerStockService;
-import top.yueshushu.learn.stock.service.StockService;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -33,13 +26,16 @@ import java.util.List;
  * @Version 1.0
  **/
 @SpringBootTest
-@Log4j2
+@Slf4j
 public class SinajsTest {
-    @Autowired
-    private CrawlerStockService crawlerStockService;
-
-    @Resource(name="defaultCrawlerService")
+    @Resource
+    private StockBusiness stockBusiness;
+    @Resource
+    private StockHistoryBusiness stockHistoryBusiness;
+    @Resource
     private CrawlerService crawlerService;
+
+
     @Autowired
     private RestTemplate restTemplate;
     /**
@@ -50,15 +46,9 @@ public class SinajsTest {
         String code="sz002415";
         StockRo stockRo=new StockRo();
         stockRo.setCode(code);
-        OutputResult<StockShowInfo> stockShowInfoOutputResult = crawlerStockService.showNowInfo(stockRo);
-        System.out.println(stockShowInfoOutputResult.getData().getOrDefault("result",new StockShowInfo()));
-    }
-
-    @Test
-    public void minTest(){
-        String code="sz002415";
-        String content=crawlerService.getMinUrl(code);
-        log.info(">>输出内容:"+content);
+        OutputResult<StockShowInfo> stockShowInfoOutputResult = stockBusiness.getStockInfo(
+                stockRo.getCode());
+        System.out.println(stockShowInfoOutputResult.getData());
     }
     @Test
     public void getStockListTest(){
@@ -66,7 +56,7 @@ public class SinajsTest {
         List<DownloadStockInfo> downloadStockInfos = stockList.subList(0, 10);
         downloadStockInfos.stream().forEach(
                 n->{
-                    log.info(n);
+                    log.info("输出信息:{}",n);
                 }
         );
     }
@@ -87,7 +77,7 @@ public class SinajsTest {
         );
         dailyIndex.forEach(
                 n->{
-                    log.info(n);
+                    log.info("输出信息:{}",n);
                 }
         );
     }

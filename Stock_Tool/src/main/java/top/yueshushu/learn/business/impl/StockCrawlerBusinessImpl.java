@@ -1,0 +1,60 @@
+package top.yueshushu.learn.business.impl;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import top.yueshushu.learn.business.StockCrawlerBusiness;
+import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.response.OutputResult;
+import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.ro.stock.StockStatRo;
+import top.yueshushu.learn.service.StockCrawlerService;
+
+import javax.annotation.Resource;
+
+/**
+ * @Description 爬虫编排层
+ * @Author 岳建立
+ * @Date 2021/11/12 23:07
+ **/
+@Service
+public class StockCrawlerBusinessImpl implements StockCrawlerBusiness {
+    @Resource
+    private StockCrawlerService stockCrawlerService;
+
+    @Override
+    public OutputResult<StockShowInfo> getStockInfo(StockRo stockRo) {
+        return stockCrawlerService.getStockInfo(stockRo);
+    }
+
+    @Override
+    public OutputResult<String> getStockKline(StockRo stockRo) {
+        return stockCrawlerService.getStockKline(stockRo);
+    }
+
+    @Override
+    public OutputResult<String> stockAsync(StockRo stockRo) {
+        return stockCrawlerService.stockAsync(stockRo);
+    }
+
+    @Override
+    public OutputResult stockHistoryAsync(StockRo stockRo) {
+        return stockCrawlerService.stockHistoryAsync(stockRo);
+    }
+
+
+    @Override
+    public OutputResult getWeekStat(StockStatRo stockStatRo) {
+        return stockCrawlerService.getWeekStat(stockStatRo);
+    }
+
+    @Override
+    public OutputResult getCharStat(StockStatRo stockStatRo) {
+        return stockCrawlerService.getCharStat(stockStatRo);
+    }
+
+
+    @Override
+    public void updateCodePrice(String code) {
+        stockCrawlerService.updateCodePrice(code);
+    }
+}

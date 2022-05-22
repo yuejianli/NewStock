@@ -3,16 +3,11 @@ package top.yueshushu.learn.xxljob.user;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.ro.BuyRo;
-import top.yueshushu.learn.mode.ro.DealRo;
-import top.yueshushu.learn.pojo.TradeEntrust;
-import top.yueshushu.learn.service.BuyService;
-import top.yueshushu.learn.service.DealService;
-import top.yueshushu.learn.service.TradeEntrustService;
 import top.yueshushu.learn.service.TradeStrategyService;
 
 /**
@@ -24,7 +19,7 @@ import top.yueshushu.learn.service.TradeStrategyService;
  **/
 @Component
 @JobHandler("mockEntructHandler")
-@Log4j2
+@Slf4j
 public class MockEntructHandler extends IJobHandler {
     @Autowired
     private TradeStrategyService tradeStrategyService;

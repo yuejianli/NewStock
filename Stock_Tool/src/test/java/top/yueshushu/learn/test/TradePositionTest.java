@@ -1,6 +1,7 @@
 package top.yueshushu.learn.test;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.math.BigDecimal;
  **/
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@Log4j2
+@Slf4j
 public class TradePositionTest {
     @Autowired
     private TradePositionService tradePositionService;
@@ -35,6 +36,6 @@ public class TradePositionTest {
         tradePositionRo.setMockType(1);
 
         OutputResult outputResult = tradePositionService.listPosition(tradePositionRo);
-        log.info(outputResult);
+        log.info("输出结果:{}",outputResult);
     }
 }

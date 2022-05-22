@@ -1,0 +1,165 @@
+package top.yueshushu.learn.common;
+
+import top.yueshushu.learn.response.BaseResultCode;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @ClassName:ResultCode
+ * @Description Tool 工具的错误码信息
+ * @Author 岳建立
+ * @Date 2022/5/20 20:14
+ * @Version 1.0
+ **/
+public class ResultCode extends BaseResultCode {
+    /**
+     * 用户层提示信息：  100 10 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode LOGIN_EXPIRE =
+            new ResultCode(false, 10010001, "登录已过期,请重新登录");
+    public static final ResultCode ACCOUNT_IS_OFFLINE =
+            new ResultCode(false, 10010002, "您的账号已经在另一处登录了,您被迫下线!");
+    public static final ResultCode ACCOUNT_IS_EMPTY =
+            new ResultCode(false, 10010003, "用户账号不能为空");
+    public static final ResultCode PASSWORD_IS_EMPTY =
+            new ResultCode(false, 10010004, "密码不能为空");
+    public static final ResultCode READ_AGREEMENT_TRUE =
+            new ResultCode(false, 10010005, "必须同意协议");
+    public static final ResultCode ACCOUNT_NOT_EXIST =
+            new ResultCode(false, 10010006, "用户名或者账号不正确");
+    public static final ResultCode PASSWORD_INCORRECT  =
+            new ResultCode(false, 10010006, "用户名或者账号不正确");
+
+
+    /**
+     * 交易用户层提示信息：  100 11 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode TRADE_PASSWORD_IS_EMPTY =
+            new ResultCode(true, 10011001, "交易用户登录密码不能为空");
+    public static final ResultCode TRADE_IDENTIFY_CODE_IS_EMPTY =
+            new ResultCode(false, 10011002, "验证码不能为空");
+    public static final ResultCode TRADE_USER_NO_RELATION =
+            new ResultCode(false, 10011003, "当前登录用户未关联交易用户");
+
+
+    /**
+     * 股票信息提示信息：  100 12 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode STOCK_CODE_IS_EMPTY =
+            new ResultCode(true, 10012001, "股票编码不能为空");
+    public static final ResultCode STOCK_CODE_NO_EXIST =
+            new ResultCode(true, 10012002, "股票编码不存在");
+    public static final ResultCode STOCK_KLINE_IS_EMPTY =
+            new ResultCode(true, 10012003, "股票K线类型不能为空");
+    public static final ResultCode STOCK_EXCHANGE_IS_EMPTY =
+            new ResultCode(true, 10012004, "股票交易所类型不能为空");
+
+    /**
+     * 股票自选提示信息：  100 13 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode STOCK_SELECTED_EXISTS =
+            new ResultCode(true, 10013001, "已经存在自选表里面，不需要重复添加");
+    public static final ResultCode STOCK_SELECTED_MAX_LIMIT =
+            new ResultCode(true, 10013002, "已经超过允许自选的最大数量");
+    public static final ResultCode ID_IS_EMPTY =
+            new ResultCode(true, 10013003, "请选择要操作的记录");
+
+    public static final ResultCode STOCK_SELECTED_NO_RECORD =
+            new ResultCode(true, 10013004, "选中的记录不存在,请刷新后再操作");
+    public static final ResultCode STOCK_SELECTED_HAVE_DISABLE =
+            new ResultCode(true, 10013005, "选中的记录已经被移除自选了");
+
+
+    /**
+     * 假期：  100 14 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode HOLIDAY_EXISTS =
+            new ResultCode(true, 10014001, "假期已经同步，不需要重复同步");
+
+
+    /**
+     * 股票工具：  100 15 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode TOOL_TYPE_IS_EMPTY =
+            new ResultCode(true, 10015001, "请选择工具要处理的类型");
+    public static final ResultCode TOOL_MAKE_MONEY_IS_EMPTY =
+            new ResultCode(true, 10015002, "预期所赚金额不能为空");
+    public static final ResultCode TOOL_MAKE_PRICE_IS_EMPTY =
+            new ResultCode(true, 10015003, "预期价格不能为空");
+    public static final ResultCode TOOL_MAKE_PROPORTION_IS_EMPTY =
+            new ResultCode(true, 10015004, "预期所赚比例不能为空");
+    public static final ResultCode TOOL_NUMBER_IS_EMPTY =
+            new ResultCode(true, 10015005, "交易的数量不能为空");
+    public static final ResultCode TOOL_NUMBER_IS_HUNDREDS =
+            new ResultCode(true, 10015006, "交易的数量必须是整百数");
+    public static final ResultCode TOOL_PRICE_IS_EMPTY =
+            new ResultCode(true, 10015007, "交易的价格不能为空");
+    public static final ResultCode TOOL_AREA_IS_EMPTY =
+            new ResultCode(true, 10015008, "交易的类型不能为空");
+    public static final ResultCode TOOL_FEE_IS_EMPTY =
+            new ResultCode(true, 10015009, "交易的手续费不能为空");
+    public static final ResultCode TOOL_TYPE_NOT_SUPPORT=
+            new ResultCode(true, 10015010, "工具要处理的类型不支持");
+    public static final ResultCode TOOL_FEE_NOT_SUPPORT=
+            new ResultCode(true, 10015011, "交易手续费在 0.02 到 0.03之间");
+
+
+    public static final ResultCode TOOL_CONVERT_NUMBER_IS_EMPTY =
+            new ResultCode(true, 10015012, "第二次补仓交易的数量不能为空");
+    public static final ResultCode TOOL_CONVERT_NUMBER_IS_HUNDREDS =
+            new ResultCode(true, 10015013, "第二次补仓交易的数量必须是整百数");
+    public static final ResultCode TOOL_CONVERT_PRICE_IS_EMPTY =
+            new ResultCode(true, 10015014, "第二次补仓交易的价格不能为空");
+
+
+    public static final ResultCode TOOL_REDUCE_NUMBER_IS_EMPTY =
+            new ResultCode(true, 10015015, "第二次减仓交易的数量不能为空");
+    public static final ResultCode TOOL_REDUCE_NUMBER_IS_HUNDREDS =
+            new ResultCode(true, 10015016, "第二次减仓交易的数量必须是整百数");
+    public static final ResultCode TOOL_REDUCE_PRICE_IS_EMPTY =
+            new ResultCode(true, 10015017, "第二次减仓交易的价格不能为空");
+
+
+    private static final BaseResultCode[] VALUES;
+
+    static {
+        VALUES = getStaticFieldValues(ResultCode.class);
+    }
+
+    private ResultCode(boolean success, int code, String message) {
+        super(success, code, message);
+    }
+
+    public static BaseResultCode[] values() {
+        return VALUES;
+    }
+
+    public static BaseResultCode getByCode(int code) {
+
+        for (BaseResultCode typeEnum : values()) {
+            if (typeEnum.getCode() == code) {
+                return typeEnum;
+            }
+        }
+
+        return null;
+    }
+
+    public static BaseResultCode getResultCodeByMessage(String message){
+        for(BaseResultCode resultCode : VALUES){
+            if(resultCode.getMessage().equals(message)){
+                return resultCode;
+            }
+        }
+        return null;
+    }
+
+    public static List<Integer> getCodeList(){
+        List<Integer> result = new ArrayList<>();
+        for(BaseResultCode resultCode:values()){
+            result.add(resultCode.getCode());
+        }
+        return result;
+    }
+}

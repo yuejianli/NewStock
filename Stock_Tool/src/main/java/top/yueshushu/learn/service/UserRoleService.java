@@ -1,6 +1,6 @@
 package top.yueshushu.learn.service;
 
-import top.yueshushu.learn.pojo.UserRole;
+import top.yueshushu.learn.domain.UserRoleDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author 岳建立
  * @since 2022-01-02
  */
-public interface UserRoleService extends IService<UserRole> {
+public interface UserRoleService extends IService<UserRoleDo> {
 
 }

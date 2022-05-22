@@ -1,6 +1,6 @@
 package top.yueshushu.learn.mapper;
 
-import top.yueshushu.learn.pojo.TradeRuleCondition;
+import top.yueshushu.learn.domain.TradeRuleConditionDo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 两个蝴蝶飞  自定义的
  * @since 2022-01-26
  */
-public interface TradeRuleConditionMapper extends BaseMapper<TradeRuleCondition> {
+public interface TradeRuleConditionMapper extends BaseMapper<TradeRuleConditionDo> {
 
 }

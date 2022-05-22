@@ -1,10 +1,9 @@
 package top.yueshushu.learn.service;
 
-import top.yueshushu.learn.mode.ro.DealRo;
 import top.yueshushu.learn.mode.ro.TradeDealRo;
-import top.yueshushu.learn.pojo.TradeDeal;
+import top.yueshushu.learn.domain.TradeDealDo;
 import com.baomidou.mybatisplus.extension.service.IService;
-import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.response.OutputResult;
 
 /**
@@ -15,7 +14,7 @@ import top.yueshushu.learn.response.OutputResult;
  * @author 两个蝴蝶飞
  * @since 2022-01-03
  */
-public interface TradeDealService extends IService<TradeDeal> {
+public interface TradeDealService extends IService<TradeDealDo> {
     /**
      * 查询今日成交信息
      * @param tradeDealRo
@@ -25,9 +24,9 @@ public interface TradeDealService extends IService<TradeDeal> {
 
     /**
      * 添加一条成交记录到成交表里面
-     * @param tradeEntrust
+     * @param tradeEntrustDo
      */
-    void addDealRecord(TradeEntrust tradeEntrust);
+    void addDealRecord(TradeEntrustDo tradeEntrustDo);
 
     /**
      * 查询历史成交记录信息

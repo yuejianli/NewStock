@@ -1,8 +1,7 @@
 package top.yueshushu.learn.service;
 
-import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
-import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.domain.TradeEntrustDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
@@ -16,7 +15,7 @@ import java.util.List;
  * @author 两个蝴蝶飞
  * @since 2022-01-03
  */
-public interface TradeEntrustService extends IService<TradeEntrust> {
+public interface TradeEntrustService extends IService<TradeEntrustDo> {
     /**
      * 查询委托信息
      * @param tradeEntrustRo
@@ -36,6 +35,6 @@ public interface TradeEntrustService extends IService<TradeEntrust> {
      * @param mockType
      * @return
      */
-    List<TradeEntrust> listNowRunEntruct(Integer userId, Integer mockType);
+    List<TradeEntrustDo> listNowRunEntruct(Integer userId, Integer mockType);
 
 }

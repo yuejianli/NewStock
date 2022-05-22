@@ -1,8 +1,6 @@
 package top.yueshushu.learn.util;
 
-import top.yueshushu.learn.mode.vo.TradePositionVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.Stock;
 import top.yueshushu.learn.response.OutputResult;
 
 import java.util.List;
@@ -31,17 +29,19 @@ public class PageUtil {
         if(list.size() == 0){
             return null;
         }
-
-        Integer count = list.size(); //记录总数
-        Integer pageCount = 0; //页数
+        //记录总数
+        Integer count = list.size();
+        //页数
+        Integer pageCount = 0;
         if (count % pageSize == 0) {
             pageCount = count / pageSize;
         } else {
             pageCount = count / pageSize + 1;
         }
-
-        int fromIndex = 0; //开始索引
-        int toIndex = 0; //结束索引
+        //开始索引
+        int fromIndex = 0;
+        //结束索引
+        int toIndex = 0;
 
         if(pageNum > pageCount){
             pageNum = pageCount;
@@ -67,7 +67,7 @@ public class PageUtil {
      * @return
      */
     public static OutputResult pageResult(List list, Integer pageNum, Integer pageSize) {
-        return OutputResult.success(new PageResponse((long) list.size(),
+        return OutputResult.buildSucc(new PageResponse((long) list.size(),
                 startPage(list,pageNum,pageSize)));
     }
 }

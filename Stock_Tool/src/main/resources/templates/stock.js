@@ -1,21 +1,25 @@
-/*处理url跳转的问题*/
-var getStockInfo_url="../stockCrawler/getStockInfo";
-var getStockKline_url="../stockCrawler/getStockKline";
-var getStockHistory_url="../stockCrawler/getStockHistory";
-var getStockAsync_url="../stockCrawler/stockAsync";
-var getStockHisAsync_url="../stockCrawler/stockHistoryAsync";
 
 //展示的查看历史的股票代码
-var historyCode="";
+var selectedCode="";
 var clickRow=null;
 
+/**
+ * 页面刚进来时，初使用
+ */
 $(function () {
     //将其清空
     $("#codeSync").hide();
     $("#stock_table").init();
     $("#stock_history_table").init();
 })
-var stock_table_column=[
+
+
+/**
+ *
+ * 表格展示信息
+ */
+
+let stock_table_column=[
     {
         title : '股票代码',
         field : 'code',
@@ -50,7 +54,7 @@ var stock_table_column=[
 
 $('#stock_table').bootstrapTable({
     method : 'post',
-    url : "../stock/list",//请求路径
+    url : STOCK_LIST_URL,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -88,8 +92,7 @@ function queryParams(params) {
 }
 //处理机构返回数据
 function handleClientData(res){
-    console.log("输出数据:"+JSON.stringify(res))
-    let data= res.data.result;
+    let data= res.data;
     if(data.list==null||data.list.length<1){
         //将其清空
         $("#codeSync").show();
@@ -103,8 +106,33 @@ function handleClientData(res){
     };
 }
 function exchangeFormat(value){
-    return value==0?"深圳交易所股票":"上海交易所股票";
+    let message ="";
+    switch(value){
+        case 0:{
+            message = "深圳交易所股票";
+            break;
+        }
+        case 1:{
+            message = "上海交易所股票";
+            break;
+        }
+        case 2:{
+            message = "北京交易所股票";
+            break;
+        }
+        default:{
+
+            break;
+        }
+    }
+    return message;
 }
+
+
+$("#keywords").blur(function(){
+    $("#stock_table").bootstrapTable('refresh', '{silent: true}');
+})
+
 /* 给每一行增加操作按钮 */
 function operationFormatter(value, row, index) {
     return [
@@ -130,7 +158,7 @@ window.operationEvents={
     //查询股票具体信息
     'click .info' : function(e, value, row, index) {
         //处理信息，并展示.
-        showInfo(row.fullCode);
+        showInfo(row.code);
         $("#info_popup").modal('show');
     },
     //查询股票具体信息
@@ -178,16 +206,13 @@ window.operationEvents={
     }
 };
 
-$("#keywords").blur(function(){
-    $("#stock_table").bootstrapTable('refresh', '{silent: true}');
-})
+/*----------------查看股票的 info 简单信息 -------------------**/
 /*股票的查看信息相关接口*/
 function showInfo(code){
     //将以前的信息清空
     $("#showInfo").find(".info").text("");
     //获取这个股票的相关信息
     let stockInfo=getStockInfo(code);
-    console.log("输出获取值:2"+JSON.stringify(stockInfo))
     //进行展示股票的相关信息
     fillShowInfo(stockInfo);
 }
@@ -218,35 +243,21 @@ function getStockInfo(code){
     $.ajax({
         async:false,
         type:"post",
-        url:getStockInfo_url,
+        url:STOCK_CRAWLER_INFO_URL,
         data:JSON.stringify(info),
         dataType:"json",
         contentType:"application/json;charset=utf-8",
         success:function(data){
-            console.log("输出获取值:2"+JSON.stringify(data.data.result))
-            returnData= data.data.result;
+            returnData= data.data;
         }
     });
     return returnData;
 }
 
-function showHistory(code){
-    // const info = getFillInfo(code);
-    // let returnData;
-    // $.ajax({
-    //     async:false,
-    //     type:"post",
-    //     url:getStockHistory_url,
-    //     data:JSON.stringify(info),
-    //     dataType:"json",
-    //     contentType:"application/json;charset=utf-8",
-    //     success:function(data){
-    //         returnData= data.data.result;
-    //     }
-    // });
-    // return returnData;
 
-    historyCode=code;
+/***-------------查询股票的历史记录信息------------------***/
+function showHistory(code){
+    selectedCode=code;
     //刷新表格
     $("#stock_history_table").bootstrapTable('refresh', '{silent: true}');
 }
@@ -265,20 +276,24 @@ function getFillInfo(code,type,exchage){
     return info;
 }
 
-var base64_gif="data:image/gif;base64,";
+/*********************************展示 K线的相关信息***********************************************/
 /**
- * 查看股票的相关信息
- */
-
+ * 1 为分钟
+ * 2 为天
+ * 3为周
+ * 4为月
+ *
+ * */
+let base64_gif="data:image/gif;base64,";
 /*查看K线的相关操作*/
 function showKInfo(code,type){
     //将以前的信息清空
-    let url=getStockKline_url;
+    let url=STOCK_KLINE_URL;
     //获取这个股票的相关信息
     const info = getFillInfo(code,type);
     let base64Result=getStockK(info,url);
     //进行展示股票的K线图
-    var base64Str=base64_gif+base64Result;
+    let base64Str=base64_gif+base64Result;
     switch (type) {
         case 2:{
             $("#k_daily").attr("src",base64Str);
@@ -312,18 +327,16 @@ function getStockK(info,url){
         dataType:"json",
         contentType:"application/json;charset=utf-8",
         success:function(data){
-            returnData= data.data.result;
+            returnData= data.data;
         }
     });
     return returnData;
 }
 
 
+/**********************************股票历史记录信息******************************************/
 
-
-
-
-var stock_history_table_column=[
+let stock_history_table_column=[
     {
         title : '日期',
         field : 'currDate',
@@ -391,7 +404,7 @@ var stock_history_table_column=[
 
 $('#stock_history_table').bootstrapTable({
     method : 'post',
-    url : "../stockHistory/history",//请求路径
+    url : STOCK_HISTORY_LIST_URL,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -424,7 +437,7 @@ function queryHistoryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码
-        "code":historyCode,
+        "code":selectedCode,
         "startDate":$("#historyStartDate").val(),
         "endDate":$("#historyEndDate").val()
     }
@@ -432,12 +445,15 @@ function queryHistoryParams(params) {
 }
 //处理机构返回数据
 function handleHistoryClientData(res){
-    let data= res.data.result;
+    let data= res.data;
     return {
         total: data.total,
         rows: data.list
     }
 }
+
+/****************************股票同步****************************************/
+
 
 $("#syncDateRange").daterangepicker({
         showDropdowns: true,
@@ -484,7 +500,7 @@ $("#codeSync").click(function(){
     $.ajax({
         async:false,
         type:"post",
-        url:getStockAsync_url,
+        url:STOCK_ASYNC_URL,
         data:JSON.stringify(info),
         dataType:"json",
         contentType:"application/json;charset=utf-8",
@@ -511,7 +527,7 @@ $("#codeHistorySync").click(function(){
     $.ajax({
         async:false,
         type:"post",
-        url:getStockHisAsync_url,
+        url:STOCK_HISTORY_ASYNC_URL,
         data:JSON.stringify(info),
         dataType:"json",
         contentType:"application/json;charset=utf-8",
@@ -527,32 +543,6 @@ $("#codeHistorySync").click(function(){
     });
 
 })
-
-function formatTime(shijian){
-    let date = new Date(shijian)
-    var y = date.getFullYear();
-    var m = date.getMonth() + 1;
-    m = m < 10 ? ('0' + m) : m;
-    var d = date.getDate();
-    d = d < 10 ? ('0' + d) : d;
-    var h = date.getHours();
-    h=h < 10 ? ('0' + h) : h;
-    var minute = date.getMinutes();
-    minute = minute < 10 ? ('0' + minute) : minute;
-    var second=date.getSeconds();
-    second=second < 10 ? ('0' + second) : second;
-    return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
-};
-function formatDate(shijian){
-    let date = new Date(shijian)
-    var y = date.getFullYear();
-    var m = date.getMonth() + 1;
-    m = m < 10 ? ('0' + m) : m;
-    var d = date.getDate();
-    d = d < 10 ? ('0' + d) : d;
-    return y + '-' + m + '-' + d;
-};
-
 $("#historyDateRange").daterangepicker({
         showDropdowns: true,
         autoUpdateInput: false,
@@ -585,7 +575,7 @@ $("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now));
 $("#historyStartDate").val(formatDate(oneMonthBefore));
 $("#historyEndDate").val(formatDate(now));
 
-
+/***************************股票加入自选**************************************/
 //  加入自选
 function addSelfSelect(code){
     if(isEmpty(code)){
@@ -594,7 +584,7 @@ function addSelfSelect(code){
     }
     //进行请求
    let postResponse = postAjax(
-        "../stockSelected/add",
+       STOCK_SELECTED_ADD_URL,
         {"stockCode":code}
     );
     //如果成功，那么就是登录成功.

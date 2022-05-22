@@ -8,16 +8,16 @@ $("#login").click(function(){
     if(!validateSubmit(info)){
         return ;
     }
-    let postResponse = postAjax("../user/login",info);
+    let postResponse = postAjax(LOGIN_URL,info);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         Flavr.falert("用户登录成功");
         //获取登录的数据
-        let user = postResponse.data.result;
+        let user = postResponse.data.currentUser;
         sessionStorage.setItem("loginUserId",user.id);
         sessionStorage.setItem("Authorization",user.token);
         //进行跳转
-        window.location.href = "../tradelogin";
+        window.location.href = "tradelogin";
     }else{
         Flavr.falert(postResponse.message);
     }

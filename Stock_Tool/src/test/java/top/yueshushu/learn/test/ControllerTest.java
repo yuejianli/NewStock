@@ -1,6 +1,7 @@
 package top.yueshushu.learn.test;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ import top.yueshushu.learn.service.TradeRuleConditionService;
  **/
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@Log4j2
+@Slf4j
 public class ControllerTest {
     @Autowired
     private TradeRuleConditionService tradeRuleConditionService;
     @Test
     public void listTest(){
-        log.info(tradeRuleConditionService.listCondition());
+        log.info("输出结果:{}",tradeRuleConditionService.listCondition());
     }
     @Test
     public void updateTest(){
@@ -33,6 +34,6 @@ public class ControllerTest {
         tradeRuleConditionRo.setId(1);
         tradeRuleConditionRo.setName("张三");
         tradeRuleConditionRo.setDescription("李四");
-        log.info(tradeRuleConditionService.updateCondition(tradeRuleConditionRo));
+        log.info("输出结果:{}",tradeRuleConditionService.updateCondition(tradeRuleConditionRo));
     }
 }

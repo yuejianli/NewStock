@@ -9,10 +9,9 @@ import java.net.URL;
 
 /**
  * @ClassName:ImageUtil
- * @Description TODO
+ * @Description 图片工具类
  * @Author 岳建立
  * @Date 2021/11/12 22:02
- * @Version 1.0
  **/
 public class ImageUtil {
     /**
@@ -28,8 +27,10 @@ public class ImageUtil {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(5 * 1000);
-            InputStream inStream = conn.getInputStream();// 通过输入流获取图片数据
-            byte[] btImg = readInputStream(inStream);// 得到图片的二进制数据
+            // 通过输入流获取图片数据
+            InputStream inStream = conn.getInputStream();
+            // 得到图片的二进制数据
+            byte[] btImg = readInputStream(inStream);
             return btImg;
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,7 +48,8 @@ public class ImageUtil {
         try {
             File imageFile = new File(strUrl);
             InputStream inStream = new FileInputStream(imageFile);
-            byte[] btImg = readInputStream(inStream);// 得到图片的二进制数据
+            // 得到图片的二进制数据
+            byte[] btImg = readInputStream(inStream);
             return btImg;
         } catch (Exception e) {
             e.printStackTrace();

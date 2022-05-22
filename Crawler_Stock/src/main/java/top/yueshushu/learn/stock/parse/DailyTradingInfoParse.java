@@ -17,9 +17,9 @@ public interface DailyTradingInfoParse {
     /**
      * 默认的股票历史交易记录解析器
      * @param inputStream 输入流
-     * @return
+     * @return 默认的股票历史交易记录解析器
      */
-    public default List<StockHistoryCsvInfo> parseStockHistoryList(InputStream inputStream){
+     default List<StockHistoryCsvInfo> parseStockHistoryList(InputStream inputStream){
         return Collections.EMPTY_LIST;
     };
 

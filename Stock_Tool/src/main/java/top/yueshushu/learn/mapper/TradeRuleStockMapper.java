@@ -2,7 +2,7 @@ package top.yueshushu.learn.mapper;
 
 import org.apache.ibatis.annotations.Param;
 import top.yueshushu.learn.mode.dto.TradeRuleStockQueryDto;
-import top.yueshushu.learn.pojo.TradeRuleStock;
+import top.yueshushu.learn.domain.TradeRuleStockDo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author 两个蝴蝶飞  自定义的
  * @since 2022-01-26
  */
-public interface TradeRuleStockMapper extends BaseMapper<TradeRuleStock> {
+public interface TradeRuleStockMapper extends BaseMapper<TradeRuleStockDo> {
     /**
      * 查询同一个类型的 其它配置的股票信息
      *
@@ -24,7 +24,7 @@ public interface TradeRuleStockMapper extends BaseMapper<TradeRuleStock> {
      * @date 2022/1/27 15:14
      * @author zk_yjl
      */
-    List<TradeRuleStock> listNoRid(@Param("tradeRuleStockQueryDto") TradeRuleStockQueryDto tradeRuleStockQueryDto);
+    List<TradeRuleStockDo> listNoRid(@Param("tradeRuleStockQueryDto") TradeRuleStockQueryDto tradeRuleStockQueryDto);
 
     /**
      * 移除之前的配置

@@ -1,7 +1,7 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.mode.ro.TradeRuleStockRo;
-import top.yueshushu.learn.pojo.TradeRuleStock;
+import top.yueshushu.learn.domain.TradeRuleStockDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * @author 两个蝴蝶飞
  * @since 2022-01-26
  */
-public interface TradeRuleStockService extends IService<TradeRuleStock> {
+public interface TradeRuleStockService extends IService<TradeRuleStockDo> {
     /**
      * 查询规则适用的信息
      * @date 2022/1/27 11:46
@@ -39,7 +39,7 @@ public interface TradeRuleStockService extends IService<TradeRuleStock> {
      * @param ruleId
      * @return java.util.List<top.yueshushu.learn.pojo.TradeRuleStock>
      */
-    List<TradeRuleStock> listByRid(Integer ruleId);
+    List<TradeRuleStockDo> listByRid(Integer ruleId);
     /**
      * 查询股票对应的规则信息
      * @date 2022/1/28 14:26

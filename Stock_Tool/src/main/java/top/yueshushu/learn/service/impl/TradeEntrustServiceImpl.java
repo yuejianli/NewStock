@@ -3,33 +3,23 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.GetHisOrdersDataRequest;
 import top.yueshushu.learn.api.request.GetOrdersDataRequest;
-import top.yueshushu.learn.api.request.GetStockListRequest;
 import top.yueshushu.learn.api.response.GetHisOrdersDataResponse;
 import top.yueshushu.learn.api.response.GetOrdersDataResponse;
-import top.yueshushu.learn.api.response.GetStockListResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
 import top.yueshushu.learn.config.TradeClient;
 import top.yueshushu.learn.enumtype.EntrustStatusType;
 import top.yueshushu.learn.enumtype.MockType;
-import top.yueshushu.learn.mapper.TradePositionMapper;
-import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
-import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.mode.vo.TradeEntrustVo;
-import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.mode.vo.TradePositionVo;
-import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.mapper.TradeEntrustMapper;
-import top.yueshushu.learn.pojo.TradePosition;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeEntrustService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -52,7 +42,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, TradeEntrust> implements TradeEntrustService {
+public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, TradeEntrustDo> implements TradeEntrustService {
     @Autowired
     private TradeEntrustMapper tradeEntrustMapper;
     @Resource
@@ -64,11 +54,11 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
     @Override
     public OutputResult listEntrust(TradeEntrustRo tradeEntrustRo) {
         if(null==tradeEntrustRo.getMockType()){
-            return OutputResult.alert("请传入交易盘的类型");
+            return OutputResult.buildAlert("请传入交易盘的类型");
         }
         MockType mockType = MockType.getMockType(tradeEntrustRo.getMockType());
         if(null==mockType){
-            return OutputResult.alert("不支持的交易盘的类型");
+            return OutputResult.buildAlert("不支持的交易盘的类型");
         }
         if(MockType.MOCK.getCode().equals(mockType.getCode())){
             return mockList(tradeEntrustRo);
@@ -80,11 +70,11 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
     @Override
     public OutputResult history(TradeEntrustRo tradeEntrustRo) {
         if(null==tradeEntrustRo.getMockType()){
-            return OutputResult.alert("请传入交易盘的类型");
+            return OutputResult.buildAlert("请传入交易盘的类型");
         }
         MockType mockType = MockType.getMockType(tradeEntrustRo.getMockType());
         if(null==mockType){
-            return OutputResult.alert("不支持的交易盘的类型");
+            return OutputResult.buildAlert("不支持的交易盘的类型");
         }
         if(MockType.MOCK.getCode().equals(mockType.getCode())){
             return mockHistoryList(tradeEntrustRo);
@@ -94,21 +84,21 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
     }
 
     @Override
-    public List<TradeEntrust> listNowRunEntruct(Integer userId, Integer mockType) {
+    public List<TradeEntrustDo> listNowRunEntruct(Integer userId, Integer mockType) {
         Date now = DateUtil.date();
         Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeEntrust> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",userId);
         queryWrapper.eq("mock_type",mockType);
         queryWrapper.gt("entrust_date",beginNow);
         queryWrapper.eq("entrust_status", EntrustStatusType.ING.getCode());
         queryWrapper.orderByDesc("id");
         //根据用户去查询信息
-        List<TradeEntrust> tradeEntrustList = tradeEntrustMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeEntrustList)) {
-            return new ArrayList<TradeEntrust>();
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
+            return new ArrayList<TradeEntrustDo>();
         }
-        return tradeEntrustList;
+        return tradeEntrustDoList;
     }
 
     /**
@@ -120,7 +110,7 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
         //获取响应信息
         TradeResultVo<GetOrdersDataResponse> tradeResultVo = getOrdersDataResponse(tradeEntrustRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.alert("查询我的当日委托单失败");
+            return OutputResult.buildAlert("查询我的当日委托单失败");
         }
         List<GetOrdersDataResponse> data = tradeResultVo.getData();
 
@@ -130,7 +120,7 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
             tradeEntrustVo.setCode(getOrdersDataResponse.getMmlb());
             tradeEntrustVoList.add(tradeEntrustVo);
         }
-        return OutputResult.success(tradeEntrustVoList);
+        return OutputResult.buildSucc(tradeEntrustVoList);
     }
 
     /**
@@ -160,27 +150,27 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
     private OutputResult mockList(TradeEntrustRo tradeEntrustRo) {
         Date now = DateUtil.date();
         Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeEntrust> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",tradeEntrustRo.getUserId());
         queryWrapper.eq("mock_type",tradeEntrustRo.getMockType());
         queryWrapper.gt("entrust_date",beginNow);
         queryWrapper.orderByDesc("id");
         //根据用户去查询信息
-        List<TradeEntrust> tradeEntrustList = tradeEntrustMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeEntrustList)) {
-           return OutputResult.success(
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
+           return OutputResult.buildSucc(
                    new ArrayList<TradeEntrustVo>()
            );
         }
         List<TradeEntrustVo> tradePositionVoList = new ArrayList<>();
-        tradeEntrustList.stream().forEach(
+        tradeEntrustDoList.stream().forEach(
                 n->{
                     TradeEntrustVo tradeEntrustVo = new TradeEntrustVo();
                     BeanUtils.copyProperties(n,tradeEntrustVo);
                     tradePositionVoList.add(tradeEntrustVo);
                 }
         );
-        return OutputResult.success(tradePositionVoList);
+        return OutputResult.buildSucc(tradePositionVoList);
     }
 
 
@@ -195,7 +185,7 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
         TradeResultVo<GetHisOrdersDataResponse> tradeResultVo =
                 getHistoryOrdersDataResponse(tradeEntrustRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.alert("查询我的历史委托单失败");
+            return OutputResult.buildAlert("查询我的历史委托单失败");
         }
         List<GetHisOrdersDataResponse> data = tradeResultVo.getData();
 
@@ -205,7 +195,7 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
             tradeEntrustVo.setCode(getOrdersDataResponse.getMmlb());
             tradeEntrustVoList.add(tradeEntrustVo);
         }
-        return OutputResult.success(tradeEntrustVoList);
+        return OutputResult.buildSucc(tradeEntrustVoList);
     }
 
     /**
@@ -241,27 +231,27 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
         Date beginNow = DateUtil.beginOfDay(now);
         //获取14天前的日期
         Date before14Day = DateUtil.offsetDay(beginNow,-14);
-        QueryWrapper<TradeEntrust> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",tradeEntrustRo.getUserId());
         queryWrapper.eq("mock_type",tradeEntrustRo.getMockType());
         queryWrapper.gt("entrust_date",before14Day);
         queryWrapper.lt("entrust_date",now);
         queryWrapper.orderByDesc("id");
         //根据用户去查询信息
-        List<TradeEntrust> tradeEntrustList = tradeEntrustMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeEntrustList)) {
-            return OutputResult.success(
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
+            return OutputResult.buildSucc(
                     new ArrayList<TradeEntrustVo>()
             );
         }
         List<TradeEntrustVo> tradePositionVoList = new ArrayList<>();
-        tradeEntrustList.stream().forEach(
+        tradeEntrustDoList.stream().forEach(
                 n->{
                     TradeEntrustVo tradeEntrustVo = new TradeEntrustVo();
                     BeanUtils.copyProperties(n,tradeEntrustVo);
                     tradePositionVoList.add(tradeEntrustVo);
                 }
         );
-        return OutputResult.success(tradePositionVoList);
+        return OutputResult.buildSucc(tradePositionVoList);
     }
 }

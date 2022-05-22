@@ -1,15 +1,13 @@
 package top.yueshushu.learn.service.impl;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.yueshushu.learn.mapper.StockSelectedMapper;
+import top.yueshushu.learn.mapper.StockSelectedDoMapper;
 import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.SellRo;
 import top.yueshushu.learn.service.BuyService;
 import top.yueshushu.learn.service.SellService;
-import top.yueshushu.learn.service.StockService;
 import top.yueshushu.learn.service.TradeStrategyService;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockRedisUtil;
@@ -29,7 +27,7 @@ import java.util.List;
 @Slf4j
 public class TradeStrategyServiceImpl implements TradeStrategyService {
     @Autowired
-    private StockSelectedMapper stockSelectedMapper;
+    private StockSelectedDoMapper stockSelectedDoMapper;
     @Autowired
     private BuyService buyService;
     @Autowired
@@ -39,7 +37,7 @@ public class TradeStrategyServiceImpl implements TradeStrategyService {
     public static final BigDecimal subPrice = new BigDecimal("2.00");
     @Override
     public void mockEntructXxlJob(BuyRo buyRo) {
-        List<String> codeList = stockSelectedMapper.findCodeList(null);
+        List<String> codeList = stockSelectedDoMapper.findCodeList(null);
         //查询该员工最开始的收盘价
         for(String code:codeList){
             //获取昨天的价格

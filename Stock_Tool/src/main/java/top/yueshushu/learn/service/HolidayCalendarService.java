@@ -1,7 +1,7 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.mode.ro.HolidayRo;
-import top.yueshushu.learn.pojo.HolidayCalendar;
+import top.yueshushu.learn.domain.HolidayCalendarDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
@@ -13,11 +13,11 @@ import top.yueshushu.learn.response.OutputResult;
  * @author 岳建立
  * @since 2022-01-02
  */
-public interface HolidayCalendarService extends IService<HolidayCalendar> {
+public interface HolidayCalendarService{
     /**
-     * 查询假期信息
-     * @param holidayRo
-     * @return
+     * 查询当前年的假期信息
+     * @param holidayRo 当前年对象
+     * @return 查询当前年的假期信息
      */
     OutputResult listHoliday(HolidayRo holidayRo);
     /**

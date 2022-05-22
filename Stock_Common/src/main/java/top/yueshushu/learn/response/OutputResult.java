@@ -1,6 +1,7 @@
 package top.yueshushu.learn.response;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @Version 1.0
  **/
 @Data
+@Getter
 public class OutputResult<T> implements Serializable {
     /**
      * @param code 响应代码
@@ -26,124 +28,133 @@ public class OutputResult<T> implements Serializable {
     private Boolean success;
     private String message;
     private String exceptionMessage;
-    private Map<String,T> data=new HashMap<String,T>();
+    private T data ;
 
-    private static ResultCode DEFAULT_SUCCESS=ResultCode.SUCCESS;
-    private static ResultCode DEFAULT_ALERT=ResultCode.ALERT;
-    private static ResultCode DEFAULT_FAIL=ResultCode.FAIL;
+    private static BaseResultCode DEFAULT_SUCCESS = BaseResultCode.SUCCESS;
+    private static BaseResultCode DEFAULT_ALERT = BaseResultCode.ALERT;
+    private static BaseResultCode DEFAULT_FAIL = BaseResultCode.FAIL;
 
     /**
      * 构造方法 私有。 避免外部构造
      */
-    private OutputResult(){
+    public OutputResult() {
 
     }
 
-    /**
-     * 成功，不响应数据
-     * @return
-     */
-    public static OutputResult success(){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_SUCCESS.getCode();
-        outputResult.success=true;
-        outputResult.message=DEFAULT_SUCCESS.getDesc();
-        outputResult.data.put("result","{}");
-        return outputResult;
+    public OutputResult(BaseResultCode baseResultCode) {
+        this(baseResultCode, null);
     }
 
-    /**
-     * 成功
-     * @param data  要响应的数据
-     * @return
-     */
-    public static  OutputResult success(Object data){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_SUCCESS.getCode();
-        outputResult.message=DEFAULT_SUCCESS.getDesc();
-        outputResult.success=true;
-        outputResult.data.put("result",data);
-        return outputResult;
+    public OutputResult(BaseResultCode resultCode, T data) {
+        this(resultCode.isSuccess(), resultCode.getCode(), resultCode.getMessage(), data);
     }
 
-    /**
-     * 警告，不响应数据
-     * @return
-     */
-    public static OutputResult alert(){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_ALERT.getCode();
-        outputResult.message=DEFAULT_ALERT.getDesc();
-        outputResult.success=false;
-        outputResult.data.put("result","{}");
-        return outputResult;
+    public OutputResult(boolean success, int code, String message, T data) {
+        this.success = success;
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
 
-    /**
-     * 警告，响应提示消息
-     * @param data
-     * @return
-     */
-    public  static OutputResult alert(Object data){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_ALERT.getCode();
-        outputResult.message=data.toString();
-        outputResult.data.put("result",data);
-        outputResult.success=false;
-        return outputResult;
+    public static <T> OutputResult<T> buildFail() {
+        return buildFail(BaseResultCode.FAIL);
     }
 
-    /**
-     * 错误，不响应提示消息
-     * @return
-     */
-    public static OutputResult error(){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_FAIL.getCode();
-        outputResult.message=DEFAULT_FAIL.getDesc();
-        outputResult.data.put("result","{}");
-        outputResult.success=false;
-        return outputResult;
+    public static <T> OutputResult<T> buildFail(String message) {
+        return buildFail(BaseResultCode.FAIL.getCode(), message);
     }
 
-    /**
-     * 错误，响应提示消息
-     * @param data
-     * @return
-     */
-    public static OutputResult error(Object data){
-        OutputResult outputResult=new OutputResult();
-        outputResult.code=DEFAULT_FAIL.getCode();
-        outputResult.message=data.toString();
-        outputResult.success=false;
-        outputResult.data.put("result",data);
-        return outputResult;
+    public static <T> OutputResult<T> buildFail(BaseResultCode resultCode) {
+        return buildFail(resultCode.getCode(), resultCode.getMessage());
     }
 
-    /**
-     * 自定义状态码
-     * @param resultCode  自定义的状态码
-     */
-    public OutputResult statusCode(ResultCode resultCode){
-        this.code=resultCode.getCode();
-        return this;
+    public static <T> OutputResult<T> buildFail(int code, String message) {
+        return build(false, code, message, null);
     }
 
-    /**
-     * 自定义响应的消息
-     * @param resultCode
-     */
-    public OutputResult message(ResultCode resultCode){
-        this.message=resultCode.getDesc();
-        return this;
+    public static <T> OutputResult<T> buildFail(BaseResultCode resultCode, T data) {
+        return buildFail(resultCode, null, data);
     }
-    /**
-     * 自定义状态码和信息
-     * @param resultCode  自定义的状态码
-     */
-    public OutputResult resultCode(ResultCode resultCode){
-        this.code=resultCode.getCode();
-        this.message=resultCode.getDesc();
-        return this;
+
+    public static <T> OutputResult<T> buildFail(BaseResultCode resultCode, String message) {
+        return new OutputResult<>(resultCode.isSuccess(), resultCode.getCode(), message, null);
+    }
+
+    public static <T> OutputResult<T> buildFail(BaseResultCode resultCode, String message, T data) {
+        return buildFail(resultCode.getCode(), message, data);
+    }
+
+    public static <T> OutputResult<T> buildFail(int code, String message, T data) {
+        return build(false, code, message, data);
+    }
+
+
+    public static <T> OutputResult<T> buildAlert() {
+        return buildAlert(BaseResultCode.ALERT);
+    }
+
+    public static <T> OutputResult<T> buildAlert(String message) {
+        return buildAlert(BaseResultCode.ALERT.getCode(), message);
+    }
+
+    public static <T> OutputResult<T> buildAlert(BaseResultCode resultCode) {
+        return buildAlert(resultCode.getCode(), resultCode.getMessage());
+    }
+
+    public static <T> OutputResult<T> buildAlert(int code, String message) {
+        return build(false, code, message, null);
+    }
+
+    public static <T> OutputResult<T> buildAlert(BaseResultCode resultCode, T data) {
+        return buildAlert(resultCode, null, data);
+    }
+
+    public static <T> OutputResult<T> buildAlert(BaseResultCode resultCode, String message) {
+        return new OutputResult<>(resultCode.isSuccess(), resultCode.getCode(), message, null);
+    }
+
+    public static <T> OutputResult<T> buildAlert(BaseResultCode resultCode, String message, T data) {
+        return buildFail(resultCode.getCode(), message, data);
+    }
+
+    public static <T> OutputResult<T> buildAlert(int code, String message, T data) {
+        return build(false, code, message, data);
+    }
+
+
+    public static <T> OutputResult<T> buildSucc() {
+        return buildSucc(BaseResultCode.SUCCESS);
+    }
+
+    public static <T> OutputResult<T> buildSucc(T data) {
+        return buildSucc(BaseResultCode.SUCCESS, data);
+    }
+
+    public static <T> OutputResult<T> buildSucc(BaseResultCode resultCode) {
+        return buildSucc(resultCode.getCode(), resultCode.getMessage());
+    }
+
+    public static <T> OutputResult<T> buildSucc(int code, String message) {
+        return buildSucc(code, message, null);
+    }
+
+    public static <T> OutputResult<T> buildSucc(BaseResultCode resultCode, T data) {
+        return buildSucc(resultCode, null, data);
+    }
+
+    public static <T> OutputResult<T> buildSucc(BaseResultCode resultCode, String message, T data) {
+        return buildSucc(resultCode.getCode(), message, data);
+    }
+
+    public static <T> OutputResult<T> buildSucc(int code, String message, T data) {
+        return build(true, code, message, data);
+    }
+
+    private static <T> OutputResult<T> build(boolean success, int code, String message, T data) {
+        return new OutputResult<>(success, code, message, data);
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

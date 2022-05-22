@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import top.yueshushu.learn.mode.dto.XxlJobContentDto;
 import top.yueshushu.learn.service.XxlJobService;
 
+import javax.annotation.Resource;
 import java.net.HttpCookie;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +56,7 @@ public class XxlJobServiceImpl implements XxlJobService {
     private static String cookie;
 
 
-    @Autowired
+    @Resource
     private RestTemplate restTemplate;
 
     @Override

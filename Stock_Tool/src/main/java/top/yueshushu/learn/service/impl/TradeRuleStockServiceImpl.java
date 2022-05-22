@@ -2,9 +2,9 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.enumtype.DealType;
 import top.yueshushu.learn.mode.dto.StockRuleDto;
 import top.yueshushu.learn.mode.dto.TradeRuleStockQueryDto;
@@ -12,11 +12,10 @@ import top.yueshushu.learn.mode.ro.TradeRuleStockRo;
 import top.yueshushu.learn.mode.vo.StockRuleVo;
 import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.mode.vo.TradeRuleStockVo;
-import top.yueshushu.learn.pojo.TradeRule;
-import top.yueshushu.learn.pojo.TradeRuleStock;
+import top.yueshushu.learn.domain.TradeRuleDo;
+import top.yueshushu.learn.domain.TradeRuleStockDo;
 import top.yueshushu.learn.mapper.TradeRuleStockMapper;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.response.ResultCode;
 import top.yueshushu.learn.service.StockSelectedService;
 import top.yueshushu.learn.service.TradeRuleService;
 import top.yueshushu.learn.service.TradeRuleStockService;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  * @since 2022-01-26
  */
 @Service
-public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper, TradeRuleStock> implements TradeRuleStockService {
+public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper, TradeRuleStockDo> implements TradeRuleStockService {
     @Autowired
     private StockSelectedService stockSelectedService;
     @Autowired
@@ -49,22 +48,22 @@ public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper,
     public OutputResult applyList(TradeRuleStockRo tradeRuleStockRo) {
         //根据id 去查询
         if(tradeRuleStockRo.getId()==null){
-            return OutputResult.success(new TradeRuleStockVo());
+            return OutputResult.buildSucc(new TradeRuleStockVo());
         }
-        TradeRule dbTradeRule = tradeRuleService.getById(tradeRuleStockRo.getId());
-        if(null==dbTradeRule){
-            return OutputResult.alert("传入的Id规则编号不正确");
+        TradeRuleDo dbTradeRuleDo = tradeRuleService.getById(tradeRuleStockRo.getId());
+        if(null== dbTradeRuleDo){
+            return OutputResult.buildAlert("传入的Id规则编号不正确");
         }
-        if(!dbTradeRule.getUserId().equals(tradeRuleStockRo.getUserId())){
-            return OutputResult.alert("你无法配置别人的规则信息");
+        if(!dbTradeRuleDo.getUserId().equals(tradeRuleStockRo.getUserId())){
+            return OutputResult.buildAlert("你无法配置别人的规则信息");
         }
         //查询所有的自选股票信息.
         List<StockSelectedVo> allSelectedStockList = stockSelectedService.listSelf(
-                dbTradeRule.getUserId(),""
+                dbTradeRuleDo.getUserId(),""
         );
         //进行对应
         if(CollectionUtils.isEmpty(allSelectedStockList)){
-            return OutputResult.success();
+            return OutputResult.buildSucc();
         }
         Map<String, String> stockNameMap = allSelectedStockList.stream().collect(
                 Collectors.toMap(
@@ -73,15 +72,15 @@ public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper,
                 )
         );
         //查询当前自选的股票信息
-        List<TradeRuleStock> ruleStock = listByRid(tradeRuleStockRo.getId());
+        List<TradeRuleStockDo> ruleStock = listByRid(tradeRuleStockRo.getId());
         //处理成相应的 Vo 形式
         List<StockSelectedVo> applyList=ruleStockToStockVo(stockNameMap, ruleStock);
         TradeRuleStockQueryDto tradeRuleStockQueryDto = new TradeRuleStockQueryDto();
         tradeRuleStockQueryDto.setUserId(tradeRuleStockRo.getUserId());
-        tradeRuleStockQueryDto.setRuleId(dbTradeRule.getId());
-        tradeRuleStockQueryDto.setRuleType(dbTradeRule.getRuleType());
-        tradeRuleStockQueryDto.setMockType(dbTradeRule.getMockType());
-        List<TradeRuleStock> other = tradeRuleStockMapper.listNoRid(
+        tradeRuleStockQueryDto.setRuleId(dbTradeRuleDo.getId());
+        tradeRuleStockQueryDto.setRuleType(dbTradeRuleDo.getRuleType());
+        tradeRuleStockQueryDto.setMockType(dbTradeRuleDo.getMockType());
+        List<TradeRuleStockDo> other = tradeRuleStockMapper.listNoRid(
                 tradeRuleStockQueryDto
         );
         List<StockSelectedVo> otherApplyList =  ruleStockToStockVo(stockNameMap, other);
@@ -94,59 +93,59 @@ public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper,
         if(!CollectionUtils.isEmpty(otherApplyList)){
             tradeRuleStockVo.setOtherApplyList(otherApplyList);
         }
-        return OutputResult.success(tradeRuleStockVo);
+        return OutputResult.buildSucc(tradeRuleStockVo);
     }
 
     @Override
     public OutputResult apply(TradeRuleStockRo tradeRuleStockRo) {
         //根据id 去查询
         if(tradeRuleStockRo.getId()==null){
-            return OutputResult.alert(ResultCode.ALERT);
+            return OutputResult.buildAlert(ResultCode.ALERT);
         }
-        TradeRule dbTradeRule = tradeRuleService.getById(tradeRuleStockRo.getId());
-        if(null==dbTradeRule){
-            return OutputResult.alert("传入的Id规则编号不正确");
+        TradeRuleDo dbTradeRuleDo = tradeRuleService.getById(tradeRuleStockRo.getId());
+        if(null== dbTradeRuleDo){
+            return OutputResult.buildAlert("传入的Id规则编号不正确");
         }
-        if(!dbTradeRule.getUserId().equals(tradeRuleStockRo.getUserId())){
-            return OutputResult.alert("你无法配置别人的规则信息");
+        if(!dbTradeRuleDo.getUserId().equals(tradeRuleStockRo.getUserId())){
+            return OutputResult.buildAlert("你无法配置别人的规则信息");
         }
         //先将以前的该规则配置的股票全部删除
-        LambdaQueryWrapper<TradeRuleStock>lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.eq(TradeRuleStock::getRuleId,tradeRuleStockRo.getId());
+        LambdaQueryWrapper<TradeRuleStockDo>lambdaQueryWrapper = new LambdaQueryWrapper();
+        lambdaQueryWrapper.eq(TradeRuleStockDo::getRuleId,tradeRuleStockRo.getId());
         tradeRuleStockMapper.delete(lambdaQueryWrapper);
 
         //如果有其他的移除的，就将移除的去掉.
         if(!CollectionUtils.isEmpty(tradeRuleStockRo.getRemoveCodeList())){
             //进行移除。
             tradeRuleStockMapper.removeOtherStock(
-                    dbTradeRule.getUserId(),
-                    dbTradeRule.getMockType(),
+                    dbTradeRuleDo.getUserId(),
+                    dbTradeRuleDo.getMockType(),
                     tradeRuleStockRo.getRemoveCodeList()
             );
         }
         Date now = DateUtil.date();
         //进行添加操作
         if(!CollectionUtils.isEmpty(tradeRuleStockRo.getApplyCodeList())){
-           List<TradeRuleStock> tradeRuleStockList = new ArrayList<>();
+           List<TradeRuleStockDo> tradeRuleStockDoList = new ArrayList<>();
            for(String stockCode:tradeRuleStockRo.getApplyCodeList()){
 
-               TradeRuleStock tradeRuleStock = new TradeRuleStock();
+               TradeRuleStockDo tradeRuleStockDo = new TradeRuleStockDo();
                //进行设置
-               tradeRuleStock.setRuleId(tradeRuleStockRo.getId());
-               tradeRuleStock.setStockCode(stockCode);
-               tradeRuleStock.setCreateTime(now);
-               tradeRuleStockList.add(tradeRuleStock);
+               tradeRuleStockDo.setRuleId(tradeRuleStockRo.getId());
+               tradeRuleStockDo.setStockCode(stockCode);
+               tradeRuleStockDo.setCreateTime(now);
+               tradeRuleStockDoList.add(tradeRuleStockDo);
            }
-           saveBatch(tradeRuleStockList);
+           saveBatch(tradeRuleStockDoList);
         }
-        return OutputResult.success();
+        return OutputResult.buildSucc();
     }
 
     @Override
-    public List<TradeRuleStock> listByRid(Integer ruleId) {
+    public List<TradeRuleStockDo> listByRid(Integer ruleId) {
         return this.lambdaQuery()
-                .eq(TradeRuleStock::getRuleId,ruleId)
-                .orderByDesc(TradeRuleStock::getId)
+                .eq(TradeRuleStockDo::getRuleId,ruleId)
+                .orderByDesc(TradeRuleStockDo::getId)
                 .list();
     }
 
@@ -156,7 +155,7 @@ public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper,
         List<StockSelectedVo> stockSelectedVoList = stockSelectedService.listSelf(tradeRuleStockRo.getUserId(),
                 tradeRuleStockRo.getKeyword());
         if(CollectionUtils.isEmpty(stockSelectedVoList)){
-            return OutputResult.success();
+            return OutputResult.buildSucc();
         }
         //每一个股票，去查询对应的信息
         List<StockRuleVo> stockRuleVoList = new ArrayList<>();
@@ -194,10 +193,10 @@ public class TradeRuleStockServiceImpl extends ServiceImpl<TradeRuleStockMapper,
             //设置卖出的规则
             stockRuleVoList.add(stockRuleVo);
         }
-        return OutputResult.success(stockRuleVoList);
+        return OutputResult.buildSucc(stockRuleVoList);
     }
 
-    private List<StockSelectedVo> ruleStockToStockVo(Map<String, String> stockNameMap, List<TradeRuleStock> other) {
+    private List<StockSelectedVo> ruleStockToStockVo(Map<String, String> stockNameMap, List<TradeRuleStockDo> other) {
         List<StockSelectedVo> otherApplyList = new ArrayList<>();
         other.stream().forEach(
                 n->{

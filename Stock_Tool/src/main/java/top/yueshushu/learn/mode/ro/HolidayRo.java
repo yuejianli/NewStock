@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import top.yueshushu.learn.page.PageRo;
+import top.yueshushu.learn.util.SelectConditionUtil;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +24,7 @@ public class HolidayRo extends PageRo implements Serializable {
     private Integer year;
 
     public Integer getYear(){
-        if(this.year==null||this.year==0){
+        if(SelectConditionUtil.intIsNullOrZero(year)){
             return DateUtil.thisYear();
         }
         return year;

@@ -1,9 +1,8 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.entity.Stock;
 import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.model.info.StockInfo;
-import top.yueshushu.learn.pojo.Stock;
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 
@@ -15,13 +14,13 @@ import top.yueshushu.learn.ro.stock.StockRo;
  * @author 岳建立
  * @since 2022-01-02
  */
-public interface StockService extends IService<Stock> {
+public interface StockService {
     /**
-     * 查询所有的股票记录
-     * @param stockRo
-     * @return
+     * 分页查询股票记录
+     * @param stockRo 股票查询对象
+     * @return 返回分页查询股票的记录信息
      */
-    OutputResult<StockInfo> listStock(StockRo stockRo);
+    OutputResult<StockInfo> pageStock(StockRo stockRo);
 
     /**
      * 查询股票的信息
@@ -39,8 +38,8 @@ public interface StockService extends IService<Stock> {
 
     /**
      * 根据股票的编码，查询股票的信息
-     * @param code
-     * @return
+     * @param code 股票的编码
+     * @return 根据股票的编码，查询股票的信息
      */
     OutputResult<StockVo> getStockInfo(String code);
 }

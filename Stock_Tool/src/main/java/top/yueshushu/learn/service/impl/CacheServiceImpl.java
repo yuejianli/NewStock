@@ -8,7 +8,7 @@ import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.mode.ro.CacheRo;
 import top.yueshushu.learn.mode.vo.CacheVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.Config;
+import top.yueshushu.learn.domain.ConfigDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.CacheService;
 import top.yueshushu.learn.util.PageUtil;
@@ -57,9 +57,9 @@ public class CacheServiceImpl implements CacheService {
             cacheVo.setValue(value);
             cacheVoList.add(cacheVo);
         }
-        List<Config> list = PageUtil.startPage(cacheVoList, cacheRo.getPageNum(),
+        List<ConfigDo> list = PageUtil.startPage(cacheVoList, cacheRo.getPageNum(),
                 cacheRo.getPageSize());
-        return OutputResult.success(new PageResponse<Config>((long) cacheVoList.size(),
+        return OutputResult.buildSucc(new PageResponse<ConfigDo>((long) cacheVoList.size(),
                 list));
     }
 
@@ -73,7 +73,7 @@ public class CacheServiceImpl implements CacheService {
         String key = keyPrefix +cacheRo.getKey();
         //设置值
         redisUtil.set(key,cacheRo.getValue());
-        return OutputResult.success();
+        return OutputResult.buildSucc();
     }
 
     @Override
@@ -81,6 +81,6 @@ public class CacheServiceImpl implements CacheService {
         String keyPrefix = getKeyPrefix(cacheRo.getUserId());
         String key = keyPrefix +cacheRo.getKey();
         redisUtil.remove(key);
-        return OutputResult.success();
+        return OutputResult.buildSucc();
     }
 }

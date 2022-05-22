@@ -1,6 +1,7 @@
 package top.yueshushu.learn.test;
 
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import java.math.BigDecimal;
  **/
 @SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@Log4j2
+@Slf4j
 public class BuyTest {
     @Autowired
     private BuyService buyService;
@@ -41,7 +42,7 @@ public class BuyTest {
         buyRo.setMockType(1);
         buyRo.setPrice(new BigDecimal(200));
         OutputResult outputResult = buyService.buy(buyRo);
-        log.info(outputResult);
+        log.info("输出结果:{}",outputResult);
     }
 
     @Test
@@ -54,7 +55,7 @@ public class BuyTest {
         sellRo.setMockType(1);
         sellRo.setPrice(new BigDecimal(150));
         OutputResult outputResult = sellService.sell(sellRo);
-        log.info(outputResult);
+        log.info("输出结果:{}",outputResult);
     }
     @Test
     public void revokeTest(){
@@ -63,7 +64,7 @@ public class BuyTest {
         revokeRo.setMockType(1);
         revokeRo.setId(14);
         OutputResult outputResult = revokeService.revoke(revokeRo);
-        log.info(outputResult);
+        log.info("输出结果:{}",outputResult);
     }
     @Test
     public void dealTest(){
@@ -72,6 +73,6 @@ public class BuyTest {
         dealRo.setMockType(1);
         dealRo.setId(20);
         OutputResult outputResult = dealService.deal(dealRo);
-        log.info(outputResult);
+        log.info("输出结果:{}",outputResult);
     }
 }

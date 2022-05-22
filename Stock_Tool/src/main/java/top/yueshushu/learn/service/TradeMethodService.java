@@ -1,7 +1,7 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.enumtype.TradeMethodType;
-import top.yueshushu.learn.pojo.TradeMethod;
+import top.yueshushu.learn.domain.TradeMethodDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -12,18 +12,18 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author 岳建立
  * @since 2022-01-02
  */
-public interface TradeMethodService extends IService<TradeMethod> {
+public interface TradeMethodService{
     /**
      * 获取相关的方法信息
       * @param tradeMethodType
      * @return
      */
-    TradeMethod getMethod(TradeMethodType tradeMethodType);
+    TradeMethodDo getMethod(TradeMethodType tradeMethodType);
 
     /**
      * 根据方法的code 获取对应的信息
      * @param methodCode
      * @return
      */
-    TradeMethod getMethodByCode(String methodCode);
+    TradeMethodDo getMethodByCode(String methodCode);
 }

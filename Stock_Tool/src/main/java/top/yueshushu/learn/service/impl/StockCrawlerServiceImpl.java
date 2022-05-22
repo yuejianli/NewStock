@@ -3,22 +3,22 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockCrawlerService;
-import top.yueshushu.learn.service.StockService;
 import top.yueshushu.learn.util.BigDecimalUtil;
-import top.yueshushu.learn.util.StockRedisUtil;
 import top.yueshushu.learn.util.StockUtil;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -31,15 +31,14 @@ import java.util.Date;
  **/
 @Service
 public class StockCrawlerServiceImpl implements StockCrawlerService {
-    @Autowired
+    @Resource
     private RestTemplate restTemplate;
 
-    @Autowired
-    private StockRedisUtil stockRedisUtil;
-    @Autowired
-    private StockService stockService;
+    @SuppressWarnings("all")
+    @Resource(name = Const.ASYNC_SERVICE_EXECUTOR_BEAN_NAME)
+    private AsyncTaskExecutor executor;
 
-    @Value("${restUrl.crawlerUrl}")
+    @Value("${restHost.crawlerUrl}")
     private String crawlerUrl;
 
     @Override
@@ -70,7 +69,6 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     }
 
     @Override
-    @Async
     public OutputResult stockHistoryAsync(StockRo stockRo) {
         //处理日期信息
         OutputResult handlerResult=handlerDate(stockRo);
@@ -84,13 +82,10 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         ).getBody();
     }
 
-
-
-
     @Override
     public OutputResult getWeekStat(StockStatRo stockStatRo) {
         if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.success();
+            return OutputResult.buildSucc();
         }
         String url= crawlerUrl+"getWeekStat";
         return restTemplate.postForEntity(
@@ -102,7 +97,7 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Override
     public OutputResult getCharStat(StockStatRo stockStatRo) {
         if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.success();
+            return OutputResult.buildSucc();
         }
         String url= crawlerUrl+"getCharStat";
         return restTemplate.postForEntity(
@@ -118,9 +113,9 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     private OutputResult handlerDate(StockRo stockRo) {
         SyncStockHistoryType syncRangeType = SyncStockHistoryType.getSyncRangeType(stockRo.getType());
         if(syncRangeType==null){
-            return OutputResult.alert("不支持的同步交易范围");
+            return OutputResult.buildAlert("不支持的同步交易范围");
         }
-        final String Date_formatter="yyyyMMdd";
+        String Date_formatter = Const.STOCK_DATE_FORMAT;
         Date now=DateUtil.date();
         String startDate=DateUtil.format(
                 now,Date_formatter
@@ -133,13 +128,13 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
                 startDate= DateUtil.format(
                         DateUtil.parse(
                                 stockRo.getStartDate(),
-                                "yyyy-MM-dd HH:mm:ss"
+                                Const.DATE_FORMAT
                         )
                         ,Date_formatter);
                 endDate= DateUtil.format(
                         DateUtil.parse(
                                 stockRo.getEndDate(),
-                                "yyyy-MM-dd HH:mm:ss"
+                                Const.DATE_FORMAT
                         )
                         ,Date_formatter);
                 break;
@@ -198,16 +193,13 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
                 OutputResult.class
         ).getBody();
         //获取信息
-       String priceReturn = (String) outputResult.getData().getOrDefault(
-                "result",
-               "0.00"
-        );
+       String priceReturn = (String) outputResult.getData();
        //将这个信息进行转换，转换成对应的 BigDecimal
         BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
         //放置进去
-        stockRedisUtil.setPrice(
-                code,
-                price
-        );
+       // stockRedisUtil.setPrice(
+        //        code,
+        //        price
+        //);
     }
 }

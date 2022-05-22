@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @ClassName:StockHistory
- * @Description TODO
+ * @ClassName:StockHistoryVo
+ * @Description 股票历史信息展示
  * @Author 岳建立
  * @Date 2021/11/14 11:06
  * @Version 1.0

@@ -11,8 +11,8 @@ var holiday_table_column=[
         width:"150px"
     },
     {
-        title : '创建日期',
-        field : 'createTime',
+        title : '所属年',
+        field : 'currYear',
         align:"center",
         width:"240px"
     },
@@ -27,7 +27,7 @@ var holiday_table_column=[
 
 $('#holiday_table').bootstrapTable({
     method : 'post',
-    url : "holidayCalendar/list",//请求路径
+    url : HOLIDAY_LIST_URL,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -66,7 +66,7 @@ function queryParams(params) {
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     if(data.list==null||data.list.length<1){
         //将其清空
         $("#holidaySync").show();
@@ -89,7 +89,7 @@ function dateTypeFormatter(row,index,value){
 $("#holidaySync").click(function(){
     //执行同步的操作
     let postResponse = postAjax(
-        "../holidayCalendar/sync",
+        HOLIDAY_ASYNC_URL,
         {}
     );
 

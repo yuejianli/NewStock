@@ -2,24 +2,23 @@ package top.yueshushu.learn.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import top.yueshushu.learn.assembler.StockAssembler;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domainservice.StockDomainService;
+import top.yueshushu.learn.entity.Stock;
 import top.yueshushu.learn.mode.vo.StockVo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.Stock;
-import top.yueshushu.learn.mapper.StockMapper;
+import top.yueshushu.learn.domain.StockDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.StockService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import top.yueshushu.learn.util.RedisUtil;
-import top.yueshushu.learn.util.StockRedisUtil;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,45 +31,67 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService {
-    @Autowired
-    private StockMapper stockMapper;
+public class StockServiceImpl implements StockService {
+    @Resource
+    private StockDomainService stockDomainService;
+    @Resource
+    private StockAssembler stockAssembler;
+
     @Override
-    public OutputResult listStock(StockRo stockRo) {
+    public OutputResult pageStock(StockRo stockRo) {
         PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
-        List<Stock> stockInfoList= stockMapper.selectByKeyword(stockRo.getKeyword());
-        PageInfo pageInfo=new PageInfo<Stock>(stockInfoList);
-        return OutputResult.success(new PageResponse<Stock>(pageInfo.getTotal(),
+        List<StockDo> stockDoInfoList = stockDomainService.selectByKeyword(stockRo.getKeyword());
+        if (CollectionUtils.isEmpty(stockDoInfoList)){
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+
+        List<StockVo> pageResultList = new ArrayList<>(stockDoInfoList.size());
+        stockDoInfoList.forEach(
+                n->{
+                    pageResultList.add(
+                            stockAssembler.entityToVo(
+                                    stockAssembler.doToEntity(
+                                            n
+                                    )
+                            )
+                    );
+                }
+        );
+        PageInfo pageInfo=new PageInfo<StockVo>(pageResultList);
+        return OutputResult.buildSucc(new PageResponse<StockVo>(pageInfo.getTotal(),
                 pageInfo.getList()));
     }
     @Override
     public Stock selectByCode(String code) {
-        List<Stock> stockList = stockMapper.selectByCodeAndType(code, null);
-        if(CollectionUtils.isEmpty(stockList)){
-            return null;
-        }
-        return stockList.get(stockList.size()-1);
+       return stockAssembler.doToEntity(
+               stockDomainService.getByCode(code)
+       );
     }
 
     @Override
     public boolean existStockCode(String code) {
-        List<Stock> stockList = stockMapper.selectByCodeAndType(code, null);
-        if(CollectionUtils.isEmpty(stockList)){
-            return false;
-        }
-        return true;
+        Stock stock = stockAssembler.doToEntity(
+                stockDomainService.getByCode(code)
+        );
+        return stock!=null;
     }
 
     @Override
     public OutputResult<StockVo> getStockInfo(String code) {
-        List<Stock> stockInfoList= stockMapper.selectByKeyword(code);
-        if(CollectionUtils.isEmpty(stockInfoList)){
-            return OutputResult.alert("没有此股票代码信息");
+        Stock stock = stockAssembler.doToEntity(
+                stockDomainService.getByCode(
+                        code
+                )
+        );
+        if (null == stock){
+            return OutputResult.buildAlert(
+                ResultCode.STOCK_CODE_NO_EXIST
+            );
         }
-        Stock stock = stockInfoList.get(stockInfoList.size()-1);
-        //获取信息
-        StockVo stockVo = new StockVo();
-        BeanUtils.copyProperties(stock,stockVo);
-        return OutputResult.success(stockVo);
+        return OutputResult.buildSucc(
+                stockAssembler.entityToVo(stock)
+        );
     }
 }

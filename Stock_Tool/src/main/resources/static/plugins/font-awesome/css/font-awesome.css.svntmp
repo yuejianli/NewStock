@@ -201,7 +201,7 @@
 .fa-star-o:before {
   content: "\f006";
 }
-.fa-user:before {
+.fa-userDo:before {
   content: "\f007";
 }
 .fa-film:before {
@@ -848,7 +848,7 @@
 .fa-cloud-upload:before {
   content: "\f0ee";
 }
-.fa-user-md:before {
+.fa-userDo-md:before {
   content: "\f0f0";
 }
 .fa-stethoscope:before {
@@ -1732,7 +1732,7 @@
 .fa-ship:before {
   content: "\f21a";
 }
-.fa-user-secret:before {
+.fa-userDo-secret:before {
   content: "\f21b";
 }
 .fa-motorcycle:before {
@@ -1796,10 +1796,10 @@
 .fa-server:before {
   content: "\f233";
 }
-.fa-user-plus:before {
+.fa-userDo-plus:before {
   content: "\f234";
 }
-.fa-user-times:before {
+.fa-userDo-times:before {
   content: "\f235";
 }
 .fa-hotel:before,

@@ -5,6 +5,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,11 +18,11 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @JobHandler("helloXxlJobHandler")
-@Log4j2
+@Slf4j
 public class HelloXxlJobHandler extends IJobHandler {
     @Override
     public ReturnT<String> execute(String s) throws Exception {
-        log.info("Handler: >>>>开始执行策略"+ DateUtil.now());
+        log.info("Handler: {} >>>>开始执行策略",DateUtil.now());
         return ReturnT.SUCCESS;
     }
 }

@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
+import top.yueshushu.learn.business.HolidayCalendarBusiness;
 import top.yueshushu.learn.mode.ro.HolidayRo;
 import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.HolidayCalendarService;
 import top.yueshushu.learn.service.StockService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -28,17 +31,19 @@ import top.yueshushu.learn.service.StockService;
 @RequestMapping("/holidayCalendar")
 @Api("节假日信息假期")
 public class HolidayCalendarController {
-    @Autowired
-    private HolidayCalendarService holidayCalendarService;
+    @Resource
+    private HolidayCalendarBusiness holidayCalendarBusiness;
+
     @PostMapping("/list")
     @ApiOperation("查询假期信息")
-    public OutputResult list(@RequestBody HolidayRo holidayRo){
-        return holidayCalendarService.listHoliday(holidayRo);
+    public OutputResult list(@RequestBody HolidayRo holidayRo) {
+        return holidayCalendarBusiness.listHoliday(holidayRo);
     }
+
     @PostMapping("/sync")
     @ApiOperation("同步假期")
-    public OutputResult sync(@RequestBody HolidayRo holidayRo){
-        return holidayCalendarService.syncYear(holidayRo.getYear());
+    public OutputResult sync(@RequestBody HolidayRo holidayRo) {
+        return holidayCalendarBusiness.syncYear(holidayRo.getYear());
     }
 
 }

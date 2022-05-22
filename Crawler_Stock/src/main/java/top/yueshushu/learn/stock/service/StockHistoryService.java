@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.ro.stock.StockStatRo;
-import top.yueshushu.learn.stock.pojo.StockHistory;
 
 /**
  * @ClassName:StockHistoryService
@@ -13,26 +12,11 @@ import top.yueshushu.learn.stock.pojo.StockHistory;
  * @Date 2021/11/14 11:24
  * @Version 1.0
  **/
-public interface StockHistoryService extends IService<StockHistory> {
-    public OutputResult getStockHistory(StockRo stockRo);
-
+public interface StockHistoryService  {
     /**
-     * 删除这个范围内的数据
-     * @param stockRo
+     * 股票历史记录同步
+     * @param stockRo 股票对象
+     * @return 股票历史记录同步
      */
-    void deleteAsyncData(StockRo stockRo);
-
-    /**
-     * 查询股票的相关的周记录信息
-     * @param stockStatRo
-     * @return
-     */
-    OutputResult getWeekStat(StockStatRo stockStatRo);
-
-    /**
-     * 展示股票的相关的记录信息
-     * @param stockStatRo
-     * @return
-     */
-    OutputResult getCharStat(StockStatRo stockStatRo);
+    OutputResult stockCrawlerHistoryAsync(StockRo stockRo);
 }

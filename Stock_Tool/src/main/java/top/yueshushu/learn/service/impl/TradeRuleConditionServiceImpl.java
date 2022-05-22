@@ -1,11 +1,11 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.TradeRuleConditionRo;
-import top.yueshushu.learn.pojo.TradeRuleCondition;
+import top.yueshushu.learn.domain.TradeRuleConditionDo;
 import top.yueshushu.learn.mapper.TradeRuleConditionMapper;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.response.ResultCode;
 import top.yueshushu.learn.service.TradeRuleConditionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ import java.util.List;
  * @since 2022-01-26
  */
 @Service
-public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditionMapper, TradeRuleCondition> implements TradeRuleConditionService {
+public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditionMapper, TradeRuleConditionDo> implements TradeRuleConditionService {
 
     @Override
     public OutputResult listCondition() {
-        return OutputResult.success(listAll());
+        return OutputResult.buildSucc(listAll());
     }
 
     @Override
@@ -33,12 +33,12 @@ public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditio
         //根据id 查询信息
         Integer id = tradeRuleConditionRo.getId();
         if(id==null){
-            return OutputResult.alert(ResultCode.ALERT);
+            return OutputResult.buildAlert(ResultCode.ALERT);
         }
         //查询是否有此信息
-        TradeRuleCondition dbCondtion = getById(id);
+        TradeRuleConditionDo dbCondtion = getById(id);
         if(dbCondtion==null){
-            return OutputResult.alert("传入的Id编号有误");
+            return OutputResult.buildAlert("传入的Id编号有误");
         }
         //进行修改
        dbCondtion.setName(
@@ -51,11 +51,11 @@ public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditio
                 DateUtil.date()
         );
         updateById(dbCondtion);
-        return OutputResult.success();
+        return OutputResult.buildSucc();
     }
 
     @Override
-    public List<TradeRuleCondition> listAll() {
+    public List<TradeRuleConditionDo> listAll() {
         return this.lambdaQuery()
                         .list();
     }

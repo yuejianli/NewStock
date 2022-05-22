@@ -27,7 +27,7 @@ import java.util.Map;
  * @description：Cache的缓存配置信息,可以解决乱码问题
  * @date ：2021/09/23 17:09
  */
-@Log4j2
+@Slf4j
 @Configuration
 public class CacheConfig extends CachingConfigurerSupport {
 
@@ -72,13 +72,15 @@ public class CacheConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager() {
         return new RedisCacheManager(
                 RedisCacheWriter.nonLockingRedisCacheWriter(factory),
-                this.getRedisCacheConfigurationWithTtl(30*60), // 默认策略，未配置的 key 会使用这个
-                this.getRedisCacheConfigurationMap() // 指定 key 策略
+                // 默认策略，未配置的 key 会使用这个
+                this.getRedisCacheConfigurationWithTtl(30*60),
+                // 指定 key 策略
+                this.getRedisCacheConfigurationMap()
         );
     }
 
     private Map<String, RedisCacheConfiguration> getRedisCacheConfigurationMap() {
-        Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>();
+        Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>(8);
         //DayCache和SecondsCache进行过期时间配置translates缓存丢弃改为了redis
         redisCacheConfigurationMap.put("translates", this.getRedisCacheConfigurationWithTtl(12*60*60));
         redisCacheConfigurationMap.put("strategies", this.getRedisCacheConfigurationWithTtl(60));

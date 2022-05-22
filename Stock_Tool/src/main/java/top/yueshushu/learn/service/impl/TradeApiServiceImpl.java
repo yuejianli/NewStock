@@ -11,14 +11,11 @@ import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.*;
 import top.yueshushu.learn.api.response.AuthenticationResponse;
 import top.yueshushu.learn.config.TradeClient;
-import top.yueshushu.learn.pojo.TradeMethod;
-import top.yueshushu.learn.pojo.TradeUser;
 import top.yueshushu.learn.service.AbstractTradeApiService;
 import top.yueshushu.learn.service.ConfigService;
 import top.yueshushu.learn.service.TradeService;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class TradeApiServiceImpl extends AbstractTradeApiService {

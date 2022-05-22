@@ -1,10 +1,6 @@
 package top.yueshushu.learn.stock.parse;
-import org.springframework.util.CollectionUtils;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.stock.entity.DownloadStockInfo;
-import top.yueshushu.learn.stock.util.ListUtil;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,10 +10,10 @@ import java.util.List;
 public interface StockInfoParser {
     /**
      * 将content 信息转换成对应的股票实体信息
-     * @param content
-     * @return
+     * @param content 内容
+     * @return 信息转换成对应的股票实体信息
      */
-    public default List<DownloadStockInfo> parseStockInfoList(String content){
+     default List<DownloadStockInfo> parseStockInfoList(String content){
         return Collections.EMPTY_LIST;
     };
 }

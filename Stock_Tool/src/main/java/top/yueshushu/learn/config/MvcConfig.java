@@ -1,8 +1,12 @@
 package top.yueshushu.learn.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import top.yueshushu.learn.interceptor.AuthorizationInterceptor;
 
 /**
  * @ClassName:MvcConfig
@@ -13,7 +17,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @Since 1.0
  **/
 @Configuration
-public class MvcConfig extends WebMvcConfigurerAdapter {
+public class MvcConfig implements WebMvcConfigurer {
+    @Bean
+    public HandlerInterceptor getAuthInterceptor() {
+        //返回自定义的拦截类
+        return new AuthorizationInterceptor();
+    }
     /**
      * 配置静态的资源信息
      * @param registry

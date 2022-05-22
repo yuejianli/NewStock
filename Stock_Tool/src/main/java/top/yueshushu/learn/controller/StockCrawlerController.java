@@ -1,54 +1,77 @@
 package top.yueshushu.learn.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.yueshushu.learn.model.info.StockInfo;
+import top.yueshushu.learn.business.StockCrawlerBusiness;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
-import top.yueshushu.learn.service.StockCrawlerService;
-import top.yueshushu.learn.service.StockService;
+
+import javax.annotation.Resource;
 
 /**
- * @ClassName:StockController
- * @Description TODO
+ * @Description: 股票爬虫的Controller
  * @Author 岳建立
  * @Date 2021/11/12 23:03
- * @Version 1.0
  **/
 @RestController
 @RequestMapping("/stockCrawler")
+@ApiOperation("股票爬虫程序")
 public class StockCrawlerController {
-    @Autowired
-    private StockCrawlerService stockCrawlerService;
-    @PostMapping("/getStockInfo")
-    public OutputResult<StockShowInfo> getStockInfo(@RequestBody StockRo stockRo){
-        return stockCrawlerService.getStockInfo(stockRo);
-    }
-    @PostMapping("/getStockKline")
-    public OutputResult<String> getStockKline(@RequestBody StockRo stockRo){
-        return stockCrawlerService.getStockKline(stockRo);
-    }
-    @PostMapping("/stockAsync")
-    public OutputResult<String> stockAsync(@RequestBody StockRo stockRo){
-        return stockCrawlerService.stockAsync(stockRo);
-    }
-    /*关于历史记录的处理*/
-    @PostMapping("/stockHistoryAsync")
-    public OutputResult stockHistoryAsync(@RequestBody StockRo stockRo){
-        return stockCrawlerService.stockHistoryAsync(stockRo);
-    }
+    @Resource
+    private StockCrawlerBusiness stockCrawlerBusiness;
 
-    @PostMapping("/getWeekStat")
-    public OutputResult getWeekStat(@RequestBody StockStatRo stockStatRo){
-        return stockCrawlerService.getWeekStat(stockStatRo);
+    @ApiOperation("查询股票的基本信息")
+    @PostMapping("/getStockInfo")
+    public OutputResult<StockShowInfo> getStockInfo(@RequestBody StockRo stockRo) {
+        if (!StringUtils.hasText(stockRo.getCode())){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_CODE_IS_EMPTY
+            );
+        }
+        return stockCrawlerBusiness.getStockInfo(stockRo);
     }
-    @PostMapping("/getCharStat")
-    public OutputResult getCharStat(@RequestBody StockStatRo stockStatRo){
-        return stockCrawlerService.getCharStat(stockStatRo);
+    @ApiOperation("查询股票的K线图")
+    @PostMapping("/getStockKline")
+    public OutputResult<String> getStockKline(@RequestBody StockRo stockRo) {
+        if (!StringUtils.hasText(stockRo.getCode())){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_CODE_IS_EMPTY
+            );
+        }
+        if (stockRo.getType() == null){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_KLINE_IS_EMPTY
+            );
+        }
+        return stockCrawlerBusiness.getStockKline(stockRo);
+    }
+    @ApiOperation("股票列表同步")
+    @PostMapping("/stockAsync")
+    public OutputResult<String> stockAsync(@RequestBody StockRo stockRo) {
+        return stockCrawlerBusiness.stockAsync(stockRo);
+    }
+    /**
+     * 关于历史记录的处理
+     */
+    @ApiOperation("同步股票的历史记录")
+    @PostMapping("/stockHistoryAsync")
+    public OutputResult<String> stockHistoryAsync(@RequestBody StockRo stockRo) {
+        if (!StringUtils.hasText(stockRo.getCode())){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_CODE_IS_EMPTY
+            );
+        }
+        if (stockRo.getExchange() == null){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_EXCHANGE_IS_EMPTY
+            );
+        }
+        return stockCrawlerBusiness.stockHistoryAsync(stockRo);
     }
 }

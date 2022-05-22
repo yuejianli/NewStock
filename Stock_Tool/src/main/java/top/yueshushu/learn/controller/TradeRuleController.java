@@ -2,14 +2,11 @@ package top.yueshushu.learn.controller;
 
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.mode.ro.TradeRuleRo;
-import top.yueshushu.learn.pojo.TradeMethod;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeRuleService;
 

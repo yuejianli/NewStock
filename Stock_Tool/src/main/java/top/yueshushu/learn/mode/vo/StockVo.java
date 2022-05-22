@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
- * @ClassName:StockVo
- * @Description TODO
+ * @Description 股票展示信息
  * @Author 岳建立
  * @Date 2022/1/3 9:52
- * @Version 1.0
  **/
 @Data
 @ApiModel("股票展示信息")
@@ -36,5 +34,5 @@ public class StockVo implements Serializable {
     @ApiModelProperty("创建人")
     private String createUser;
     @ApiModelProperty("是否删除 1为正常 2为删除")
-    private Boolean flag;
+    private Integer flag;
 }

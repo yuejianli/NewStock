@@ -1,11 +1,40 @@
+# 配置 Mysql 需要修改的常量
+MYSQL_HOST: 139.155.90.176:3306
+MYSQL_USERNAME: fund
+MYSQL_PASSWORD: fund
+
+# 配置 Druid 的用户名和密码
+DRUID_USERNAME: yuejianli
+DRUID_PASSWORD: yuezelin
+
+# 配置Redis 的信息:
+REDIS_HOST: 139.155.90.176
+REDIS_PORT: 6379
+REDIS_PASSWORD: zk123
+REDIS_DATABASE: 8
+
+# 配置 swagger 的用户名和密码
+SWAGGER_USERNAME: admin
+SWAGGER_PASSWORD: yuezelin
+
+# 配置爬虫的请求地址:
+CRAWLER_URL: http://localhost:8089/Crawler/stock/
+
+#xxl-job-admin 的相关配置信息
+XXL_JOB_IP: 127.0.0.1
+XXL_JOB_PORT: 8085
+
 server:
   port: 8088
   servlet:
-    context-path: /
+    context-path: /Stock
   #设置头的大小
   max-http-header-size: 102400
 # 引入 数据库的相关配置
 spring:
+  main:
+    allow-bean-definition-overriding: true
+  # 配置 json
   jackson:
     #参数意义：
     #JsonInclude.Include.ALWAYS       默认
@@ -15,21 +44,31 @@ spring:
     default-property-inclusion: ALWAYS
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
+  # 配置数据库
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: >
-      jdbc:mysql://139.155.90.176:3306/stock?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false
-      &allowMultiQueries=true
-    username: fund
-    password: fund
+    url: jdbc:mysql://${MYSQL_HOST}/stock?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
     type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 100
+    maxActive: 100
+    minIdle: 100
+    # 配置监控统计拦截的filters，去掉后监控界面sql将无法统计，'wall'用于防火墙
+    # filters: stat, wall, log4j   # wall暂不启用，如果启用，需要设置multiStatementAllow为true
+    filters: stat
+    # 通过connectProperties属性来打开mergeSql功能，慢SQL记录
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=2000
+    druid:
+      aop-patterns: top.yueshushu.learn.mapper.*,top.yueshushu.learn.service.impl.*
   # 配置Redis的使用
   redis:
-    database: 8 # 所使用的数据库  默认是0
-    host: 139.155.90.176  #所使用的redis的主机地址
-    port: 6379  # 端口号  默认是 6379
-    password: zk123 # 密码
-    timeout: 5000 # 超时时间  5000毫秒
+    database: ${REDIS_DATABASE}
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    # 超时时间  5000毫秒
+    timeout: 5000
     # 连接池 lettuce 的配置
     lettuce:
       pool:
@@ -59,8 +98,11 @@ mybatis-plus:
   mapper-locations: classpath:mybatis/mapper/**/*.xml
   # 配置日志
   configuration:
-    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true #  配置数据库表的列别名设置
+    # 关闭mybatis一级缓存，防止事务和缓存同时打开引起的查询异常
+    local-cache-scope: STATEMENT
+    #查看mybatis的SQL, 线上服务器关闭
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: flag   # 逻辑删除的字段
@@ -73,17 +115,31 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-#配置日志文件
-#配置访问stock的地址信息
-restUrl:
-  crawlerUrl: http://localhost:8082/Crawler/stock/
+# 配置token生成
+jwt:
+  key: "saaa-ihrm"
+  ttl: "3600000"
+#配置 swagger
+swagger:
+  show: true
+  production: false
+  basic:
+    enable: true
+    username: ${SWAGGER_USERNAME}
+    password: ${SWAGGER_PASSWORD}
+# 支持上传文件
+multipart:
+  enabled: true
+# 配置日志信息
 mylog:
   exc-full-show: false
   run-time: 0
   result-length: 500
-#xxl-job-admin 的相关配置信息
-XXL_JOB_IP: 127.0.0.1
-XXL_JOB_PORT: 8091
+
+# 配置爬虫地址请求
+restHost:
+  crawlerUrl: ${CRAWLER_URL}
+# 配置 xxl-job的信息
 xxl:
   job:
     admin:

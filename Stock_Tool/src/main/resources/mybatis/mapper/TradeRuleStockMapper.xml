@@ -3,7 +3,7 @@
 <mapper namespace="top.yueshushu.learn.mapper.TradeRuleStockMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="top.yueshushu.learn.pojo.TradeRuleStock">
+    <resultMap id="BaseResultMap" type="top.yueshushu.learn.domain.TradeRuleStockDo">
         <id column="id" property="id" />
         <result column="rule_id" property="ruleId" />
         <result column="stock_code" property="stockCode" />
@@ -32,7 +32,7 @@
             </if>
         </where>
     </delete>
-    <select id="listNoRid" resultType="top.yueshushu.learn.pojo.TradeRuleStock">
+    <select id="listNoRid" resultType="top.yueshushu.learn.domain.TradeRuleStockDo">
          select s.id,s.rule_id,s.stock_code,s.create_time from trade_rule_stock s,trade_rule r
          where s.rule_id = r.id
          and r.user_id =#{tradeRuleStockQueryDto.userId}

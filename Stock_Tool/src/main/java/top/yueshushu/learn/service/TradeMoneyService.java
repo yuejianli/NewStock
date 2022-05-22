@@ -2,7 +2,7 @@ package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
 import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.pojo.TradeMoney;
+import top.yueshushu.learn.domain.TradeMoneyDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
@@ -14,7 +14,7 @@ import top.yueshushu.learn.response.OutputResult;
  * @author 两个蝴蝶飞
  * @since 2022-01-03
  */
-public interface TradeMoneyService extends IService<TradeMoney> {
+public interface TradeMoneyService extends IService<TradeMoneyDo> {
     /**
      * 查询资产信息
      * @param tradeMoneyRo
@@ -34,11 +34,11 @@ public interface TradeMoneyService extends IService<TradeMoney> {
      * @param mockType
      * @return
      */
-    TradeMoney getByUid(Integer userId, Integer mockType);
+    TradeMoneyDo getByUid(Integer userId, Integer mockType);
 
     /**
      * 更新用户的资产信息
-     * @param tradeMoney
+     * @param tradeMoneyDo
      */
-    void updateMoneyVoByid(TradeMoney tradeMoney);
+    void updateMoneyVoByid(TradeMoneyDo tradeMoneyDo);
 }

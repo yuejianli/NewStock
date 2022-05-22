@@ -3,7 +3,7 @@ package top.yueshushu.learn.stock.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.stock.pojo.Stock;
+import top.yueshushu.learn.stock.entity.Stock;
 
 /**
  * @InterfaceName StockBaseService
@@ -12,30 +12,33 @@ import top.yueshushu.learn.stock.pojo.Stock;
  * @Date 2021/11/14 0:04
  * @Version 1.0
  **/
-public interface StockService extends IService<Stock>{
+public interface StockService{
     /**
-     * 查询股票的相关信息
-     * @param stockRo
-     * @return
+     * 根据股票的编码，爬虫获取当前的股票信息
+     * @param stockCode 股票编码
+     * @return 根据股票的编码，爬虫获取当前的股票信息
      */
-    OutputResult list(StockRo stockRo);
+    OutputResult getCrawlerStockInfoByCode(String stockCode);
 
     /**
-     * 删除所有的数据
+     * 获取当前股票的爬虫K线图
+     * @param code 股票的编码
+     * @param type K线图类型
+     * @return 获取当前股票的爬虫K线图
      */
-    void deleteAll();
+    OutputResult getCrawlerLine(String code, Integer type);
 
     /**
-     * 查询股票的信息
-     * @param code
-     * @return
+     * 股票信息全量同步
+     * @param stockRo 股票对象
+     * @return 返回股票信息全量同步
      */
-    Stock selectByCode(String code);
+    OutputResult stockAsync(StockRo stockRo);
 
     /**
-     * 是否存在着这个股票
-     * @param code
-     * @return
+     * 获取股票的当前价格
+     * @param code 股票的编码
+     * @return 获取股票的当前价格
      */
-    boolean existStockCode(String code);
+    OutputResult getCrawlerPrice(String code);
 }

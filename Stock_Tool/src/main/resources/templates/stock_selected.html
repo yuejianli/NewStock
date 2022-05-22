@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="StyleSheet" href="static/plugins/bootstrap/css/bootstrap.css" type="text/css">
+    <link rel="StyleSheet" href="static/plugins/bootstrap-table/bootstrap-table.min.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/plugins/flavr/flavr.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/css/common/common.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/css/my.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/plugins/font-awesome/css/font-awesome.min.css" type="text/css">
+ <style type="text/css">
+
+ </style>
+</head>
+<body class="page-bg container">
+<!-- 查看基金详细信息 -->
+<div class="modal fade" id="add_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">添加到自选股票</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">股票代码:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="stockCode" value="sz002415"/>
+                        </div>
+                    </div>
+                    <div class="form-group" id="stockNameGroup" style="margin-top: 30px;">
+                        <label class="col-sm-4 control-label">股票名称:</label>
+                        <div class="col-sm-6">
+                            <label class="col-sm-4 control-label" id="stockNameLabel"></label>
+                            <input type="hidden" class="underline_input" id="hiddenStockCode" value=""/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="add_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <div>
+        <form class="form-inline">
+            <div class="col-sm-3">
+                <input type="text" class="form-control" id="keywords" value="" placeholder="股票的代码或者名称"/>
+            </div>
+        </form>
+    </div>
+    <div id="custom-toolbar">
+        <button id="add" type="button" class="btn btn-unified">
+            <i class="fa fa-add"></i>&nbsp;&nbsp;添加自选
+        </button>
+    </div>
+    <!-- 表格-开始  -->
+    <table id="stockSelected_table" data-toggle="table"
+           class="table-striped table-bordered table-hover">
+    </table>
+</div>
+<script type="text/javascript" src="static/plugins/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="static/plugins/flavr/flavr.min.js"></script>
+<script type="text/javascript" src="HttpReqUrl.js"></script>
+<script type="text/javascript" src="static/myjs/myjs.js"></script>
+<script type="text/javascript" src="stock_selected.js"></script>
+
+</body>
+</html>

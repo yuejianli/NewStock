@@ -1,36 +1,29 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import top.yueshushu.learn.common.XxlJobConst;
-import top.yueshushu.learn.enumtype.ConfigCodeType;
+import top.yueshushu.learn.assembler.StockSelectedAssembler;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domainservice.StockSelectedDomainService;
+import top.yueshushu.learn.entity.StockSelected;
 import top.yueshushu.learn.enumtype.DataFlagType;
-import top.yueshushu.learn.enumtype.ExchangeType;
-import top.yueshushu.learn.enumtype.SyncStockHistoryType;
-import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.IdRo;
 import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.mode.ro.StockSelectedRo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.pojo.Config;
-import top.yueshushu.learn.pojo.Stock;
-import top.yueshushu.learn.pojo.StockSelected;
-import top.yueshushu.learn.mapper.StockSelectedMapper;
+import top.yueshushu.learn.domain.StockSelectedDo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.*;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import top.yueshushu.learn.util.StockRedisUtil;
 
+import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -42,235 +35,247 @@ import java.util.*;
  */
 @Service
 @Slf4j(topic = "自选股票")
-public class StockSelectedServiceImpl extends ServiceImpl<StockSelectedMapper, StockSelected> implements StockSelectedService {
-    @Autowired
-    private StockSelectedMapper stockSelectedMapper;
-    @Autowired
-    private StockService stockService;
-    @Autowired
-    private ConfigService configService;
-    @Autowired
-    private XxlJobService xxlJobService;
-    @Autowired
-    private StockRedisUtil stockRedisUtil;
-    @Autowired
-    private StockCrawlerService stockCrawlerService;
-    @Autowired
-    private StockHistoryService stockHistoryService;
-    @Override
-    public OutputResult add(StockSelectedRo stockSelectedRo) {
-        //看是否已经加入自选，如果已经添加，则不需要添加.
-        QueryWrapper<StockSelected> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("stock_code",stockSelectedRo.getStockCode());
-        queryWrapper.eq("user_id",stockSelectedRo.getUserId());
+public class StockSelectedServiceImpl implements StockSelectedService {
 
-        StockSelected stockSelected = getSelectedByWrapper(queryWrapper);
-        if(stockSelected!=null&&
-                DataFlagType.NORMAL.getCode().equals(
-                        stockSelected.getFlag()
-                )){
-            return OutputResult.alert("已经存在自选表里面，不需要重复添加");
-        }
-        //看是否超过最大的数量
-        if(checkMaxCount(stockSelectedRo.getUserId())){
-            return OutputResult.alert("已经超过允许自选的最大数量");
-        }
-        if(stockSelected==null){
-            log.info("没有股票自选记录 {}，进行添加",stockSelectedRo.getStockCode());
+    @Resource
+    private StockSelectedAssembler stockSelectedAssembler;
+    @Resource
+    private StockSelectedDomainService stockSelectedDomainService;
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public StockSelected add(StockSelectedRo stockSelectedRo,String stockName) {
+        StockSelected stockSelected = stockSelectedAssembler.doToEntity(
+                stockSelectedDomainService.getByUserIdAndCodeAndStatus(
+                        stockSelectedRo.getUserId(),
+                        stockSelectedRo.getStockCode(),
+                        null
+                )
+        );
+        if (stockSelected == null) {
+            log.info("用户{}没有该股票 {} 的记录，进行添加", stockSelectedRo.getUserId(),stockSelectedRo.getStockCode());
             stockSelected = new StockSelected();
-            Integer jobId = addJob(stockSelectedRo);
-            Stock stock = stockService.selectByCode(stockSelectedRo.getStockCode());
             stockSelected.setStockCode(stockSelectedRo.getStockCode());
             stockSelected.setStockName(
-                    stock==null?"":stock.getName()
+                   stockName
             );
             stockSelected.setUserId(stockSelectedRo.getUserId());
             stockSelected.setCreateTime(DateUtil.date());
-            stockSelected.setJobId(jobId);
+            stockSelected.setStatus(DataFlagType.NORMAL.getCode());
             stockSelected.setFlag(DataFlagType.NORMAL.getCode());
-            stockSelectedMapper.insert(stockSelected);
-            //设置历史记录
-            //获取相关的信息，进行处理。
-            List<String> codeList = new ArrayList<>();
-            codeList.add(stockSelectedRo.getStockCode());
-            List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
-            //循环设置缓存信息
-            if(CollectionUtils.isEmpty(priceCacheDtoList)){
-                log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}",codeList);
-            }
-            for(StockPriceCacheDto priceCacheDto:priceCacheDtoList){
-                stockRedisUtil.setYesPrice(priceCacheDto.getCode(),priceCacheDto.getPrice());
-            }
-        }else{
-            log.info("有股票自选记录 {}，进行修改",stockSelectedRo.getStockCode());
+
+            stockSelectedDomainService.save(
+                    stockSelectedAssembler.entityToDo(
+                            stockSelected
+                    )
+            );
+        } else {
+            log.info("用户{} 有股票 {}自选记录,只能现在被删除了,对这条记录进行修改", stockSelectedRo.getUserId(),
+                    stockSelectedRo.getStockCode());
             stockSelected.setCreateTime(DateUtil.date());
-            stockSelected.setFlag(DataFlagType.NORMAL.getCode());
+            stockSelected.setStatus(DataFlagType.NORMAL.getCode());
             //进行更新
-            stockSelectedMapper.updateById(stockSelected);
-            //将任务启动
-            xxlJobService.enableJob(stockSelected.getJobId());
+            stockSelectedDomainService.updateById(
+                    stockSelectedAssembler.entityToDo(
+                            stockSelected
+                    )
+            );
         }
-        return OutputResult.success();
-    }
-
-
-    /**
-     * 看是否超过最大的数量，如果超过，则返回 true, 不允许添加。
-     * 如果没有超过，返回 false, 允许添加。
-     * @param userId
-     * @return
-     */
-    private boolean checkMaxCount(Integer userId) {
-        //获取配置信息
-        Config config = configService.getConfigByCode(userId, ConfigCodeType.SELECT_MAX_NUM.getCode());
-        //获取信息
-        Integer maxCount = Integer.parseInt(
-                Optional.ofNullable(config.getCodeValue())
-                .orElse("20")
+        // 重新查询一下,获取最新的携带着 id的数据
+       return stockSelectedAssembler.doToEntity(
+                stockSelectedDomainService.getByUserIdAndCodeAndStatus(
+                        stockSelectedRo.getUserId(),
+                        stockSelectedRo.getStockCode(),
+                        DataFlagType.NORMAL.getCode()
+                )
         );
-        //获取当前用户所拥有的数量.
-        QueryWrapper<StockSelected> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",userId);
-        queryWrapper.eq("flag",DataFlagType.NORMAL.getCode());
-        int nowUseCount = Optional.ofNullable(stockSelectedMapper.selectCount(queryWrapper)).orElse(0);
-        //进行比较，返回
-        return maxCount>=nowUseCount?false:true;
     }
+    /**
+     * 看是否超过最大的数量，如果超过，则返回 true
+     * 如果没有超过，返回 false, 允许添加。
+     * @param userId 用户编号
+     * @param maxSelectedNum 最大的自选数量
+     * @return 看是否超过最大的数量，如果超过，则返回 true
+     */
+    private boolean checkMaxCount(Integer userId,Integer maxSelectedNum) {
+        //获取当前用户所拥有的数量.
+        QueryWrapper<StockSelectedDo> queryWrapper = new QueryWrapper();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("flag", DataFlagType.NORMAL.getCode());
+        int nowUseCount = stockSelectedDomainService.countByUserIdAndStatus(
+                userId,
+                DataFlagType.NORMAL.getCode()
+        );
+        //进行比较，返回
+        return maxSelectedNum >= nowUseCount ? false : true;
+    }
+
     @Override
     public OutputResult delete(IdRo idRo, int userId) {
-        QueryWrapper<StockSelected> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("id",idRo.getIds());
-        queryWrapper.eq("user_id",userId);
-        queryWrapper.eq("flag",DataFlagType.NORMAL.getCode());
-        //进行删除
-        //获取对应的自选信息.
-        StockSelected stockSelected = getSelectedByWrapper(queryWrapper);
-        if(stockSelected== null){
-            return OutputResult.alert("已经被移出自选了");
-        }
-        //否则的话，修改成删除状态
-        stockSelected.setFlag(
-                DataFlagType.DELETE.getCode()
+        StockSelected stockSelected = stockSelectedAssembler.doToEntity(
+                stockSelectedDomainService.getById(idRo.getId())
         );
-        stockSelectedMapper.updateById(stockSelected);
-        //需要暂停任务
-        xxlJobService.disableJob(
-                stockSelected.getJobId()
-        );
-        stockRedisUtil.removePrice(stockSelected.getStockCode());
-        return OutputResult.success();
+        return deleteByInfo(stockSelected,userId);
     }
 
-    private StockSelected getSelectedByWrapper(Wrapper<StockSelected> wrapper){
-        List<StockSelected> stockSelectedList = stockSelectedMapper.selectList(wrapper);
-        if(CollectionUtils.isEmpty(stockSelectedList)){
-            return null;
+    public OutputResult deleteByInfo(StockSelected stockSelected,Integer userId){
+        //如果不存在，或者用户编号不一致
+        if (stockSelected == null || !stockSelected.getUserId().equals(userId)){
+            return OutputResult.buildAlert(ResultCode.STOCK_SELECTED_NO_RECORD);
         }
-        return stockSelectedList.get(0);
+        if (DataFlagType.DELETE.getCode().equals(stockSelected.getStatus())){
+            return OutputResult.buildAlert(ResultCode.STOCK_SELECTED_HAVE_DISABLE);
+        }
+
+        //否则的话，修改成删除状态
+        stockSelected.setStatus(
+                DataFlagType.DELETE.getCode()
+        );
+        stockSelectedDomainService.updateById(
+                stockSelectedAssembler.entityToDo(
+                        stockSelected
+                )
+        );
+        return OutputResult.buildSucc(stockSelected.getJobId());
+    }
+    @Override
+    public OutputResult pageSelected(StockSelectedRo stockSelectedRo) {
+        PageHelper.startPage(stockSelectedRo.getPageNum(), stockSelectedRo.getPageSize());
+        List<StockSelectedVo> pageResultList = listSelf(
+                stockSelectedRo.getUserId(),
+                stockSelectedRo.getKeyword()
+        );
+        if (CollectionUtils.isEmpty(pageResultList)) {
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+        PageInfo pageInfo = new PageInfo<>(pageResultList);
+        return OutputResult.buildSucc(new PageResponse<>(
+                pageInfo.getTotal(), pageInfo.getList()
+        ));
     }
 
     @Override
-    public OutputResult listSelected(StockSelectedRo stockSelectedRo) {
-        PageHelper.startPage(stockSelectedRo.getPageNum(),stockSelectedRo.getPageSize());
-        List<StockSelectedVo> stockInfoList=
-                stockSelectedMapper.selectByKeyword(stockSelectedRo.getUserId(),
-                        stockSelectedRo.getKeyword());
-        PageInfo pageInfo=new PageInfo<>(stockInfoList);
-        return OutputResult.success(new PageResponse<StockSelectedVo>(pageInfo.getTotal(),
-                pageInfo.getList()));
+    public OutputResult validateAdd(StockSelectedRo stockSelectedRo, int maxSelectedNum) {
+        StockSelected stockSelected = stockSelectedAssembler.doToEntity(
+                stockSelectedDomainService.getByUserIdAndCodeAndStatus(
+                        stockSelectedRo.getUserId(),
+                        stockSelectedRo.getStockCode(),
+                        DataFlagType.NORMAL.getCode()
+                )
+        );
+        if (stockSelected != null &&
+                DataFlagType.NORMAL.getCode().equals(
+                        stockSelected.getStatus()
+                )) {
+            log.info("用户{}添加股票 {} 到自选失败，因为已经存在了",stockSelectedRo.getUserId(),
+                    stockSelectedRo.getStockCode());
+            return OutputResult.buildAlert(ResultCode.STOCK_SELECTED_EXISTS);
+        }
+        //看是否超过最大的数量
+        if (checkMaxCount(stockSelectedRo.getUserId(),maxSelectedNum)) {
+            return OutputResult.buildAlert(ResultCode.STOCK_SELECTED_MAX_LIMIT);
+        }
+        return OutputResult.buildSucc();
+    }
+
+    @Override
+    public void updateSelected(StockSelected stockSelected) {
+         stockSelectedDomainService.updateById(
+                stockSelectedAssembler.entityToDo(
+                        stockSelected
+                )
+        );
+    }
+
+    @Override
+    public Map<String, String> listStockCodeByUserId(Integer userId) {
+
+        List<StockSelectedDo> stockSelectedDoList = stockSelectedDomainService.listByUserIdAndCodeAndStatus(
+                userId, null, DataFlagType.NORMAL.getCode()
+        );
+        return stockSelectedDoList.stream().collect(
+                Collectors.toMap(
+                        StockSelectedDo::getStockCode,
+                        StockSelectedDo::getStockName,
+                        (o,n)->n
+                )
+        );
     }
 
     @Override
     public OutputResult deleteByCode(StockSelectedRo stockSelectedRo) {
-        QueryWrapper<StockSelected> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("stock_code",stockSelectedRo.getStockCode());
-        queryWrapper.eq("user_id",stockSelectedRo.getUserId());
-        queryWrapper.eq("flag",DataFlagType.NORMAL.getCode());
-        //进行删除
-        //获取对应的自选信息.
-        StockSelected stockSelected = getSelectedByWrapper(queryWrapper);
-        if(stockSelected== null){
-            return OutputResult.alert("已经被移出自选了");
-        }
-        //否则的话，修改成删除状态
-        stockSelected.setFlag(
-                DataFlagType.DELETE.getCode()
-        );
-        stockSelectedMapper.deleteById(stockSelected.getId());
-        //需要暂停任务
-        xxlJobService.disableJob(
-                stockSelected.getJobId()
-        );
-        stockRedisUtil.removePrice(stockSelected.getStockCode());
-        return OutputResult.success();
-
+       StockSelected stockSelected = stockSelectedAssembler.doToEntity(
+               stockSelectedDomainService.getByUserIdAndCodeAndStatus(
+                       stockSelectedRo.getUserId(),
+                       stockSelectedRo.getStockCode(),
+                       null
+               )
+       );
+       return deleteByInfo(stockSelected,stockSelected.getUserId());
     }
 
     @Override
     public void syncDayHistory() {
         //查询出所有的自选表里面的股票记录信息
-        List<String> codeList = stockSelectedMapper.findCodeList(null);
-        for(String code:codeList){
-            //对股票进行同步
-            StockRo stockRo = new StockRo();
-            stockRo.setType(
-                    SyncStockHistoryType.SELF.getCode()
-            );
-            Date now = DateUtil.date();
-            //获取上一天的记录
-            Date beforeOne = DateUtil.offsetDay(now,-1);
-            stockRo.setStartDate(
-                    DateUtil.format(beforeOne,"yyyy-MM-dd hh:mm:ss")
-            );
-            stockRo.setEndDate(
-                    DateUtil.format(now,"yyyy-MM-dd hh:mm:ss")
-            );
-            stockRo.setCode(code);
-            stockRo.setExchange(ExchangeType.SH.getCode());
-            stockCrawlerService.stockHistoryAsync(
-                    stockRo
-            );
-        }
+        //List<String> codeList = stockSelectedDoMapper.findCodeList(null);
+        //for (String code : codeList) {
+        //    //对股票进行同步
+        //    StockRo stockRo = new StockRo();
+        //    stockRo.setType(
+        //            SyncStockHistoryType.SELF.getCode()
+        //    );
+        //    Date now = DateUtil.date();
+        //    //获取上一天的记录
+        //    Date beforeOne = DateUtil.offsetDay(now, -1);
+        //    stockRo.setStartDate(
+        //            DateUtil.format(beforeOne, "yyyy-MM-dd hh:mm:ss")
+        //    );
+        //    stockRo.setEndDate(
+        //            DateUtil.format(now, "yyyy-MM-dd hh:mm:ss")
+        //    );
+        //    stockRo.setCode(code);
+        //    stockRo.setExchange(ExchangeType.SH.getCode());
+        //    stockCrawlerService.stockHistoryAsync(
+        //            stockRo
+        //    );
+        //}
     }
 
     @Override
     public void cacheClosePrice() {
-        //查询出所有的自选表里面的股票记录信息
-        List<String> codeList = stockSelectedMapper.findCodeList(null);
-        //获取相关的信息，进行处理。
-       List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
-       //循环设置缓存信息
-        if(CollectionUtils.isEmpty(priceCacheDtoList)){
-            log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}",codeList);
-            return ;
-        }
-        for(StockPriceCacheDto priceCacheDto:priceCacheDtoList){
-            stockRedisUtil.setYesPrice(priceCacheDto.getCode(),priceCacheDto.getPrice());
-        }
+        ////查询出所有的自选表里面的股票记录信息
+        //List<String> codeList = stockSelectedDoMapper.findCodeList(null);
+        ////获取相关的信息，进行处理。
+        //List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
+        ////循环设置缓存信息
+        //if (CollectionUtils.isEmpty(priceCacheDtoList)) {
+        //    log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}", codeList);
+        //    return;
+        //}
+        //for (StockPriceCacheDto priceCacheDto : priceCacheDtoList) {
+        //    stockRedisUtil.setYesPrice(priceCacheDto.getCode(), priceCacheDto.getPrice());
+        //}
     }
 
     @Override
-    public List<StockSelectedVo> listSelf(Integer userId,String keyword) {
+    public List<StockSelectedVo> listSelf(Integer userId, String keyword) {
         //查询所有的股票信息
-                return stockSelectedMapper.selectByKeyword(userId,
-                      keyword);
-
-    }
-    // Integer addJob(String cron, String jobDesc, Integer group,
-    // String jobHandler, String creator, Integer executorParam);
-    /**
-     * 添加任务
-     * @param stockSelectedRo
-     * @return
-     */
-    private Integer addJob(StockSelectedRo stockSelectedRo) {
-        return xxlJobService.addJob(
-                XxlJobConst.SELECTED_SCAN_CRON,
-                stockSelectedRo.getUserId()+"自选股票"+stockSelectedRo.getStockCode(),
-                XxlJobConst.JOB_SELECTED_GROUP,
-                XxlJobConst.SELECTED_SCAN_HANDLER,
-                stockSelectedRo.getUserId()+"",
-                stockSelectedRo.getStockCode()
+        List<StockSelectedDo> stockSelectedDoList =
+                stockSelectedDomainService.listByUserIdAndKeyword(userId, keyword);
+        if (CollectionUtils.isEmpty(stockSelectedDoList)) {
+            return Collections.EMPTY_LIST;
+        }
+        List<StockSelectedVo> stockSelectedVoList = new ArrayList<>(stockSelectedDoList.size());
+        stockSelectedDoList.forEach(
+                n -> {
+                    stockSelectedVoList.add(
+                            stockSelectedAssembler.entityToVo(
+                                    stockSelectedAssembler.doToEntity(n)
+                            )
+                    );
+                }
         );
+        return stockSelectedVoList;
     }
 }

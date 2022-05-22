@@ -1,18 +1,19 @@
 package top.yueshushu.learn.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import top.yueshushu.learn.domainservice.TradeMethodDomainService;
 import top.yueshushu.learn.enumtype.TradeMethodType;
-import top.yueshushu.learn.pojo.TradeMethod;
-import top.yueshushu.learn.mapper.TradeMethodMapper;
+import top.yueshushu.learn.domain.TradeMethodDo;
+import top.yueshushu.learn.mapper.TradeMethodDoMapper;
 import top.yueshushu.learn.service.TradeMethodService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,11 +26,11 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class TradeMethodServiceImpl extends ServiceImpl<TradeMethodMapper, TradeMethod> implements TradeMethodService {
-    @Autowired
-    private TradeMethodMapper tradeMethodMapper;
+public class TradeMethodServiceImpl implements TradeMethodService {
+    @Resource
+    private TradeMethodDomainService tradeMethodDomainService;
     @Override
-    public TradeMethod getMethod(TradeMethodType tradeMethodType) {
+    public TradeMethodDo getMethod(TradeMethodType tradeMethodType) {
         if(null==tradeMethodType){
             return null;
         }
@@ -37,18 +38,10 @@ public class TradeMethodServiceImpl extends ServiceImpl<TradeMethodMapper, Trade
     }
 
     @Override
-    public TradeMethod getMethodByCode(String methodCode) {
+    public TradeMethodDo getMethodByCode(String methodCode) {
         if(!StringUtils.hasText(methodCode)){
             return null;
         }
-        //获取相关的方法信息
-        QueryWrapper<TradeMethod> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("code",methodCode);
-        List<TradeMethod> tradeMethodList = tradeMethodMapper.selectList(queryWrapper);
-        if(CollectionUtils.isEmpty(tradeMethodList)){
-            log.error("交易方法:查询的交易方法{}不存在",methodCode);
-            return null;
-        }
-        return tradeMethodList.get(0);
+        return tradeMethodDomainService.getMethodByCode(methodCode);
     }
 }

@@ -3,7 +3,7 @@
 <mapper namespace="top.yueshushu.learn.mapper.TradeRuleMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="top.yueshushu.learn.pojo.TradeRule">
+    <resultMap id="BaseResultMap" type="top.yueshushu.learn.domain.TradeRuleDo">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="condition_code" property="conditionCode" />

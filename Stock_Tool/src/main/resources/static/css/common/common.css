@@ -2,10 +2,10 @@
 	cursor: pointer;
 }
 
-/* ÏÂºáÏßinput¿ò */
+/* ä¸‹æ¨ªçº¿inputæ¡† */
 .underline_input{
 	border: none;
-	border-bottom: 1px solid #ccc;	
+	border-bottom: 1px solid #ccc;
 	display: block;
 	width: 100%;
 	height: 34px;
@@ -22,13 +22,13 @@
 	border-radius: 4px;
 	outline: 0;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
 }
 .underline_input[disabled]{
 	cursor: not-allowed;
 }
 
-/* ÎŞ¿òÏßinput¿ò */
+/* æ— æ¡†çº¿inputæ¡† */
 .noborder_input{
 	border: none;
 	display: block;
@@ -42,7 +42,7 @@
 	background-image: none;
 }
 
-/* ÈÕÆÚinput¿ò */
+/* æ—¥æœŸinputæ¡† */
 .date_input{
 	border: 1px solid #ccc;
 	display: block;
@@ -59,12 +59,12 @@
 }
 
 
-/* tooltipĞÅÏ¢¾Ó×ó */
+/* tooltipä¿¡æ¯å±…å·¦ */
 .tooltip-inner {
 	text-align: left;
 }
 
-/* ÔÂ·İ */
+/* æœˆä»½ */
 .datetimepicker-months{
 	width:220px;
 }
@@ -72,12 +72,12 @@ div.datetimepicker div:nth-child(4) > table:nth-child(1){
 	width:220px;
 }
 
-/* ÎŞ±³¾°ÑÕÉ« */
+/* æ— èƒŒæ™¯é¢œè‰² */
 .no-bg{
 	background-color: white;
 }
 
-/* ²Ù×÷°´Å¥ */
+/* æ“ä½œæŒ‰é’® */
 .operate_button{
 	width: 20xp;
 	height: 20px;

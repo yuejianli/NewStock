@@ -18,6 +18,10 @@ public class MoneyVo extends PoundageVo implements Serializable{
      */
     private String code;
     /**
+     * @param code 股票的名称
+     */
+    private String name;
+    /**
      * @param price 买入时的价格
      */
     private String price;

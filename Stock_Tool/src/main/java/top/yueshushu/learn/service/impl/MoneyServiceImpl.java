@@ -36,51 +36,17 @@ import java.util.List;
 @Slf4j
 public class MoneyServiceImpl implements MoneyService {
     @Override
-    public OutputResult calcMoney(MoneyRo moneyRo) {
-        //1. 进行验证
-        OutputResult validateResponse=validateRo(moneyRo);
-        if(null!=validateResponse){
-            return validateResponse;
-        }
-        //2. 组装数据,处理预期的价格,也就是卖的价格.
-        Double makePrice=handlerPrice(moneyRo);
-        moneyRo.setMakePrice(makePrice);
-        //3. 获取数据
-        MoneyVo moneyVo=assemblyMoneyVo(moneyRo);
-        return OutputResult.success(moneyVo);
+    public Double handlerClearPrice(MoneyRo moneyRo) {
+        return handlerPrice(moneyRo);
     }
 
     @Override
-    public OutputResult coverMoney(MoneyRo moneyRo) {
-        //1. 进行验证
-        OutputResult validateResponse=validateRo(moneyRo);
-        if(null!=validateResponse){
-            return validateResponse;
-        }
-        //2. 组装数据,处理预期的价格,也就是卖的价格.
-        Double makePrice=handlerCovertPrice(moneyRo);
-        moneyRo.setSecPrice(makePrice);
-        //3. 获取数据
-        CalcMoneyVo calcMoneyVo=coverCalcMoneyVo(moneyRo);
-        return OutputResult.success(calcMoneyVo);
+    public MoneyVo assemblyClearMoneyVo(MoneyRo moneyRo) {
+        return assemblyMoneyVo(moneyRo);
     }
 
     @Override
-    public OutputResult reduceMoney(MoneyRo moneyRo) {
-        //1. 进行验证
-        OutputResult validateResponse=validateRo(moneyRo);
-        if(null!=validateResponse){
-            return validateResponse;
-        }
-        //2. 组装数据,处理预期的价格,也就是卖的价格.
-        Double makePrice=handlerReducePrice(moneyRo);
-        moneyRo.setSecPrice(makePrice);
-        //3. 获取数据
-        CalcMoneyVo calcMoneyVo=reduceCalcMoneyVo(moneyRo);
-        return OutputResult.success(calcMoneyVo);
-    }
-
-    private CalcMoneyVo reduceCalcMoneyVo(MoneyRo moneyRo) {
+    public CalcMoneyVo reduceCalcMoneyVo(MoneyRo moneyRo) {
         CalcMoneyVo result=new CalcMoneyVo();
         //填充基本的信息
         result.setCode(moneyRo.getCode());
@@ -208,7 +174,8 @@ public class MoneyServiceImpl implements MoneyService {
         result.setCalcBuyMoneyVoList(calcBuyMoneyVoList);
     }
 
-    private Double handlerReducePrice(MoneyRo moneyRo) {
+    @Override
+    public Double handlerReducePrice(MoneyRo moneyRo) {
         Double result=0.0d;
         switch (moneyRo.getType()){
             case 1:{
@@ -217,10 +184,6 @@ public class MoneyServiceImpl implements MoneyService {
             }
             case 2:{
                 result=reduceMoneyToPrice(moneyRo);
-                break;
-            }
-            case 3:{
-                result=covertPatternToPrice(moneyRo);
                 break;
             }
             default:{
@@ -267,7 +230,8 @@ public class MoneyServiceImpl implements MoneyService {
      * @param moneyRo
      * @return
      */
-    private CalcMoneyVo coverCalcMoneyVo(MoneyRo moneyRo) {
+    @Override
+    public CalcMoneyVo coverCalcMoneyVo(MoneyRo moneyRo) {
         CalcMoneyVo result=new CalcMoneyVo();
         //填充基本的信息
         result.setCode(moneyRo.getCode());
@@ -382,7 +346,8 @@ public class MoneyServiceImpl implements MoneyService {
      * @param moneyRo
      * @return
      */
-    private Double handlerCovertPrice(MoneyRo moneyRo) {
+    @Override
+    public Double handlerCovertPrice(MoneyRo moneyRo) {
         Double result=0.0d;
         switch (moneyRo.getType()){
             case 1:{
@@ -393,10 +358,6 @@ public class MoneyServiceImpl implements MoneyService {
                 result=coverMoneyToPrice(moneyRo);
                 break;
             }
-            case 3:{
-                result=covertPatternToPrice(moneyRo);
-                break;
-            }
             default:{
                 break;
             }
@@ -404,16 +365,6 @@ public class MoneyServiceImpl implements MoneyService {
         return result;
 
     }
-
-    /**
-     * 补仓位时，将比例转换成金额.
-     * @param moneyRo
-     * @return
-     */
-    private Double covertPatternToPrice(MoneyRo moneyRo) {
-        return null;
-    }
-
     /**
      * 补仓位的最后价格转换成相应的买入价格
      * @param moneyRo
@@ -452,9 +403,9 @@ public class MoneyServiceImpl implements MoneyService {
 
 
     /**
-     * 处理预期的价格
-     * @param moneyRo
-     * @return
+     * 返回预期的清仓价格
+     * @param moneyRo 价格对象
+     * @return 返回预期的清仓价格
      */
     private Double handlerPrice(MoneyRo moneyRo) {
         Double result=0.0d;
@@ -479,9 +430,9 @@ public class MoneyServiceImpl implements MoneyService {
     }
 
     /**
-     * 比例转换
-     * @param moneyRo
-     * @return
+     * 清仓时，将比例转换成相应的价格
+     * @param moneyRo 清仓时对象
+     * @return 清仓时，将比例转换成相应的价格
      */
     private Double patternToPrice(MoneyRo moneyRo) {
         Double result=moneyRo.getPrice();
@@ -507,10 +458,9 @@ public class MoneyServiceImpl implements MoneyService {
     }
 
     /**
-     * 处理，转换.
-     * 将金额，转换成对应的卖出价格
-     * @param moneyRo
-     * @return
+     * 清仓时,将金额，转换成对应的卖出价格
+     * @param moneyRo 清仓时的对象
+     * @return 清仓时,将金额，转换成对应的卖出价格
      */
     private Double moneyToPrice(MoneyRo moneyRo) {
         Double result=moneyRo.getPrice();
@@ -536,9 +486,9 @@ public class MoneyServiceImpl implements MoneyService {
         return result;
     }
     /**
-     * 组装数据
-     * @param moneyRo
-     * @return
+     * 将信息进行处理，转换
+     * @param moneyRo 清仓信息对象
+     * @return 将信息进行处理，转换
      */
     private MoneyVo assemblyMoneyVo(MoneyRo moneyRo) {
         MoneyVo result=new MoneyVo();
@@ -555,8 +505,8 @@ public class MoneyServiceImpl implements MoneyService {
 
     /**
      * 封装基本的数据信息
-     * @param moneyRo
-     * @param result
+     * @param moneyRo 工具对象
+     * @param result 返回基础信息响应结果
      */
     private void basicInfo(MoneyRo moneyRo, MoneyVo result) {
         result.setCode(moneyRo.getCode());
@@ -570,7 +520,7 @@ public class MoneyServiceImpl implements MoneyService {
 
     /**
      * 处理计算的信息
-     * @param result
+     * @param result 响应结果处理
      */
     private void calcInfo(MoneyVo result) {
         BigDecimal buyMoney=BigDecimalUtil.toBigDecimal(
@@ -631,6 +581,11 @@ public class MoneyServiceImpl implements MoneyService {
         );
     }
 
+    /**
+     * 封装手续费信息到 result Vo 里面
+     * @param poundageCalcDto 手续费对象
+     * @param result 封装手续费信息到 result Vo 里面
+     */
     private void chargeInfo(PoundageCalcDto poundageCalcDto, MoneyVo result) {
         result.setPlatformFee(BigDecimalUtil.toString(poundageCalcDto.getPlatformFee()));
         result.setTradingArea(poundageCalcDto.getTradingAreaType().getCode());
@@ -650,9 +605,9 @@ public class MoneyServiceImpl implements MoneyService {
     }
 
     /**
-     * 获取相应的手续费等信息
-     * @param moneyRo
-     * @return
+     * 获取相应的手续费信息
+     * @param moneyRo 工具对象
+     * @return 获取相应的手续费信息
      */
     private PoundageCalcDto calcPoundageCalcDto(MoneyRo moneyRo) {
         //1.先构建对应的 PoundageDto 信息

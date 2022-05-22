@@ -1,7 +1,6 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.SellRo;
-import top.yueshushu.learn.pojo.Config;
-import top.yueshushu.learn.pojo.TradeEntrust;
-import top.yueshushu.learn.pojo.TradePosition;
+import top.yueshushu.learn.domain.ConfigDo;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domain.TradePositionDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.*;
 import top.yueshushu.learn.system.SystemConst;
@@ -39,75 +38,75 @@ public class SellServiceImpl implements SellService {
     public OutputResult sell(SellRo sellRo) {
         //对非空的验证信息
         if(!StringUtils.hasText(sellRo.getCode())){
-            return OutputResult.alert("请传入卖出的股票信息");
+            return OutputResult.buildAlert("请传入卖出的股票信息");
         }
         if(sellRo.getAmount()==null){
-            return OutputResult.alert("请传入卖出的股票股数信息");
+            return OutputResult.buildAlert("请传入卖出的股票股数信息");
         }
         if(sellRo.getPrice()==null){
-            return OutputResult.alert("请传入卖出的股票的价格信息");
+            return OutputResult.buildAlert("请传入卖出的股票的价格信息");
         }
         //获取当前该股票的持仓数和可用数.
-        TradePosition tradePosition = tradePositionService.getPositionByCode(
+        TradePositionDo tradePositionDo = tradePositionService.getPositionByCode(
                 sellRo.getUserId(),
                 sellRo.getMockType(),
                sellRo.getCode()
         );
-        if(tradePosition==null){
-            return OutputResult.alert("没有持仓信息，无法卖出");
+        if(tradePositionDo ==null){
+            return OutputResult.buildAlert("没有持仓信息，无法卖出");
         }
-        if(tradePosition.getUseAmount()<sellRo.getAmount()){
-            return OutputResult.alert("份额不足，请检查目前持仓数量");
+        if(tradePositionDo.getUseAmount()<sellRo.getAmount()){
+            return OutputResult.buildAlert("份额不足，请检查目前持仓数量");
         }
-        tradePosition.setUseAmount(
-                tradePosition.getUseAmount()
+        tradePositionDo.setUseAmount(
+                tradePositionDo.getUseAmount()
                 - sellRo.getAmount()
         );
         //更新
-        tradePositionService.updateById(tradePosition);
+        tradePositionService.updateById(tradePositionDo);
         //获取对应的金额
-        Config priceConfig = configService.getConfigByCode(
+        ConfigDo priceConfigDo = configService.getConfigByCode(
                 sellRo.getUserId(),
                 ConfigCodeType.TRANPRICE.getCode()
         );
-        TradeEntrust tradeEntrust = new TradeEntrust();
-        tradeEntrust.setCode(sellRo.getCode());
-        tradeEntrust.setName(sellRo.getName());
-        tradeEntrust.setEntrustDate(DateUtil.date());
-        tradeEntrust.setDealType(DealType.SELL.getCode());
-        tradeEntrust.setEntrustNum(sellRo.getAmount());
-        tradeEntrust.setEntrustPrice(BigDecimalUtil.convertFour(sellRo.getPrice()));
-        tradeEntrust.setEntrustStatus(EntrustStatusType.ING.getCode());
-        tradeEntrust.setEntrustCode(StockUtil.generateEntrustCode());
-        tradeEntrust.setUseMoney(SystemConst.DEFAULT_EMPTY);
-        tradeEntrust.setTakeoutMoney(SystemConst.DEFAULT_EMPTY);
+        TradeEntrustDo tradeEntrustDo = new TradeEntrustDo();
+        tradeEntrustDo.setCode(sellRo.getCode());
+        tradeEntrustDo.setName(sellRo.getName());
+        tradeEntrustDo.setEntrustDate(DateUtil.date());
+        tradeEntrustDo.setDealType(DealType.SELL.getCode());
+        tradeEntrustDo.setEntrustNum(sellRo.getAmount());
+        tradeEntrustDo.setEntrustPrice(BigDecimalUtil.convertFour(sellRo.getPrice()));
+        tradeEntrustDo.setEntrustStatus(EntrustStatusType.ING.getCode());
+        tradeEntrustDo.setEntrustCode(StockUtil.generateEntrustCode());
+        tradeEntrustDo.setUseMoney(SystemConst.DEFAULT_EMPTY);
+        tradeEntrustDo.setTakeoutMoney(SystemConst.DEFAULT_EMPTY);
 
-        tradeEntrust.setEntrustMoney(
+        tradeEntrustDo.setEntrustMoney(
                 StockUtil.allMoney(
                         sellRo.getAmount(),
                         sellRo.getPrice()
                 )
         );
-        tradeEntrust.setHandMoney(
+        tradeEntrustDo.setHandMoney(
                 StockUtil.getSellHandMoney(
                         sellRo.getAmount(),
                         sellRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfig.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
                 )
         );
-        tradeEntrust.setTotalMoney(
+        tradeEntrustDo.setTotalMoney(
                 StockUtil.getSellMoney(
                         sellRo.getAmount(),
                         sellRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfig.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
                 )
         );
-        tradeEntrust.setUserId(sellRo.getUserId());
-        tradeEntrust.setEntrustType(EntrustType.HANDLER.getCode());
-        tradeEntrust.setMockType(sellRo.getMockType());
-        tradeEntrust.setFlag(DataFlagType.NORMAL.getCode());
+        tradeEntrustDo.setUserId(sellRo.getUserId());
+        tradeEntrustDo.setEntrustType(EntrustType.HANDLER.getCode());
+        tradeEntrustDo.setMockType(sellRo.getMockType());
+        tradeEntrustDo.setFlag(DataFlagType.NORMAL.getCode());
         //放入一条记录到委托信息里面.
-        tradeEntrustService.save(tradeEntrust);
-        return OutputResult.success("卖出股票委托成功");
+        tradeEntrustService.save(tradeEntrustDo);
+        return OutputResult.buildSucc("卖出股票委托成功");
     }
 }

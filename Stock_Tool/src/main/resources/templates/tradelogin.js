@@ -1,16 +1,21 @@
 var yzmKey="yzm";
-var timeStamp="";
-function getRealYzmUrl() {
+/**
+ * 拼接验证码信息
+ * @returns 验证码地址+随机数
+ */
+function concatRealYzmUrl() {
     //从缓存中，获取相关的方法.
     let yzmUrl = getYzmUrl();
-    //将其封装，添加数字.
-    timeStamp=new Date().getTime();
-    return yzmUrl+"0.903"+timeStamp;
+    return yzmUrl+randomNum();
 }
-
+function randomNum(){
+    //将其封装，添加数字.
+    let timeStamp=new Date().getTime();
+    return "0.903"+timeStamp;
+}
 function reloadYzm() {
     //将其转换，封装成真正的 url
-    let realYzmUrl = getRealYzmUrl();
+    let realYzmUrl = concatRealYzmUrl();
     //封装成 url
     $("#yzm").attr("src",realYzmUrl);
 }
@@ -22,6 +27,10 @@ $("#yzm").click(function(){
     reloadYzm();
 })
 
+
+/**
+ * 交易用户的相关处理
+ */
 //点击登录
 $("#login").click(function(){
     const info = getFillInfo();
@@ -29,13 +38,13 @@ $("#login").click(function(){
     if(!validateSubmit(info)){
         return ;
     }
-    info.randNum="0.903"+timeStamp;
-    let postResponse = postAjax("../tradeUser/login",info);
+    info.randNum=randomNum();
+    let postResponse = postAjax(TRADE_USER_LOGIN_URL,info);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         Flavr.falert("交易用户登录成功");
-        //进行跳转
-        window.location.href = "../index";
+        //进行跳转,跳转到首页
+        window.location.href = "index";
     }else{
         Flavr.falert(postResponse.message);
     }
@@ -71,20 +80,12 @@ function validateSubmit(info){
 
 function getYzmUrl() {
     //看session 里面是否有对应的地址
-    var data=sessionStorage.getItem(yzmKey);
+    let data=sessionStorage.getItem(yzmKey);
     if(!isEmpty(data)){
         return data;
     }
-    let getResponse = getAjax("../tradeMethod/yzm");
-    let yzmResult=getResponse.data.result;
+    let getResponse = getAjax(TRADE_USER_LOGIN_YZM_URL);
+    let yzmResult=getResponse.data;
     sessionStorage.setItem(yzmKey,yzmResult);
     return yzmResult;
-}
-//判断字符是否为空的方法
-function isEmpty(obj){
-    if(typeof obj == "undefined" || obj == null || obj == ""){
-        return true;
-    }else{
-        return false;
-    }
 }

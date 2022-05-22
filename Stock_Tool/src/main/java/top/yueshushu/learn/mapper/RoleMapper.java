@@ -1,6 +1,6 @@
 package top.yueshushu.learn.mapper;
 
-import top.yueshushu.learn.pojo.Role;
+import top.yueshushu.learn.domain.RoleDo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 岳建立  自定义的
  * @since 2022-01-02
  */
-public interface RoleMapper extends BaseMapper<Role> {
+public interface RoleMapper extends BaseMapper<RoleDo> {
 
 }

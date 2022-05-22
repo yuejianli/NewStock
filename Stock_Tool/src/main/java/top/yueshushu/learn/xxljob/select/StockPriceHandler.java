@@ -4,14 +4,10 @@ import cn.hutool.core.date.DateUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.yueshushu.learn.pojo.StockSelected;
 import top.yueshushu.learn.service.StockCrawlerService;
-import top.yueshushu.learn.service.StockSelectedService;
-import top.yueshushu.learn.service.StockService;
-import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.util.MyDateUtil;
 
 import java.util.Date;
@@ -25,7 +21,7 @@ import java.util.Date;
  **/
 @Component
 @JobHandler("stockPriceHandler")
-@Log4j2(topic = "stockPriceHandler")
+@Slf4j(topic = "stockPriceHandler")
 public class StockPriceHandler extends IJobHandler {
     @Autowired
     private StockCrawlerService stockCrawlerService;
@@ -34,6 +30,8 @@ public class StockPriceHandler extends IJobHandler {
         //获取当前的股票信息。取第一个值.
         String code = s;
         Date now = DateUtil.date();
+        // 对时间的一些处理验证
+
         if(!MyDateUtil.between930And15()){
             return ReturnT.SUCCESS;
         }

@@ -3,7 +3,6 @@ package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.ro.TradeDealRo;
 import top.yueshushu.learn.mode.vo.TradeDealVo;
-import top.yueshushu.learn.pojo.TradeDeal;
+import top.yueshushu.learn.domain.TradeDealDo;
 import top.yueshushu.learn.mapper.TradeDealMapper;
-import top.yueshushu.learn.pojo.TradeEntrust;
+import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeDealService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -47,7 +46,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal> implements TradeDealService {
+public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDealDo> implements TradeDealService {
     @Autowired
     private TradeDealMapper tradeDealMapper;
     @Resource
@@ -59,11 +58,11 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
     @Override
     public OutputResult listDeal(TradeDealRo tradeDealRo) {
         if(null==tradeDealRo.getMockType()){
-            return OutputResult.alert("请传入交易盘的类型");
+            return OutputResult.buildAlert("请传入交易盘的类型");
         }
         MockType mockType = MockType.getMockType(tradeDealRo.getMockType());
         if(null==mockType){
-            return OutputResult.alert("不支持的交易盘的类型");
+            return OutputResult.buildAlert("不支持的交易盘的类型");
         }
         if(MockType.MOCK.getCode().equals(mockType.getCode())){
             return mockList(tradeDealRo);
@@ -74,40 +73,40 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
     }
 
     @Override
-    public void addDealRecord(TradeEntrust tradeEntrust) {
-        TradeDeal tradeDeal = new TradeDeal();
-        tradeDeal.setCode(tradeEntrust.getCode());
-        tradeDeal.setName(tradeEntrust.getName());
-        tradeDeal.setDealDate(DateUtil.date());
-        tradeDeal.setDealType(tradeEntrust.getDealType());
-        tradeDeal.setDealNum(tradeEntrust.getEntrustNum());
-        tradeDeal.setDealPrice(tradeEntrust.getEntrustPrice());
-        tradeDeal.setDealMoney(
+    public void addDealRecord(TradeEntrustDo tradeEntrustDo) {
+        TradeDealDo tradeDealDo = new TradeDealDo();
+        tradeDealDo.setCode(tradeEntrustDo.getCode());
+        tradeDealDo.setName(tradeEntrustDo.getName());
+        tradeDealDo.setDealDate(DateUtil.date());
+        tradeDealDo.setDealType(tradeEntrustDo.getDealType());
+        tradeDealDo.setDealNum(tradeEntrustDo.getEntrustNum());
+        tradeDealDo.setDealPrice(tradeEntrustDo.getEntrustPrice());
+        tradeDealDo.setDealMoney(
                 BigDecimalUtil.toBigDecimal(
-                        tradeEntrust.getEntrustPrice(),
+                        tradeEntrustDo.getEntrustPrice(),
                         new BigDecimal(
-                                tradeEntrust.getEntrustNum()
+                                tradeEntrustDo.getEntrustNum()
                         )
                 )
         );
-        tradeDeal.setDealCode(
+        tradeDealDo.setDealCode(
                 StockUtil.generateDealCode()
         );
-        tradeDeal.setEntrustCode(tradeEntrust.getEntrustCode());
-        tradeDeal.setUserId(tradeEntrust.getUserId());
-        tradeDeal.setMockType(tradeEntrust.getMockType());
-        tradeDeal.setFlag(DataFlagType.NORMAL.getCode());
-        tradeDealMapper.insert(tradeDeal);
+        tradeDealDo.setEntrustCode(tradeEntrustDo.getEntrustCode());
+        tradeDealDo.setUserId(tradeEntrustDo.getUserId());
+        tradeDealDo.setMockType(tradeEntrustDo.getMockType());
+        tradeDealDo.setFlag(DataFlagType.NORMAL.getCode());
+        tradeDealMapper.insert(tradeDealDo);
     }
 
     @Override
     public OutputResult history(TradeDealRo tradeDealRo) {
         if(null==tradeDealRo.getMockType()){
-            return OutputResult.alert("请传入交易盘的类型");
+            return OutputResult.buildAlert("请传入交易盘的类型");
         }
         MockType mockType = MockType.getMockType(tradeDealRo.getMockType());
         if(null==mockType){
-            return OutputResult.alert("不支持的交易盘的类型");
+            return OutputResult.buildAlert("不支持的交易盘的类型");
         }
         if(MockType.MOCK.getCode().equals(mockType.getCode())){
             return mockHistoryList(tradeDealRo);
@@ -125,7 +124,7 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
         //获取响应信息
         TradeResultVo<GetDealDataResponse> tradeResultVo = getDealDataResponse(tradeDealRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.alert("查询我的持仓失败");
+            return OutputResult.buildAlert("查询我的持仓失败");
         }
         List<GetDealDataResponse> data = tradeResultVo.getData();
 
@@ -135,7 +134,7 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
             tradeDealVo.setCode(getDealDataResponse.getCjbh());
             tradeDealVoList.add(tradeDealVo);
         }
-        return OutputResult.success(tradeDealVoList);
+        return OutputResult.buildSucc(tradeDealVoList);
     }
 
     /**
@@ -167,25 +166,25 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
     private OutputResult mockList(TradeDealRo tradeDealRo) {
         Date now = DateUtil.date();
         Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeDeal> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradeDealDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",tradeDealRo.getUserId());
         queryWrapper.eq("mock_type",tradeDealRo.getMockType());
         queryWrapper.gt("deal_date",beginNow);
         queryWrapper.orderByDesc("id");
         //根据用户去查询信息
-        List<TradeDeal> tradeDealList = tradeDealMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeDealList)) {
-            return OutputResult.success(new ArrayList<TradeDealVo>());
+        List<TradeDealDo> tradeDealDoList = tradeDealMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeDealDoList)) {
+            return OutputResult.buildSucc(new ArrayList<TradeDealVo>());
         }
         List<TradeDealVo> tradeDealVoList = new ArrayList<>();
-        tradeDealList.stream().forEach(
+        tradeDealDoList.stream().forEach(
                 n->{
                     TradeDealVo tradeDealVo = new TradeDealVo();
                     BeanUtils.copyProperties(n,tradeDealVo);
                     tradeDealVoList.add(tradeDealVo);
                 }
         );
-        return OutputResult.success(tradeDealVoList);
+        return OutputResult.buildSucc(tradeDealVoList);
     }
 
 
@@ -198,7 +197,7 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
         //获取响应信息
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = getHisDealDataResponse(tradeDealRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.alert("查询我的持仓失败");
+            return OutputResult.buildAlert("查询我的持仓失败");
         }
         List<GetHisDealDataResponse> data = tradeResultVo.getData();
 
@@ -208,7 +207,7 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
             tradeDealVo.setCode(getDealDataResponse.getCjbh());
             tradeDealVoList.add(tradeDealVo);
         }
-        return OutputResult.success(tradeDealVoList);
+        return OutputResult.buildSucc(tradeDealVoList);
     }
 
     /**
@@ -245,25 +244,25 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
         Date beginNow = DateUtil.beginOfDay(now);
         //获取14天前的日期
         Date before14Day = DateUtil.offsetDay(beginNow,-14);
-        QueryWrapper<TradeDeal> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradeDealDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",tradeDealRo.getUserId());
         queryWrapper.eq("mock_type",tradeDealRo.getMockType());
         queryWrapper.gt("deal_date",before14Day);
         queryWrapper.lt("deal_date",now);
         queryWrapper.orderByDesc("id");
         //根据用户去查询信息
-        List<TradeDeal> tradeDealList = tradeDealMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeDealList)) {
-            return OutputResult.success(new ArrayList<TradeDealVo>());
+        List<TradeDealDo> tradeDealDoList = tradeDealMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradeDealDoList)) {
+            return OutputResult.buildSucc(new ArrayList<TradeDealVo>());
         }
         List<TradeDealVo> tradeDealVoList = new ArrayList<>();
-        tradeDealList.stream().forEach(
+        tradeDealDoList.stream().forEach(
                 n->{
                     TradeDealVo tradeDealVo = new TradeDealVo();
                     BeanUtils.copyProperties(n,tradeDealVo);
                     tradeDealVoList.add(tradeDealVo);
                 }
         );
-        return OutputResult.success(tradeDealVoList);
+        return OutputResult.buildSucc(tradeDealVoList);
     }
 }

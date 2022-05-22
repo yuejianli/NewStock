@@ -5,6 +5,7 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.service.HolidayCalendarService;
@@ -20,7 +21,7 @@ import top.yueshushu.learn.service.TradePositionService;
  **/
 @Component
 @JobHandler("positionUseAmountHandler")
-@Log4j2(topic = "positionUseAmountHandler")
+@Slf4j(topic = "positionUseAmountHandler")
 public class PositionUseAmountHandler extends IJobHandler {
     @Autowired
     private TradePositionService tradePositionService;

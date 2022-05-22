@@ -6,14 +6,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.enumtype.TradeMethodType;
-import top.yueshushu.learn.mode.ro.IdRo;
-import top.yueshushu.learn.pojo.TradeMethod;
+import top.yueshushu.learn.domain.TradeMethodDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeMethodService;
-
-import java.text.MessageFormat;
 
 /**
  * <p>
@@ -32,12 +28,12 @@ public class TradeMethodController {
     @GetMapping("/yzm")
     @ApiOperation("获取验证码")
     public OutputResult yzm(){
-        TradeMethod tradeMethod = tradeMethodService.getMethod(
+        TradeMethodDo tradeMethodDo = tradeMethodService.getMethod(
                 TradeMethodType.yzm
         );
         //获取方法的 url
-        String url = tradeMethod.getUrl();
-        return OutputResult.success(
+        String url = tradeMethodDo.getUrl();
+        return OutputResult.buildSucc(
                url
         );
     }

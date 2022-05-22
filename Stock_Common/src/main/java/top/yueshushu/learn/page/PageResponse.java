@@ -1,7 +1,7 @@
 package top.yueshushu.learn.page;
-
 import lombok.Data;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -18,5 +18,9 @@ public class PageResponse<T> {
     public PageResponse(Long total,List<T> list){
         this.total=total;
         this.list=list;
+    }
+    public static PageResponse emptyPageResponse(){
+        return new PageResponse(0L,
+                Collections.EMPTY_LIST);
     }
 }

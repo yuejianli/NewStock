@@ -55,7 +55,7 @@ public class MyDateUtil {
     }
 
     /**
-     * 当前时间是否在下午3点之后
+     * 当前时间是否 9点半到 15点之间
      * @return
      */
     public static boolean between930And15(){

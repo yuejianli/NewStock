@@ -3,7 +3,6 @@ package top.yueshushu.learn.mode.ro;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.common.Const;
 
@@ -32,6 +31,6 @@ public class TradeUserRo implements Serializable {
         if(StringUtils.hasText(randNum)){
             return randNum;
         }
-        return Const.RANDNUM_PREFIX+System.currentTimeMillis();
+        return Const.RAND_NUMBER_PREFIX +System.currentTimeMillis();
     }
 }

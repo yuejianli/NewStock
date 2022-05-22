@@ -19,6 +19,16 @@ public class StockShowInfo implements Serializable {
      * 股票的代码
      */
     private String code;
+
+    /**
+     * 股票的全代码
+     */
+    private String fullCode;
+
+    /**
+     * 交易所类型
+     */
+    private Integer exchange;
     /**
      * 股票的名称
      */

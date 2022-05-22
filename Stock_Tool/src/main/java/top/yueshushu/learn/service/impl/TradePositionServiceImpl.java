@@ -1,7 +1,6 @@
 package top.yueshushu.learn.service.impl;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +10,15 @@ import top.yueshushu.learn.api.request.GetStockListRequest;
 import top.yueshushu.learn.api.response.GetStockListResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
 import top.yueshushu.learn.config.TradeClient;
+import top.yueshushu.learn.domain.StockSelectedDo;
+import top.yueshushu.learn.entity.StockSelected;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.enumtype.SelectedType;
-import top.yueshushu.learn.mapper.StockSelectedMapper;
+import top.yueshushu.learn.mapper.StockSelectedDoMapper;
 import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.mode.vo.TradePositionVo;
-import top.yueshushu.learn.pojo.TradePosition;
+import top.yueshushu.learn.domain.TradePositionDo;
 import top.yueshushu.learn.mapper.TradePositionMapper;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradePositionService;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j(topic = "持仓信息")
-public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, TradePosition> implements TradePositionService {
+public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, TradePositionDo> implements TradePositionService {
     @Autowired
     private TradePositionMapper tradePositionMapper;
     @Resource
@@ -55,15 +56,15 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
     @Autowired
     private StockRedisUtil stockRedisUtil;
     @Autowired
-    private StockSelectedMapper stockSelectedMapper;
+    private StockSelectedDoMapper stockSelectedDoMapper;
     @Override
     public OutputResult listPosition(TradePositionRo tradePositionRo) {
         if(null==tradePositionRo.getMockType()){
-            return OutputResult.alert("请传入交易盘的类型");
+            return OutputResult.buildAlert("请传入交易盘的类型");
         }
         MockType mockType = MockType.getMockType(tradePositionRo.getMockType());
         if(null==mockType){
-            return OutputResult.alert("不支持的交易盘的类型");
+            return OutputResult.buildAlert("不支持的交易盘的类型");
         }
         OutputResult outputResult = null;
         if(MockType.MOCK.getCode().equals(mockType.getCode())){
@@ -76,7 +77,7 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
             return outputResult;
         }
         //获取里面对应的信息
-       List<TradePositionVo>  tradePositionVoList= (List<TradePositionVo>) outputResult.getData().get("result");
+       List<TradePositionVo>  tradePositionVoList= (List<TradePositionVo>) outputResult.getData();
        //最后的结果处理
        List<TradePositionVo> result = new ArrayList<>();
        if(!CollectionUtils.isEmpty(tradePositionVoList)){
@@ -118,40 +119,40 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
            ).collect(Collectors.toList());
 
            //查询该员工对应的自选基金
-           List<StockSelectedVo> stockInfoList=
-                   stockSelectedMapper.selectByKeyword(tradePositionRo.getUserId(),
+           List<StockSelectedDo> stockInfoList=
+                   stockSelectedDoMapper.listByUserIdAndKeyword(tradePositionRo.getUserId(),
                            null);
            //对自选基金进行处理,如果有的话，就不用处理了。
            if(!CollectionUtils.isEmpty(stockInfoList)){
-               for(StockSelectedVo stockSelectedVo:stockInfoList){
+               for(StockSelectedDo stockSelectedVo:stockInfoList){
                    if(positionCodeList.contains(stockSelectedVo.getStockCode())){
                        continue;
                    }
                    //如果没有的话，就进行相关的查询，组装.
                    TradePositionVo tradePositionVo = getTradePositionVoBySelected(
-                           stockSelectedVo,tradePositionRo.getMockType()
+                           null,tradePositionRo.getMockType()
                    );
                    result.add(tradePositionVo);
                } }
        }
-       return OutputResult.success(result);
+       return OutputResult.buildSucc(result);
         //return PageUtil.pageResult(result,tradePositionRo.getPageNum(),tradePositionRo.getPageSize());
     }
 
     @Override
-    public TradePosition getPositionByCode(Integer userId,
-                                           Integer mockType,
-                                           String code) {
-        QueryWrapper<TradePosition> queryWrapper = new QueryWrapper();
+    public TradePositionDo getPositionByCode(Integer userId,
+                                             Integer mockType,
+                                             String code) {
+        QueryWrapper<TradePositionDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",userId);
         queryWrapper.eq("mock_type",mockType);
         queryWrapper.eq("code",code);
         //根据用户去查询信息
-        List<TradePosition> tradePositionList = tradePositionMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradePositionList)) {
+        List<TradePositionDo> tradePositionDoList = tradePositionMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradePositionDoList)) {
             return null;
         }
-        return tradePositionList.get(0);
+        return tradePositionDoList.get(0);
     }
 
     @Override
@@ -194,7 +195,7 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
         //获取响应信息
         TradeResultVo<GetStockListResponse> tradeResultVo = getStockListResponse(tradePositionRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.alert("查询我的持仓失败");
+            return OutputResult.buildAlert("查询我的持仓失败");
         }
         List<GetStockListResponse> data = tradeResultVo.getData();
 
@@ -205,7 +206,7 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
             tradePositionVo.setMockType(MockType.REAL.getCode());
             tradePositionVoList.add(tradePositionVo);
         }
-        return OutputResult.success(tradePositionVoList);
+        return OutputResult.buildSucc(tradePositionVoList);
     }
 
     /**
@@ -233,24 +234,24 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
      * @return
      */
     private OutputResult mockList(TradePositionRo tradePositionRo) {
-        QueryWrapper<TradePosition> queryWrapper = new QueryWrapper();
+        QueryWrapper<TradePositionDo> queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id",tradePositionRo.getUserId());
         queryWrapper.eq("mock_type",tradePositionRo.getMockType());
         //根据用户去查询信息
-        List<TradePosition> tradePositionList = tradePositionMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradePositionList)) {
-            return OutputResult.success(
+        List<TradePositionDo> tradePositionDoList = tradePositionMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(tradePositionDoList)) {
+            return OutputResult.buildSucc(
                     new ArrayList<TradePositionVo>()
             );
         }
         List<TradePositionVo> tradePositionVoList = new ArrayList<>();
-        tradePositionList.stream().forEach(
+        tradePositionDoList.stream().forEach(
                 n->{
                     TradePositionVo tradePositionVo = new TradePositionVo();
                     BeanUtils.copyProperties(n,tradePositionVo);
                     tradePositionVoList.add(tradePositionVo);
                 }
         );
-        return OutputResult.success(tradePositionVoList);
+        return OutputResult.buildSucc(tradePositionVoList);
     }
 }

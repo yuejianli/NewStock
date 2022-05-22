@@ -167,7 +167,7 @@ window.operationEvents={
     //撤销委托信息
     'click .revoke' : function(e, value, row, index) {
         //处理信息，并展示.
-        historyCode=row.code;
+        selectedCode=row.code;
         new $.flavr({
             content     : "您确定将该委托撤销吗？",
             dialog      : 'confirm',
