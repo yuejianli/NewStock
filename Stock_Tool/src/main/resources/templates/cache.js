@@ -27,7 +27,7 @@ var cache_table_column=[
 
 $('#cache_table').bootstrapTable({
     method : 'post',
-    url : "cache/list",//请求路径
+    url : CACHE_LIST_URL,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -62,13 +62,14 @@ function queryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码
-        "keyword":keyword
+        "keyword":keyword,
+        "type":0
     }
     return query;
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return {
         total: data.total,
         rows: data.list
@@ -116,8 +117,8 @@ function deleteCache(key){
     }
     //进行请求
     let postResponse = postAjax(
-        "../cache/delete",
-        {"key":key}
+        CACHE_DELETE_URL,
+        {"key":key,"type":0}
     );
     if(postResponse.success){
         Flavr.falert("删除缓存成功");
@@ -140,10 +141,11 @@ $("#update_submit").click(function(){
     }
     var info ={
         "key":key,
-        "value":value
+        "value":value,
+        "type":0
     }
 
-    let postResponse = postAjax("../cache/update",
+    let postResponse = postAjax( CACHE_UPDATE_URL,
         info);
     if(postResponse.success){
         Flavr.falert("修改缓存成功");

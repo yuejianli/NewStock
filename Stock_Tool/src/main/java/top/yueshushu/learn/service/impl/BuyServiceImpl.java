@@ -9,8 +9,8 @@ import org.springframework.util.StringUtils;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
+import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.domain.ConfigDo;
 import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.*;
@@ -61,15 +61,15 @@ public class BuyServiceImpl implements BuyService {
         //查询成功，获取对应的信息
         TradeMoneyVo tradeMoney = (TradeMoneyVo) moneyResult.getData();
         //获取对应的金额
-        ConfigDo priceConfigDo = configService.getConfigByCode(
+        ConfigVo priceConfigVo = configService.getConfigByCode(
                 buyRo.getUserId(),
-                ConfigCodeType.TRANPRICE.getCode()
+                ConfigCodeType.TRAN_PRICE.getCode()
         );
         //获取对应的手续费
         BigDecimal buyMoney = getBuyMoney(
                 buyRo.getAmount(),
                 buyRo.getPrice(),
-                BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
+                BigDecimalUtil.toBigDecimal(priceConfigVo.getCodeValue())
         );
         BigDecimal useMoney = tradeMoney.getUseMoney();
         if(useMoney.compareTo(buyMoney)<0){
@@ -129,7 +129,7 @@ public class BuyServiceImpl implements BuyService {
                 StockUtil.getBuyHandMoney(
                         buyRo.getAmount(),
                         buyRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigVo.getCodeValue())
                 )
         );
         tradeEntrustDo.setTotalMoney(buyMoney);

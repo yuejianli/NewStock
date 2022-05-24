@@ -31,17 +31,27 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
     void deleteAsyncData(@Param("code") String code, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
 
     /**
-     * 查询股票的历史交易记录
+     * 查询股票的历史交易记录,按照时间降序
      *
-     * @param code 股票编码
+     * @param code      股票编码
      * @param startDate 开始日期
-     * @param endDate 结束日期
+     * @param endDate   结束日期
      * @return 查询股票的历史交易记录
      */
-    List<StockHistoryDo> listStockHistoryAndDate(@Param("code") String code,
+    List<StockHistoryDo> listStockHistoryAndDateDesc(@Param("code") String code,
+                                                     @Param("startDate") DateTime startDate,
+                                                     @Param("endDate") DateTime endDate);
+    /**
+     * 查询股票的历史交易记录,按照时间升序.
+     *
+     * @param code      股票编码
+     * @param startDate 开始日期
+     * @param endDate   结束日期
+     * @return 查询股票的历史交易记录
+     */
+    List<StockHistoryDo> listStockHistoryAndDateAsc(@Param("code") String code,
                                                  @Param("startDate") DateTime startDate,
                                                  @Param("endDate") DateTime endDate);
-
     /**
      * 获取股票那一天的信息
      *
@@ -53,10 +63,20 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
 
     /**
      * 查询股票对应的最近收盘价信息
+     *
      * @param codeList 股票编码列表
      * @param currDate 日期
      * @return 查询股票对应的最近收盘价信息
      */
     List<StockPriceCacheDto> listClosePrice(@Param("codeList") List<String> codeList,
                                             @Param("currDate") Date currDate);
+
+    /**
+     * 根据股票的编码和日期，获取距离这一天最近的股票历史记录数据。
+     *
+     * @param code    股票编码
+     * @param endDate 最近的记录日期
+     * @return 根据股票的编码和日期，获取距离这一天最近的股票历史记录数据。
+     */
+    StockHistoryDo getRecentyHistoryBeforeDate(@Param("code") String code, @Param("endDate") DateTime endDate);
 }

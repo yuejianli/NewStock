@@ -162,7 +162,8 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
             );
         }
         //查询最近的一天，非周末，非节假日
-        DateTime beforeLastWorking = dateHelper.getBeforeLastWorking();
+        Date yestaryDay = DateUtil.yesterday();
+        DateTime beforeLastWorking = dateHelper.getBeforeLastWorking(yestaryDay);
 
         List<StockHistoryVo> stockHistoryVoList = new ArrayList<>(list.size());
         for (String code: list){

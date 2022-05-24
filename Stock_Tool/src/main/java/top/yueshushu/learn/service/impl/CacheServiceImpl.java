@@ -30,56 +30,68 @@ import java.util.Set;
 public class CacheServiceImpl implements CacheService {
     @Autowired
     private RedisUtil redisUtil;
+
     @Override
     public OutputResult listCache(CacheRo cacheRo) {
         //如果没有关键字，就查询全部
-        String keyPrefix = getKeyPrefix(cacheRo.getUserId());
+        String keyPrefix = getKeyPrefix(cacheRo.getUserId(),cacheRo.getType());
         //如果有关键字匹配
         Set<String> keys = redisUtil.getKeys(keyPrefix + "*");
         String keyword = cacheRo.getKey();
-        boolean isPattern = StringUtils.hasText(keyword)?true:false;
+        boolean isPattern = StringUtils.hasText(keyword) ? true : false;
         //获取所有的key 信息
-        List<CacheVo> cacheVoList=new ArrayList<>();
-        for(String key:keys){
+        List<CacheVo> cacheVoList = new ArrayList<>();
+        for (String key : keys) {
             //如果有关键字，就匹配一下,截取后面的值信息.
             String subKey = key.substring(keyPrefix.length());
-            if(isPattern){
+            if (isPattern) {
                 //不包含的话，不查询
-                if(!subKey.contains(keyword)){
+                if (!subKey.contains(keyword)) {
                     continue;
                 }
             }
             //获取相关的信息
-           String value = redisUtil.get(key).toString();
+            try{
+                String value = redisUtil.get(key).toString();
 
-            CacheVo cacheVo = new CacheVo();
-            cacheVo.setKey(subKey);
-            cacheVo.setValue(value);
-            cacheVoList.add(cacheVo);
+                CacheVo cacheVo = new CacheVo();
+                cacheVo.setKey(subKey);
+                cacheVo.setValue(value);
+                cacheVoList.add(cacheVo);
+            }catch (Exception e){
+                log.error(">>>查询时，出现异常:",e);
+                continue;
+            }
+
         }
-        List<ConfigDo> list = PageUtil.startPage(cacheVoList, cacheRo.getPageNum(),
+        List<CacheVo> list = PageUtil.startPage(cacheVoList, cacheRo.getPageNum(),
                 cacheRo.getPageSize());
-        return OutputResult.buildSucc(new PageResponse<ConfigDo>((long) cacheVoList.size(),
+        return OutputResult.buildSucc(new PageResponse<CacheVo>((long) cacheVoList.size(),
                 list));
     }
 
-    private String getKeyPrefix(Integer userId) {
-       return Const.CACHE_KEY_PREFIX+userId+":";
+    private String getKeyPrefix(Integer userId, Integer type) {
+        //查询的是公共的
+        if (type == 0){
+            return Const.CACHE_PUBLIC_KEY_PREFIX;
+        }else{
+            return Const.CACHE_PRIVATE_KEY_PREFIX + userId + ":";
+        }
     }
 
     @Override
     public OutputResult update(CacheRo cacheRo) {
-        String keyPrefix = getKeyPrefix(cacheRo.getUserId());
-        String key = keyPrefix +cacheRo.getKey();
+        String keyPrefix = getKeyPrefix(cacheRo.getUserId(),cacheRo.getType() );
+        String key = keyPrefix + cacheRo.getKey();
         //设置值
-        redisUtil.set(key,cacheRo.getValue());
+        redisUtil.set(key, cacheRo.getValue());
         return OutputResult.buildSucc();
     }
 
     @Override
     public OutputResult delete(CacheRo cacheRo) {
-        String keyPrefix = getKeyPrefix(cacheRo.getUserId());
-        String key = keyPrefix +cacheRo.getKey();
+        String keyPrefix = getKeyPrefix(cacheRo.getUserId(),cacheRo.getType() );
+        String key = keyPrefix + cacheRo.getKey();
         redisUtil.remove(key);
         return OutputResult.buildSucc();
     }

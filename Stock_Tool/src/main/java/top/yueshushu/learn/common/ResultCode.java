@@ -120,6 +120,24 @@ public class ResultCode extends BaseResultCode {
     public static final ResultCode TOOL_REDUCE_PRICE_IS_EMPTY =
             new ResultCode(true, 10015017, "第二次减仓交易的价格不能为空");
 
+    /**
+     * config 变量配置信息：  100 16 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode CONFIG_ID_NO_EXIST =
+            new ResultCode(true, 10016001, "不存在此配置记录信息");
+    public static final ResultCode CONFIG_IS_DEFAULT =
+            new ResultCode(true, 10016002, "已经是默认配置，不能删除");
+
+    /**
+     * cache 缓存变量配置信息：  100 17 （编排）+ 001 (三位随机)
+     */
+    public static final ResultCode CACHE_TYPE_IS_EMPTY =
+            new ResultCode(true, 10017001, "缓存类型是空");
+    public static final ResultCode CACHE_KEY_IS_EMPTY =
+            new ResultCode(true, 10017002, "缓存的值必须指定");
+
+
+
 
     private static final BaseResultCode[] VALUES;
 

@@ -10,12 +10,16 @@ import top.yueshushu.learn.ro.stock.StockStatRo;
  **/
 public interface StatBusiness {
     /**
-     *
-     * @param stockStatRo
-     * @return
+     * 周统计信息
+     * @param stockStatRo 股票统计对象
+     * @return 周统计信息
      */
     OutputResult getWeekStat(StockStatRo stockStatRo);
-
+    /**
+     * 图表统计信息
+     * @param stockStatRo 股票统计对象
+     * @return 图表统计信息
+     */
     OutputResult getCharStat(StockStatRo stockStatRo);
 
 }

@@ -42,4 +42,21 @@ public interface StockHistoryService{
      * @return 根据股票的编码和当前日期获取对应的历史记录信息
      */
     StockHistoryVo getVoByCodeAndCurrDate(String code, DateTime currDate);
+
+    /**
+     * 根据股票的编码和日期，获取距离这一天最近的股票历史记录数据。
+     * @param code 股票编码
+     * @param endDate 最近的记录日期
+     * @return 根据股票的编码和日期，获取距离这一天最近的股票历史记录数据。
+     */
+    StockHistoryVo getRecentyHistoryBeforeDate(String code, DateTime endDate);
+
+    /**
+     * 根据股票的编码和时间范围，获取这期间内的股票历史记录数据
+     * @param code 股票编码
+     * @param startDate 开始时间
+     * @param endDate 结束时间
+     * @return 根据股票的编码和时间范围，获取这期间内的股票历史记录数据
+     */
+    List<StockHistoryVo> getStockHistoryByCodeAndRangeDate(String code, DateTime startDate, DateTime endDate);
 }

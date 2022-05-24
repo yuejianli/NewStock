@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.SellRo;
-import top.yueshushu.learn.domain.ConfigDo;
 import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.domain.TradePositionDo;
+import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.*;
 import top.yueshushu.learn.system.SystemConst;
@@ -65,9 +65,9 @@ public class SellServiceImpl implements SellService {
         //更新
         tradePositionService.updateById(tradePositionDo);
         //获取对应的金额
-        ConfigDo priceConfigDo = configService.getConfigByCode(
+        ConfigVo priceConfigVo = configService.getConfigByCode(
                 sellRo.getUserId(),
-                ConfigCodeType.TRANPRICE.getCode()
+                ConfigCodeType.TRAN_PRICE.getCode()
         );
         TradeEntrustDo tradeEntrustDo = new TradeEntrustDo();
         tradeEntrustDo.setCode(sellRo.getCode());
@@ -91,14 +91,14 @@ public class SellServiceImpl implements SellService {
                 StockUtil.getSellHandMoney(
                         sellRo.getAmount(),
                         sellRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigVo.getCodeValue())
                 )
         );
         tradeEntrustDo.setTotalMoney(
                 StockUtil.getSellMoney(
                         sellRo.getAmount(),
                         sellRo.getPrice(),
-                        BigDecimalUtil.toBigDecimal(priceConfigDo.getCodeValue())
+                        BigDecimalUtil.toBigDecimal(priceConfigVo.getCodeValue())
                 )
         );
         tradeEntrustDo.setUserId(sellRo.getUserId());

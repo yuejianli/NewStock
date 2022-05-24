@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -90,5 +91,47 @@ public class StockHistoryServiceImpl  implements StockHistoryService {
                         )
                 )
         );
+    }
+
+    @Override
+    public StockHistoryVo getRecentyHistoryBeforeDate(String code, DateTime endDate) {
+        //将日期变成这一天的最后时刻
+        endDate = DateUtil.endOfDay(endDate);
+        return stockHistoryAssembler.entityToVo(
+                stockHistoryAssembler.doToEntity(
+                        stockHistoryDomainService.getRecentyHistoryBeforeDate(
+                                code,endDate
+                        )
+                )
+        );
+    }
+
+    @Override
+    public List<StockHistoryVo> getStockHistoryByCodeAndRangeDate(String code, DateTime startDate, DateTime endDate) {
+        //将开始日期变成 上一天的最后时刻
+        startDate = DateUtil.endOfDay(
+                DateUtil.offsetDay(
+                        startDate,-1
+                )
+        );
+        //将结束日期变成这一天的最后时刻
+        endDate = DateUtil.endOfDay(endDate);
+        List<StockHistoryDo> stockHistoryDoList= stockHistoryDomainService.listStockHistoryAndDateAsc(
+                code, startDate,endDate);
+
+        if (CollectionUtils.isEmpty(stockHistoryDoList)){
+           return Collections.emptyList();
+        }
+        List<StockHistoryVo> resultList = new ArrayList<>(stockHistoryDoList.size());
+        stockHistoryDoList.forEach(
+                n->{
+                    resultList.add(
+                            stockHistoryAssembler.entityToVo(
+                                    stockHistoryAssembler.doToEntity(n)
+                            )
+                    );
+                }
+        );
+        return resultList;
     }
 }

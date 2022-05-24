@@ -25,11 +25,13 @@ public class DateHelper {
      * 获取最近的一个工作日 即股票展示的昨天记录
      * @return 返回最近一个工作日
      */
-    public DateTime getBeforeLastWorking(){
+    public DateTime getBeforeLastWorking(Date currDate){
         //1. 查询出当前年的全部的假期数据
-        Date yesterdayDate = DateUtil.yesterday();
+        if (currDate == null){
+            currDate = DateUtil.date();
+        }
         List<String> holidayDateList = holidayCalendarCacheService.listHolidayDateByYear(
-                DateUtil.year(yesterdayDate)
+                DateUtil.year(currDate)
         );
         //根据当前的日期往前推送
         Date now = DateUtil.date();
@@ -53,5 +55,30 @@ public class DateHelper {
             return tempDate;
         }
         return null;
+    }
+
+    /**
+     * 当前时间是否是工作日, 是为 true, 否则 为false
+     * @param currDate 指定的时间
+     * @return 当前时间是否是工作日, 是为 true, 否则 为false
+     */
+    public boolean isWorkingDay(DateTime currDate) {
+        //1. 查询出当前年的全部的假期数据
+        if (currDate == null){
+            currDate = DateUtil.date();
+        }
+        List<String> holidayDateList = holidayCalendarCacheService.listHolidayDateByYear(
+                DateUtil.year(currDate)
+        );
+        //如果是周末，则跳过
+        if (DateUtil.isWeekend(currDate)){
+            return false;
+        }
+        // 日期转换
+        String formatDate = DateUtil.format(
+                currDate,
+                Const.SIMPLE_DATE_FORMAT
+        );
+        return !holidayDateList.contains(formatDate);
     }
 }

@@ -25,4 +25,6 @@ public class CacheRo extends PageRo implements Serializable {
     private String value;
     @ApiModelProperty("筛选关键字")
     private String keyword;
+    @ApiModelProperty("类型 1是私有的 0为公共的")
+    private Integer type;
 }

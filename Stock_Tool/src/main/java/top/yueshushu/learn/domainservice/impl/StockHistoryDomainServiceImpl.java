@@ -4,12 +4,8 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-import top.yueshushu.learn.domain.StockDo;
 import top.yueshushu.learn.domain.StockHistoryDo;
-import top.yueshushu.learn.domainservice.StockDomainService;
 import top.yueshushu.learn.domainservice.StockHistoryDomainService;
-import top.yueshushu.learn.mapper.StockDoMapper;
 import top.yueshushu.learn.mapper.StockHistoryDoMapper;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 
@@ -31,7 +27,7 @@ public class StockHistoryDomainServiceImpl extends ServiceImpl<StockHistoryDoMap
 
     @Override
     public List<StockHistoryDo> listStockHistoryAndDate(String code, DateTime startDate, DateTime endDate) {
-        return stockHistoryDoMapper.listStockHistoryAndDate(
+        return stockHistoryDoMapper.listStockHistoryAndDateDesc(
                 code,startDate,endDate
         );
     }
@@ -47,6 +43,20 @@ public class StockHistoryDomainServiceImpl extends ServiceImpl<StockHistoryDoMap
     public StockHistoryDo getByCodeAndCurrDate(String code, DateTime currDate) {
         return stockHistoryDoMapper.getStockForDate(
                 code,currDate
+        );
+    }
+
+    @Override
+    public StockHistoryDo getRecentyHistoryBeforeDate(String code, DateTime endDate) {
+        return stockHistoryDoMapper.getRecentyHistoryBeforeDate(
+                code,endDate
+        );
+    }
+
+    @Override
+    public List<StockHistoryDo> listStockHistoryAndDateAsc(String code, DateTime startDate, DateTime endDate) {
+        return stockHistoryDoMapper.listStockHistoryAndDateAsc(
+                code,startDate,endDate
         );
     }
 }

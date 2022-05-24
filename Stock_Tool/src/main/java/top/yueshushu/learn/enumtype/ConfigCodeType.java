@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
  */
 public enum ConfigCodeType {
     MOCK("mock","0为真实1为虚拟盘"),
-    TRANPRICE("TranPrice","券商的交易手续费"),
+    TRAN_PRICE("tranPrice","券商的交易手续费"),
     SELECT_MAX_NUM("selectMaxNum","最大的自选数量");
 
     private String code;

@@ -46,7 +46,7 @@ var config_table_column=[
 
 $('#config_table').bootstrapTable({
     method : 'post',
-    url : "config/list",//请求路径
+    url : CONFIG_LIST_URL,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -85,7 +85,7 @@ function queryParams(params) {
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return {
         total: data.total,
         rows: data.list
@@ -139,7 +139,7 @@ function resetConfig(id){
     }
     //进行请求
     let postResponse = postAjax(
-        "../config/reset",
+        CONFIG_RESET_URL,
         {"id":id}
     );
     if(postResponse.success){
@@ -171,7 +171,7 @@ $("#update_submit").click(function(){
         "codeValue":codeValue
     }
 
-    let postResponse = postAjax("../config/update",
+    let postResponse = postAjax(CONFIG_UPDATE_URL,
         info);
     if(postResponse.success){
         Flavr.falert("修改成功");

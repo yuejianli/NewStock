@@ -17,11 +17,11 @@ public class Const {
     public static final Integer DEFAULT_NO = 0;
     public static final Integer DEFAULT_USER_ID = 1;
 
-    public static final String CACHE_KEY_PREFIX = "stock:";
-    public static final String ID_TOKEN = "id_token";
-    public static final String TOKEN_USER = CACHE_KEY_PREFIX+"token_user:";
-    public static final String STOCK_PRICE = CACHE_KEY_PREFIX;
-    public static final String STOCK_YES_PRICE = CACHE_KEY_PREFIX+"yes:";
+    public static final String CACHE_PUBLIC_KEY_PREFIX = "stock:public:";
+    public static final String CACHE_PRIVATE_KEY_PREFIX = "stock:private:";
+
+    public static final String STOCK_PRICE = CACHE_PUBLIC_KEY_PREFIX;
+    public static final String STOCK_YES_PRICE = CACHE_PUBLIC_KEY_PREFIX +"yes:";
 
     public static final String X_REAL_IP = "x-real-ip";
     public static final int TOKEN_EXPIRE_TIME = 7 * 24 * 3600;
@@ -42,19 +42,19 @@ public class Const {
 
 
 
-    private static final String CACHE_KEY_DATA_PREFIX = CACHE_KEY_PREFIX + "data:";
+    private static final String CACHE_KEY_DATA_PREFIX = CACHE_PUBLIC_KEY_PREFIX + "data:";
     public static final String CACHE_KEY_DATA_STOCK = Const.CACHE_KEY_DATA_PREFIX + "stock";
 
-    private static final String CACHE_KEY_CONFIG_PREFIX = CACHE_KEY_PREFIX + "config:";
+    private static final String CACHE_KEY_CONFIG_PREFIX = CACHE_PUBLIC_KEY_PREFIX + "config:";
     public static final String CACHE_KEY_CONFIG_ROBOT = Const.CACHE_KEY_CONFIG_PREFIX + "robot";
 
-    private static final String CACHE_KEY_TRADE_PREFIX = CACHE_KEY_PREFIX + "trade:";
+    private static final String CACHE_KEY_TRADE_PREFIX = CACHE_PUBLIC_KEY_PREFIX + "trade:";
     public static final String CACHE_KEY_TRADE_USER = Const.CACHE_KEY_TRADE_PREFIX + "tradeUser";
     public static final String CACHE_KEY_TRADE_METHOD = Const.CACHE_KEY_TRADE_PREFIX + "tradeMethod";
 
     public static final String AUTH = "auth:";
 
-    public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_KEY_PREFIX + "trade:tradeStrategy";
+    public static final String CACHE_KEY_TRADE_STRATEGY = CACHE_PUBLIC_KEY_PREFIX + "trade:tradeStrategy";
 
     public static final long DURATION_REDIS_DEFAULT = 3600 * 24 * 2;
 
@@ -62,6 +62,6 @@ public class Const {
     public static final List<String> IgnoreList = Arrays.asList("class", "userId", "method");
 
     public static String getCacheKeyPrefix(Integer userId){
-        return CACHE_KEY_PREFIX+userId+":";
+        return CACHE_PUBLIC_KEY_PREFIX +userId+":";
     }
 }
