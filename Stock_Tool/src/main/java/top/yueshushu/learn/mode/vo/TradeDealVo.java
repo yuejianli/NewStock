@@ -1,8 +1,5 @@
 package top.yueshushu.learn.mode.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,6 +38,8 @@ public class TradeDealVo implements Serializable {
     private String dealCode;
     @ApiModelProperty("委托编号")
     private String entrustCode;
+    @ApiModelProperty("委托方式 1 手动 0 自动")
+    private Integer entrustType;
     @ApiModelProperty("关联用户")
     private Integer userId;
     @ApiModelProperty("类型 1为虚拟 0为正式")

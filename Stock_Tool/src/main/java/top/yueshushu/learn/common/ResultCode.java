@@ -30,7 +30,8 @@ public class ResultCode extends BaseResultCode {
             new ResultCode(false, 10010006, "用户名或者账号不正确");
     public static final ResultCode PASSWORD_INCORRECT  =
             new ResultCode(false, 10010006, "用户名或者账号不正确");
-
+    public static final ResultCode EASY_MONEY_LOGIN_ERROR  =
+            new ResultCode(false, 10010007, "东方财富登录失败");
 
     /**
      * 交易用户层提示信息：  100 11 （编排）+ 001 (三位随机)
@@ -158,8 +159,43 @@ public class ResultCode extends BaseResultCode {
     public static final ResultCode NO_AUTH =
             new ResultCode(true, 10018003, "没有权限操作");
 
+    /**
+     * 持仓信息 100 19（编排）+ 001 (三位随机)
+     */
+    public static final ResultCode TRADE_MOCK_TYPE_IS_EMPTY =
+            new ResultCode(true, 10019001, "未选择交易的类型");
+    public static final ResultCode TRADE_MOCK_TYPE_NOT_EXIST=
+            new ResultCode(true, 10019002, "交易的类型只支持模拟和真实两种");
+    public static final ResultCode TRADE_POSITION_FAIL=
+            new ResultCode(true, 10019003, "查询真实持仓信息失败");
+    public static final ResultCode TRADE_MONEY_FAIL=
+            new ResultCode(true, 10019004, "查询真实持仓金额信息失败");
+    public static final ResultCode TRADE_ENTRUST_FAIL=
+            new ResultCode(true, 10019005, "查询真实今日委托信息失败");
+    public static final ResultCode TRADE_ENTRUST_HISTORY_FAIL=
+            new ResultCode(true, 10019006, "查询真实历史委托信息失败");
 
+    public static final ResultCode TRADE_NO_MONEY=
+            new ResultCode(true, 10019007, "该用户没有资产记录");
+    public static final ResultCode TRADE_MONEY_LESS=
+            new ResultCode(true, 10019008, "你的资产不足,无法申请买入");
 
+    public static final ResultCode TRADE_POSITION_NO=
+            new ResultCode(true, 10019009, "没有持仓信息，无法卖出");
+
+    public static final ResultCode TRADE_POSITION_NUM_SUPPORT=
+            new ResultCode(true, 10019010, "份额不足，请检查目前持仓数量");
+
+    public static final ResultCode TRADE_ENTRUST_ID_EMPTY=
+            new ResultCode(true, 10019011, "传入的委托编号id不正确");
+
+    public static final ResultCode TRADE_ENTRUST_STATUS_ERROR=
+            new ResultCode(true, 10019012, "委托状态不正确");
+
+    public static final ResultCode TRADE_DEAL_FAIL=
+            new ResultCode(true, 10019013, "查询真实今日成交信息失败");
+    public static final ResultCode TRADE_DEAL_HISTORY_FAIL=
+            new ResultCode(true, 10019014, "查询真实历史成交信息失败");
 
     private static final BaseResultCode[] VALUES;
 

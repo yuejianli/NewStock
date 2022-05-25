@@ -40,7 +40,7 @@ function postAjax(url,info){
     return responseData;
 }
 function getToken(){
-    return sessionStorage.getItem(Authorization)|| "";
+    return sessionStorage.getItem(Authorization)||  AUTHORIZATION ;
 }
 
 function bind_bootstrap_select_data(data, target, value, text) {

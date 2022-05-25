@@ -22,4 +22,11 @@ public interface UserBusiness {
      * @return 返回转换后的密码信息
      */
     OutputResult convertPassWord(String password);
+
+    /**
+     * 转换交易用户的密码
+     * @param password 交易用户密码
+     * @return 转换交易用户的密码
+     */
+    OutputResult tradePassword(String password);
 }

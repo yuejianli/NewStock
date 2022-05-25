@@ -1,20 +1,16 @@
 package top.yueshushu.learn.response;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.ToString;
 import org.reflections.Reflections;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 /**
  * @author yuejianli
  */
 @ToString
-@Getter
+@Data
 public class BaseResultCode {
     public static final BaseResultCode SUCCESS = new BaseResultCode(true, 20000, "操作成功");
     public static final BaseResultCode ALERT = new BaseResultCode(false, 30000, "传入信息有误");

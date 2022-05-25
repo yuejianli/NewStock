@@ -5,20 +5,21 @@ import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.assembler.StockHistoryAssembler;
 import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.domainservice.StockHistoryDomainService;
+import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.StockHistoryService;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class StockHistoryServiceImpl  implements StockHistoryService {
     private StockHistoryDomainService stockHistoryDomainService;
     @Resource
     private StockHistoryAssembler stockHistoryAssembler;
+    @Resource
+    private DateHelper dateHelper;
     @Override
     public OutputResult pageHistory(StockRo stockRo) {
         Page<Object> pageGithubResult = PageHelper.startPage(stockRo.getPageNum(), stockRo.getPageSize());
@@ -76,8 +79,9 @@ public class StockHistoryServiceImpl  implements StockHistoryService {
 
     @Override
     public List<StockPriceCacheDto> listClosePrice(List<String> codeList) {
-        Date yesDate = DateUtil.yesterday();
-        return stockHistoryDomainService.listYesterdayClosePrice(codeList,yesDate);
+        //查询距离当前最近的一个工作日
+        Date lastWorkingDate = dateHelper.getBeforeLastWorking(DateUtil.date());
+        return stockHistoryDomainService.listYesterdayClosePrice(codeList,lastWorkingDate);
     }
 
     @Override

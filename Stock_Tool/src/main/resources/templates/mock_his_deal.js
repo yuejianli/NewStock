@@ -1,5 +1,6 @@
 /*处理url跳转的问题*/
-
+// 虚拟持仓信息
+var mockType = MOCK_MOCK_TYPE;
 $(function () {
     $("#mockHisDeal_table").init();
 })
@@ -68,11 +69,11 @@ var mockHisDeal_table_column=[
 
 $('#mockHisDeal_table').bootstrapTable({
     method : 'post',
-    url : "tradeDeal/history",//请求路径
+    url : TRADE_DEAL_HIS_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
-    sidePagination : 'client',//server:服务器端分页|client：前端分页
+    sidePagination : 'server',//server:服务器端分页|client：前端分页
     pageSize : 15,//单页记录数
     pageList : [5,10,20,50,100,200],//可选择单页记录数
     cache: true, //设置缓存
@@ -102,14 +103,28 @@ function queryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码,
-        "mockType":1
+        "mockType":mockType,
+        "code":$("#searchCode").val(),
+        "dealType":$("#dealType").val(),
+        "startDate":$("#historyStartDate").val(),
+        "endDate":$("#historyEndDate").val()
     }
    return query;
 }
+$("#searchCode").blur(function(){
+    $("#mockHisDeal_table").bootstrapTable('refresh', '{silent: true}');
+})
+$("#dealType").change(function(){
+    $("#mockHisDeal_table").bootstrapTable('refresh', '{silent: true}');
+})
+
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
-    return data;
+    let data= res.data ||[];
+    return {
+        total: data.total,
+        rows: data.list
+    };
 }
 
 function dealTypeFormatter(value){
@@ -130,3 +145,37 @@ window.operationEvents={
 
     }
 };
+
+
+
+$("#historyDateRange").daterangepicker({
+        showDropdowns: true,
+        autoUpdateInput: false,
+        "locale": {
+            format: 'YYYY-MM-DD',
+            applyLabel: "应用",
+            cancelLabel: "取消",
+            resetLabel: "重置",
+        }
+    },
+    function(start, end, label) {
+        if(!this.startDate){
+            this.element.val('');
+        }else{
+            this.element.val(this.startDate.format(this.locale.format));
+        }
+    }
+);
+$('#historyDateRange').on('apply.daterangepicker', function(ev, picker) {
+    $("#historyStartDate").val(picker.startDate.format('YYYY-MM-DD'));
+    $("#historyEndDate").val(picker.endDate.format('YYYY-MM-DD'));
+    $("#mockHisDeal_table").bootstrapTable('refresh', '{silent: true}');
+});
+//更改选取器的选定日期范围
+var now = new Date(new Date().setDate(new Date().getDate() + 0));
+var oneMonthBefore = new Date(new Date().setDate(new Date().getDate() -30));
+$('#historyDateRange').data('daterangepicker').setStartDate(oneMonthBefore);
+$('#historyDateRange').data('daterangepicker').setEndDate(now);
+$("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now));
+$("#historyStartDate").val(formatDate(oneMonthBefore));
+$("#historyEndDate").val(formatDate(now));

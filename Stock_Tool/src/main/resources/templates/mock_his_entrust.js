@@ -1,4 +1,4 @@
-
+var mockType = MOCK_MOCK_TYPE;
 $(function () {
     $("#mockHisEntrust_table").init();
 })
@@ -30,26 +30,26 @@ var mockHisEntrust_table_column=[
         title : '交易类型',
         field : 'dealType',
         align:"center",
-        width:"200px",
+        width:"60px",
         formatter: dealTypeFormatter,
     },
     {
         title : '交易数量',
         field : 'entrustNum',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '交易价格',
         field : 'entrustPrice',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '交易的状态',
         field : 'entrustStatus',
         align:"center",
-        width:"200px",
+        width:"60px",
         formatter: statusFormatter,
     },
     {
@@ -62,36 +62,36 @@ var mockHisEntrust_table_column=[
         title : '委托费用',
         field : 'entrustMoney',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '手续费',
         field : 'handMoney',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '总的费用',
         field : 'totalMoney',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '委托方式',
         field : 'entrustType',
         align:"center",
-        width:"200px",
+        width:"60px",
         formatter: typeFormatter,
     }
 ]
 
 $('#mockHisEntrust_table').bootstrapTable({
     method : 'post',
-    url : "tradeEntrust/history",//请求路径
+    url : TRADE_ENTRUST_HIS_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
-    sidePagination : 'client',//server:服务器端分页|client：前端分页
+    sidePagination : 'server',//server:服务器端分页|client：前端分页
     pageSize : 15,//单页记录数
     pageList : [5,10,20,50,100,200],//可选择单页记录数
     cache: true, //设置缓存
@@ -121,14 +121,17 @@ function queryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码,
-        "mockType":1
+        "mockType":mockType
     }
    return query;
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
-    return data;
+    let data= res.data ||[];
+    return {
+        total: data.total,
+        rows: data.list
+    }
 }
 
 function dealTypeFormatter(value){

@@ -2,8 +2,6 @@ package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.entity.User;
 import top.yueshushu.learn.mode.ro.UserRo;
-import top.yueshushu.learn.domain.UserDo;
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
 import java.util.List;
@@ -50,4 +48,11 @@ public interface UserService  {
      * @return 返回所有的用户id集合
      */
     List<Integer> listUserId();
+
+    /**
+     * 转换交易用户的密码
+     * @param password 交易用户密码
+     * @return 转换交易用户的密码
+     */
+    OutputResult tradePassword(String password);
 }

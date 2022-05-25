@@ -54,4 +54,9 @@ public class UserBusinessImpl implements UserBusiness {
     public OutputResult convertPassWord(String password) {
         return userService.convertPassWord(password);
     }
+
+    @Override
+    public OutputResult tradePassword(String password) {
+        return userService.tradePassword(password);
+    }
 }

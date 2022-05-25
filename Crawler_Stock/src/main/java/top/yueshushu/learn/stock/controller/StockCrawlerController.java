@@ -1,12 +1,15 @@
 package top.yueshushu.learn.stock.controller;
 
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.stock.business.StockBusiness;
 import top.yueshushu.learn.stock.business.StockHistoryBusiness;
-import top.yueshushu.learn.stock.common.ResultCode;
+import top.yueshushu.learn.stock.common.CrawlerResultCode;
 
 import javax.annotation.Resource;
 
@@ -26,7 +29,7 @@ public class StockCrawlerController {
     public OutputResult getStockInfo(@RequestBody StockRo stockRo) {
         if (!StringUtils.hasText(stockRo.getCode())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_CODE_ERROR
+                    CrawlerResultCode.STOCK_CODE_ERROR
             );
         }
         return stockBusiness.getStockInfo(stockRo.getCode());
@@ -36,12 +39,12 @@ public class StockCrawlerController {
     public OutputResult getStockKline(@RequestBody StockRo stockRo) {
         if (!StringUtils.hasText(stockRo.getCode())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_CODE_ERROR
+                    CrawlerResultCode.STOCK_CODE_ERROR
             );
         }
         if (stockRo.getType() == null) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_KLINE_IS_EMPTY
+                    CrawlerResultCode.STOCK_KLINE_IS_EMPTY
             );
         }
         return stockBusiness.getStockKline(stockRo);
@@ -59,22 +62,22 @@ public class StockCrawlerController {
     public OutputResult stockHistoryAsync(@RequestBody StockRo stockRo) {
         if (!StringUtils.hasText(stockRo.getCode())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_CODE_ERROR
+                    CrawlerResultCode.STOCK_CODE_ERROR
             );
         }
         if (stockRo.getExchange() == null) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_EXCHANGE_IS_EMPTY
+                    CrawlerResultCode.STOCK_EXCHANGE_IS_EMPTY
             );
         }
         if (!StringUtils.hasText(stockRo.getStartDate())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_ASYNC_NO_START_DATE
+                    CrawlerResultCode.STOCK_ASYNC_NO_START_DATE
             );
         }
         if (!StringUtils.hasText(stockRo.getEndDate())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_ASYNC_NO_END_DATE
+                    CrawlerResultCode.STOCK_ASYNC_NO_END_DATE
             );
         }
         return stockHistoryBusiness.stockHistoryAsync(stockRo);
@@ -84,7 +87,7 @@ public class StockCrawlerController {
     public OutputResult getStockPrice(@RequestBody StockRo stockRo) {
         if (!StringUtils.hasText(stockRo.getCode())) {
             return OutputResult.buildAlert(
-                    ResultCode.STOCK_CODE_ERROR
+                    CrawlerResultCode.STOCK_CODE_ERROR
             );
         }
         return stockBusiness.getStockPrice(stockRo.getCode());

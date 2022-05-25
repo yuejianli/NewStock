@@ -6,18 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domainservice.TradeEntrustDomainService;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.BuyRo;
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
 import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.*;
+import top.yueshushu.learn.service.BuyService;
+import top.yueshushu.learn.service.ConfigService;
+import top.yueshushu.learn.service.TradeEntrustService;
+import top.yueshushu.learn.service.TradeMoneyService;
 import top.yueshushu.learn.system.SystemConst;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockUtil;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 
 /**
@@ -37,6 +42,8 @@ public class BuyServiceImpl implements BuyService {
     private TradeMoneyService tradeMoneyService;
     @Autowired
     private ConfigService configService;
+    @Resource
+    private TradeEntrustDomainService tradeEntrustDomainService;
     @Override
     public OutputResult buy(BuyRo buyRo) {
         //对非空的验证信息
@@ -104,8 +111,8 @@ public class BuyServiceImpl implements BuyService {
             );
         }
         //更新金额信息
-        tradeMoneyService.updateMoneyVoByid(
-                tradeMoney
+        tradeMoneyService.updateMoney(
+                null
         );
 
         TradeEntrustDo tradeEntrustDo = new TradeEntrustDo();
@@ -138,7 +145,7 @@ public class BuyServiceImpl implements BuyService {
         tradeEntrustDo.setMockType(buyRo.getMockType());
         tradeEntrustDo.setFlag(DataFlagType.NORMAL.getCode());
         //放入一条记录到委托信息里面.
-        tradeEntrustService.save(tradeEntrustDo);
+        tradeEntrustDomainService.save(tradeEntrustDo);
         return OutputResult.buildSucc("买入股票委托成功");
     }
 
@@ -161,8 +168,9 @@ public class BuyServiceImpl implements BuyService {
         TradeMoneyRo tradeMoneyRo = new TradeMoneyRo();
         tradeMoneyRo.setUserId(userId);
         tradeMoneyRo.setMockType(mockType);
-        return tradeMoneyService.listMoney(
-                tradeMoneyRo
-        );
+        //return tradeMoneyService.getByUserIdAndMockType(
+        //        tradeMoneyRo
+        //);
+        return null;
     }
 }

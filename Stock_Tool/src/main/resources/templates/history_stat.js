@@ -209,7 +209,7 @@ function queryHistoryParams(params) {
 }
 //处理机构返回数据
 function handleHistoryClientData(res){
-    let data= res.data;
+    let data= res.data ||[];
     return {
         total: data.total,
         rows: data.list
@@ -241,6 +241,19 @@ $('#historyDateRange').on('apply.daterangepicker', function(ev, picker) {
 //更改选取器的选定日期范围
 var now = new Date(new Date().setDate(new Date().getDate() + 0));
 var oneMonthBefore = new Date(new Date().setDate(new Date().getDate() -365));
+
+// 获取当前的天
+var nowDay = now.getDate();
+if(nowDay==1){
+    $("#endDayNum").val(31);
+}else{
+    $("#endDayNum").val(nowDay-1);
+}
+if (nowDay <=7){
+    $("#startDayNum").val(1);
+}else{
+    $("#startDayNum").val(nowDay-7);
+}
 $('#historyDateRange').data('daterangepicker').setStartDate(oneMonthBefore);
 $('#historyDateRange').data('daterangepicker').setEndDate(now);
 $("#historyDateRange").val(formatDate(oneMonthBefore)+"/"+formatDate(now));

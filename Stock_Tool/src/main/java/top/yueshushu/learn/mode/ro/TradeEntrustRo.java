@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * @ClassName:TradeEntrustRo
  * @Description TODO
@@ -16,5 +14,6 @@ import java.math.BigDecimal;
 @Data
 @ApiModel("委托信息Ro")
 public class TradeEntrustRo extends TradeRo {
-
+    @ApiModelProperty("开始时间")
+    private String startDate;
 }

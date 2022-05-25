@@ -3,16 +3,16 @@ package top.yueshushu.learn.controller;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.yueshushu.learn.mode.ro.BuyRo;
+import top.yueshushu.learn.business.RevokeBusiness;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.RevokeRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.BuyService;
-import top.yueshushu.learn.service.RevokeService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -26,13 +26,16 @@ import top.yueshushu.learn.service.RevokeService;
 @RequestMapping("/revoke")
 @ApiModel("撤销委托单")
 public class RevokeController extends BaseController {
-    @Autowired
-    private RevokeService revokeService;
+    @Resource
+    private RevokeBusiness revokeBusiness;
     @PostMapping("/revoke")
     @ApiOperation("撤销委托信息")
     public OutputResult revoke(@RequestBody RevokeRo revokeRo){
         revokeRo.setUserId(getUserId());
-        return revokeService.revoke(revokeRo);
+        if (null == revokeRo.getId()){
+            return OutputResult.buildFail(ResultCode.ID_IS_EMPTY);
+        }
+        return revokeBusiness.revoke(revokeRo);
     }
 
 

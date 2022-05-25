@@ -3,16 +3,17 @@ package top.yueshushu.learn.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
+import top.yueshushu.learn.business.TradeMoneyBusiness;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.TradeMoneyService;
-import top.yueshushu.learn.service.TradePositionService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -26,13 +27,23 @@ import top.yueshushu.learn.service.TradePositionService;
 @RequestMapping("/tradeMoney")
 @Api("交易资产信息")
 public class TradeMoneyController extends BaseController{
-    @Autowired
-    private TradeMoneyService tradeMoneyService;
+    @Resource
+    private TradeMoneyBusiness tradeMoneyBusiness;
 
-    @PostMapping("/list")
+    @PostMapping("/info")
     @ApiOperation("查询资金信息")
     public OutputResult list(@RequestBody TradeMoneyRo tradeMoneyRo){
         tradeMoneyRo.setUserId(getUserId());
-        return tradeMoneyService.listMoney(tradeMoneyRo);
+        if (tradeMoneyRo.getMockType()==null){
+            return OutputResult.buildFail(ResultCode.TRADE_MOCK_TYPE_IS_EMPTY);
+        }
+        MockType mockType = MockType.getMockType(tradeMoneyRo.getMockType());
+        if (mockType == null){
+            return OutputResult.buildFail(ResultCode.TRADE_MOCK_TYPE_NOT_EXIST);
+        }
+        if (MockType.MOCK.equals(mockType)){
+            return tradeMoneyBusiness.mockInfo(tradeMoneyRo);
+        }
+        return tradeMoneyBusiness.realInfo(tradeMoneyRo);
     }
 }

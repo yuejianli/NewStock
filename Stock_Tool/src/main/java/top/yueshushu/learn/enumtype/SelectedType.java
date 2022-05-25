@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
  */
 public enum SelectedType {
     POSITION(1,"持仓"),
-    SELECTED(2,"自选");
+    SELECTED(2,"持仓和自选");
 
     private Integer code;
 

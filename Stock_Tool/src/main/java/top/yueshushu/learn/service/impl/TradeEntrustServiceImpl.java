@@ -1,36 +1,41 @@
 package top.yueshushu.learn.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.GetHisOrdersDataRequest;
 import top.yueshushu.learn.api.request.GetOrdersDataRequest;
 import top.yueshushu.learn.api.response.GetHisOrdersDataResponse;
 import top.yueshushu.learn.api.response.GetOrdersDataResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
+import top.yueshushu.learn.assembler.TradeEntrustAssembler;
+import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.config.TradeClient;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domainservice.TradeEntrustDomainService;
+import top.yueshushu.learn.entity.TradeEntrust;
 import top.yueshushu.learn.enumtype.EntrustStatusType;
 import top.yueshushu.learn.enumtype.MockType;
+import top.yueshushu.learn.mode.dto.TradeEntrustQueryDto;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
 import top.yueshushu.learn.mode.vo.TradeEntrustVo;
-import top.yueshushu.learn.domain.TradeEntrustDo;
-import top.yueshushu.learn.mapper.TradeEntrustMapper;
+import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeEntrustService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.TradeUtil;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -42,63 +47,35 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, TradeEntrustDo> implements TradeEntrustService {
-    @Autowired
-    private TradeEntrustMapper tradeEntrustMapper;
+public class TradeEntrustServiceImpl implements TradeEntrustService {
+    @Resource
+    private TradeEntrustDomainService tradeEntrustDomainService;
+    @Resource
+    private TradeEntrustAssembler tradeEntrustAssembler;
+
     @Resource
     private DefaultResponseParser defaultResponseParser;
-    @Autowired
+    @Resource
     private TradeUtil tradeUtil;
-    @Autowired
+    @Resource
     private TradeClient tradeClient;
-    @Override
-    public OutputResult listEntrust(TradeEntrustRo tradeEntrustRo) {
-        if(null==tradeEntrustRo.getMockType()){
-            return OutputResult.buildAlert("请传入交易盘的类型");
-        }
-        MockType mockType = MockType.getMockType(tradeEntrustRo.getMockType());
-        if(null==mockType){
-            return OutputResult.buildAlert("不支持的交易盘的类型");
-        }
-        if(MockType.MOCK.getCode().equals(mockType.getCode())){
-            return mockList(tradeEntrustRo);
-        }
-        //接下来，是正式盘的处理方式
-        return realList(tradeEntrustRo);
-    }
 
     @Override
-    public OutputResult history(TradeEntrustRo tradeEntrustRo) {
-        if(null==tradeEntrustRo.getMockType()){
-            return OutputResult.buildAlert("请传入交易盘的类型");
-        }
-        MockType mockType = MockType.getMockType(tradeEntrustRo.getMockType());
-        if(null==mockType){
-            return OutputResult.buildAlert("不支持的交易盘的类型");
-        }
-        if(MockType.MOCK.getCode().equals(mockType.getCode())){
-            return mockHistoryList(tradeEntrustRo);
-        }
-        //接下来，是正式盘的处理方式
-        return realHistoryList(tradeEntrustRo);
-    }
+    public List<TradeEntrust> listNowRunEntrust(Integer userId, Integer mockType) {
 
-    @Override
-    public List<TradeEntrustDo> listNowRunEntruct(Integer userId, Integer mockType) {
-        Date now = DateUtil.date();
-        Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",userId);
-        queryWrapper.eq("mock_type",mockType);
-        queryWrapper.gt("entrust_date",beginNow);
-        queryWrapper.eq("entrust_status", EntrustStatusType.ING.getCode());
-        queryWrapper.orderByDesc("id");
+        TradeEntrustQueryDto tradeEntrustQueryDto = new TradeEntrustQueryDto();
+        tradeEntrustQueryDto.setUserId(userId);
+        tradeEntrustQueryDto.setMockType(mockType);
+        DateTime now = DateUtil.date();
+        tradeEntrustQueryDto.setEntrustDate(now);
+        tradeEntrustQueryDto.setEntrustStatus(EntrustStatusType.ING.getCode());
         //根据用户去查询信息
-        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustDomainService.listByQuery(tradeEntrustQueryDto);
         if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
-            return new ArrayList<TradeEntrustDo>();
+            return Collections.emptyList();
         }
-        return tradeEntrustDoList;
+        return tradeEntrustDoList.stream().map(n -> tradeEntrustAssembler.doToEntity(n))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -106,11 +83,12 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
      * @param tradeEntrustRo
      * @return
      */
-    private OutputResult realList(TradeEntrustRo tradeEntrustRo) {
+    @Override
+    public OutputResult<List<TradeEntrustVo>> realList(TradeEntrustRo tradeEntrustRo) {
         //获取响应信息
         TradeResultVo<GetOrdersDataResponse> tradeResultVo = getOrdersDataResponse(tradeEntrustRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.buildAlert("查询我的当日委托单失败");
+            return OutputResult.buildAlert(ResultCode.TRADE_ENTRUST_FAIL);
         }
         List<GetOrdersDataResponse> data = tradeResultVo.getData();
 
@@ -123,10 +101,34 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
         return OutputResult.buildSucc(tradeEntrustVoList);
     }
 
+    @Override
+    public void syncRealEntrustByUserId(Integer userId, List<TradeEntrustVo> tradeEntrustVoList) {
+        //先将当前用户的今日委托信息全部删除
+        TradeEntrustQueryDto tradeEntrustQueryDto = new TradeEntrustQueryDto();
+        tradeEntrustQueryDto.setUserId(userId);
+        tradeEntrustQueryDto.setMockType(MockType.REAL.getCode());
+        DateTime now = DateUtil.date();
+        tradeEntrustQueryDto.setEntrustDate(now);
+        tradeEntrustDomainService.deleteToDayByQuery(tradeEntrustQueryDto);
+        if (CollectionUtils.isEmpty(tradeEntrustVoList)) {
+            return ;
+        }
+        List<TradeEntrustDo> entrustDoList = tradeEntrustVoList.stream().map(
+                n -> {
+                    TradeEntrustDo tradeEntrustDo =
+                            tradeEntrustAssembler.entityToDo(tradeEntrustAssembler.voToEntity(n));
+                    tradeEntrustDo.setUserId(userId);
+                    tradeEntrustDo.setMockType(MockType.REAL.getCode());
+                    return tradeEntrustDo;
+                }
+        ).collect(Collectors.toList());
+        tradeEntrustDomainService.saveBatch(entrustDoList);
+    }
+
     /**
-     * 获取响应的信息
-     * @param userId
-     * @return
+     * 获取委托的信息
+     * @param userId 用户编号
+     * @return 获取委托的信息
      */
     private TradeResultVo<GetOrdersDataResponse> getOrdersDataResponse(Integer userId) {
         GetOrdersDataRequest request = new GetOrdersDataRequest(userId);
@@ -142,34 +144,23 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
         return result;
     }
 
-    /**
-     * 查询虚拟盘的信息
-     * @param tradeEntrustRo
-     * @return
-     */
-    private OutputResult mockList(TradeEntrustRo tradeEntrustRo) {
-        Date now = DateUtil.date();
-        Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",tradeEntrustRo.getUserId());
-        queryWrapper.eq("mock_type",tradeEntrustRo.getMockType());
-        queryWrapper.gt("entrust_date",beginNow);
-        queryWrapper.orderByDesc("id");
+    @Override
+    public OutputResult mockList(TradeEntrustRo tradeEntrustRo) {
+        DateTime now = DateUtil.date();
         //根据用户去查询信息
-        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
-           return OutputResult.buildSucc(
-                   new ArrayList<TradeEntrustVo>()
-           );
-        }
-        List<TradeEntrustVo> tradePositionVoList = new ArrayList<>();
-        tradeEntrustDoList.stream().forEach(
-                n->{
-                    TradeEntrustVo tradeEntrustVo = new TradeEntrustVo();
-                    BeanUtils.copyProperties(n,tradeEntrustVo);
-                    tradePositionVoList.add(tradeEntrustVo);
-                }
+        TradeEntrustQueryDto tradeEntrustQueryDto = new TradeEntrustQueryDto();
+        tradeEntrustQueryDto.setUserId(tradeEntrustRo.getUserId());
+        tradeEntrustQueryDto.setMockType(tradeEntrustRo.getMockType());
+        tradeEntrustQueryDto.setEntrustDate(now);
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustDomainService.listByQuery(
+                tradeEntrustQueryDto
         );
+        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
+           return OutputResult.buildSucc(Collections.EMPTY_LIST);
+        }
+        List<TradeEntrustVo> tradePositionVoList = tradeEntrustDoList.stream().map(
+                n-> tradeEntrustAssembler.entityToVo(tradeEntrustAssembler.doToEntity(n))
+        ).collect(Collectors.toList());
         return OutputResult.buildSucc(tradePositionVoList);
     }
 
@@ -180,12 +171,13 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
      * @param tradeEntrustRo
      * @return
      */
-    private OutputResult realHistoryList(TradeEntrustRo tradeEntrustRo) {
+    @Override
+    public OutputResult realHistoryList(TradeEntrustRo tradeEntrustRo) {
         //获取响应信息
         TradeResultVo<GetHisOrdersDataResponse> tradeResultVo =
                 getHistoryOrdersDataResponse(tradeEntrustRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.buildAlert("查询我的历史委托单失败");
+            return OutputResult.buildAlert(ResultCode.TRADE_ENTRUST_HISTORY_FAIL);
         }
         List<GetHisOrdersDataResponse> data = tradeResultVo.getData();
 
@@ -220,38 +212,43 @@ public class TradeEntrustServiceImpl extends ServiceImpl<TradeEntrustMapper, Tra
                 new TypeReference<GetHisOrdersDataResponse>(){});
         return result;
     }
+    @Override
+    public OutputResult mockHistoryList(TradeEntrustRo tradeEntrustRo) {
 
-    /**
-     * 查询虚拟盘的信息
-     * @param tradeEntrustRo
-     * @return
-     */
-    private OutputResult mockHistoryList(TradeEntrustRo tradeEntrustRo) {
+        Page<Object> pageGithubResult = PageHelper.startPage(tradeEntrustRo.getPageNum(), tradeEntrustRo.getPageSize());
+
         Date now = DateUtil.date();
-        Date beginNow = DateUtil.beginOfDay(now);
-        //获取14天前的日期
-        Date before14Day = DateUtil.offsetDay(beginNow,-14);
-        QueryWrapper<TradeEntrustDo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",tradeEntrustRo.getUserId());
-        queryWrapper.eq("mock_type",tradeEntrustRo.getMockType());
-        queryWrapper.gt("entrust_date",before14Day);
-        queryWrapper.lt("entrust_date",now);
-        queryWrapper.orderByDesc("id");
-        //根据用户去查询信息
-        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeEntrustDoList)) {
-            return OutputResult.buildSucc(
-                    new ArrayList<TradeEntrustVo>()
+        //不包含今天
+        DateTime beginNow = DateUtil.beginOfDay(now);
+        TradeEntrustQueryDto tradeEntrustQueryDto = new TradeEntrustQueryDto();
+        tradeEntrustQueryDto.setUserId(tradeEntrustRo.getUserId());
+        tradeEntrustQueryDto.setMockType(tradeEntrustRo.getMockType());
+        if (!StringUtils.hasText(tradeEntrustRo.getStartDate())){
+            //获取14天前的日期
+            DateTime before14Day = DateUtil.offsetDay(beginNow,-14);
+            tradeEntrustQueryDto.setStartEntrustDate(
+                    before14Day
+            );
+        }else{
+            tradeEntrustQueryDto.setStartEntrustDate(
+                    DateUtil.parse(tradeEntrustRo.getStartDate(), Const.SIMPLE_DATE_FORMAT)
             );
         }
-        List<TradeEntrustVo> tradePositionVoList = new ArrayList<>();
-        tradeEntrustDoList.stream().forEach(
-                n->{
-                    TradeEntrustVo tradeEntrustVo = new TradeEntrustVo();
-                    BeanUtils.copyProperties(n,tradeEntrustVo);
-                    tradePositionVoList.add(tradeEntrustVo);
-                }
-        );
-        return OutputResult.buildSucc(tradePositionVoList);
+        tradeEntrustQueryDto.setEndEntrustDate(beginNow);
+
+        //根据用户去查询信息
+        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustDomainService.listHistoryByQuery(tradeEntrustQueryDto);
+        if (CollectionUtils.isEmpty(tradeEntrustDoList)){
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+        List<TradeEntrustVo> pageResultList = tradeEntrustDoList.stream().map(
+                n-> tradeEntrustAssembler.entityToVo(tradeEntrustAssembler.doToEntity(n))
+        ).collect(Collectors.toList());
+        PageInfo pageInfo=new PageInfo<>(pageResultList);
+        return OutputResult.buildSucc(new PageResponse<>(
+                pageGithubResult.getTotal(),pageInfo.getList()
+        ));
     }
 }

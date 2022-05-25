@@ -1,6 +1,5 @@
 package top.yueshushu.learn.test;
 
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,9 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradePositionService;
-import top.yueshushu.learn.util.StockRedisUtil;
-
-import java.math.BigDecimal;
 
 /**
  * @ClassName:StockUtilTest
@@ -35,7 +31,7 @@ public class TradePositionTest {
         tradePositionRo.setPageSize(10);
         tradePositionRo.setMockType(1);
 
-        OutputResult outputResult = tradePositionService.listPosition(tradePositionRo);
+        OutputResult outputResult = tradePositionService.realList(tradePositionRo);
         log.info("输出结果:{}",outputResult);
     }
 }

@@ -16,4 +16,6 @@ import lombok.Data;
 public class DealRo extends TradeRo {
     @ApiModelProperty("成交单的id信息")
     private Integer id;
+    @ApiModelProperty("委托方式 1手动,0自动")
+    private Integer entrustType;
 }

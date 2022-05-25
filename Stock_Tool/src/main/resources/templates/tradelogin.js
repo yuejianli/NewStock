@@ -3,6 +3,7 @@ var yzmKey="yzm";
  * 拼接验证码信息
  * @returns 验证码地址+随机数
  */
+var randomNum  ;
 function concatRealYzmUrl() {
     //从缓存中，获取相关的方法.
     let yzmUrl = getYzmUrl();
@@ -11,7 +12,8 @@ function concatRealYzmUrl() {
 function randomNum(){
     //将其封装，添加数字.
     let timeStamp=new Date().getTime();
-    return "0.903"+timeStamp;
+    randomNum = "0.903"+timeStamp;
+    return randomNum;
 }
 function reloadYzm() {
     //将其转换，封装成真正的 url
@@ -38,13 +40,13 @@ $("#login").click(function(){
     if(!validateSubmit(info)){
         return ;
     }
-    info.randNum=randomNum();
+    info.randNum=randomNum;
     let postResponse = postAjax(TRADE_USER_LOGIN_URL,info);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         Flavr.falert("交易用户登录成功");
         //进行跳转,跳转到首页
-        window.location.href = "index";
+        window.location.href = "page.html";
     }else{
         Flavr.falert(postResponse.message);
     }
@@ -56,21 +58,15 @@ $("#login").click(function(){
 */
 function getFillInfo(){
     //获取用户填入的信息
-    let password = $("#password").val();
     let identifyCode = $("#identifyCode").val();
     const info = {
-        "password": password,
+        "password": "二货，我不输入密码了",
         "identifyCode": identifyCode
     };
     return info;
 }
 // 验证用户登录信息
 function validateSubmit(info){
-
-    if(isEmpty(info.password)){
-        Flavr.falert("证券密码不能为空");
-        return false;
-    }
     if(isEmpty(info.identifyCode)||info.identifyCode.length!=4||!/^\d{4}$/.test(info.identifyCode)){
         Flavr.falert("验证码必须为4位纯数字");
         return false;

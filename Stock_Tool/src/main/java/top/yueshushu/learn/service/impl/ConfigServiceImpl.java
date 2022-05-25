@@ -2,23 +2,20 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.assembler.ConfigAssembler;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domain.ConfigDo;
 import top.yueshushu.learn.domainservice.ConfigDomainService;
 import top.yueshushu.learn.enumtype.ConfigCodeType;
 import top.yueshushu.learn.mode.ro.ConfigRo;
 import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.domain.ConfigDo;
-import top.yueshushu.learn.mapper.ConfigDoMapper;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.ConfigService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.PageUtil;
 
 import javax.annotation.Resource;
@@ -171,10 +168,10 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public int getMaxSelectedNumByUserId(Integer userId) {
         //获取配置信息
-        ConfigDo configDo = configDomainService.getByUserIdAndCode(userId, ConfigCodeType.SELECT_MAX_NUM.getCode());
+        ConfigVo configVo = getConfig(userId, ConfigCodeType.SELECT_MAX_NUM);
         //获取信息
         return Integer.parseInt(
-                Optional.ofNullable(configDo.getCodeValue())
+                Optional.ofNullable(configVo.getCodeValue())
                         .orElse("20")
         );
     }

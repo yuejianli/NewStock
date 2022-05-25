@@ -6,16 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import top.yueshushu.learn.assembler.TradePositionAssembler;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.entity.TradePosition;
 import top.yueshushu.learn.enumtype.*;
 import top.yueshushu.learn.mode.ro.SellRo;
-import top.yueshushu.learn.domain.TradeEntrustDo;
-import top.yueshushu.learn.domain.TradePositionDo;
 import top.yueshushu.learn.mode.vo.ConfigVo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.*;
+import top.yueshushu.learn.service.ConfigService;
+import top.yueshushu.learn.service.SellService;
+import top.yueshushu.learn.service.TradeEntrustService;
+import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.system.SystemConst;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockUtil;
+
+import javax.annotation.Resource;
 
 /**
  * @ClassName:SellServiceImpl
@@ -34,6 +40,8 @@ public class SellServiceImpl implements SellService {
     private TradePositionService tradePositionService;
     @Autowired
     private ConfigService configService;
+    @Resource
+    private TradePositionAssembler tradePositionAssembler;
     @Override
     public OutputResult sell(SellRo sellRo) {
         //对非空的验证信息
@@ -47,23 +55,23 @@ public class SellServiceImpl implements SellService {
             return OutputResult.buildAlert("请传入卖出的股票的价格信息");
         }
         //获取当前该股票的持仓数和可用数.
-        TradePositionDo tradePositionDo = tradePositionService.getPositionByCode(
+        TradePosition tradePosition = tradePositionService.getPositionByCode(
                 sellRo.getUserId(),
                 sellRo.getMockType(),
                sellRo.getCode()
         );
-        if(tradePositionDo ==null){
+        if(tradePosition ==null){
             return OutputResult.buildAlert("没有持仓信息，无法卖出");
         }
-        if(tradePositionDo.getUseAmount()<sellRo.getAmount()){
+        if(tradePosition.getUseAmount()<sellRo.getAmount()){
             return OutputResult.buildAlert("份额不足，请检查目前持仓数量");
         }
-        tradePositionDo.setUseAmount(
-                tradePositionDo.getUseAmount()
+        tradePosition.setUseAmount(
+                tradePosition.getUseAmount()
                 - sellRo.getAmount()
         );
         //更新
-        tradePositionService.updateById(tradePositionDo);
+       // tradePositionService.updateById(tradePositionAssembler.entityToDo(tradePosition));
         //获取对应的金额
         ConfigVo priceConfigVo = configService.getConfigByCode(
                 sellRo.getUserId(),
@@ -106,7 +114,7 @@ public class SellServiceImpl implements SellService {
         tradeEntrustDo.setMockType(sellRo.getMockType());
         tradeEntrustDo.setFlag(DataFlagType.NORMAL.getCode());
         //放入一条记录到委托信息里面.
-        tradeEntrustService.save(tradeEntrustDo);
+       // tradeEntrustService.save(tradeEntrustDo);
         return OutputResult.buildSucc("卖出股票委托成功");
     }
 }

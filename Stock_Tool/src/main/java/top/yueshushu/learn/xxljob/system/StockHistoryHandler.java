@@ -5,8 +5,8 @@ import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.service.StockSelectedService;
 
 import javax.annotation.Resource;
@@ -24,9 +24,15 @@ import javax.annotation.Resource;
 public class StockHistoryHandler extends IJobHandler {
     @Resource
     private StockSelectedService stockSelectedService;
+    @Resource
+    private DateHelper dateHelper;
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
+        if (!dateHelper.isWorkingDay(DateUtil.date())){
+            log.info("当前时间{}不是交易日，不需要同步",DateUtil.now());
+            return ReturnT.SUCCESS;
+        }
         log.info(">>> {} 时,更新目前自选表里面的历史表记录信息", DateUtil.now());
         stockSelectedService.syncDayHistory();
         return ReturnT.SUCCESS;

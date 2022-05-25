@@ -7,12 +7,15 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import top.yueshushu.learn.assembler.TradePositionAssembler;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domainservice.TradeEntrustDomainService;
+import top.yueshushu.learn.entity.TradeEntrust;
+import top.yueshushu.learn.entity.TradeMoney;
+import top.yueshushu.learn.entity.TradePosition;
 import top.yueshushu.learn.enumtype.DealType;
 import top.yueshushu.learn.enumtype.EntrustStatusType;
 import top.yueshushu.learn.mode.ro.DealRo;
-import top.yueshushu.learn.domain.TradeEntrustDo;
-import top.yueshushu.learn.domain.TradeMoneyDo;
-import top.yueshushu.learn.domain.TradePositionDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.*;
 import top.yueshushu.learn.system.SystemConst;
@@ -20,6 +23,7 @@ import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockRedisUtil;
 import top.yueshushu.learn.util.StockUtil;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -44,6 +48,10 @@ public class DealServiceImpl implements DealService {
     private TradeDealService tradeDealService;
     @Autowired
     private StockRedisUtil stockRedisUtil;
+    @Resource
+    private TradePositionAssembler tradePositionAssembler;
+    @Resource
+    private TradeEntrustDomainService tradeEntrustDomainService;
     @Override
     @Async
     public OutputResult deal(DealRo dealRo) {
@@ -51,7 +59,7 @@ public class DealServiceImpl implements DealService {
             return OutputResult.buildAlert("请选择要成交的委托单信息");
         }
         //查询单号信息
-        TradeEntrustDo tradeEntrustDo = tradeEntrustService.getById(dealRo.getId());
+        TradeEntrustDo tradeEntrustDo = tradeEntrustDomainService.getById(dealRo.getId());
         if(null== tradeEntrustDo){
             return OutputResult.buildAlert("传入的委托编号id不正确");
         }
@@ -73,19 +81,20 @@ public class DealServiceImpl implements DealService {
     @Override
     public void mockDealXxlJob(DealRo dealRo) {
         //获取当前所有的今日委托单信息，正在委托的.
-        List<TradeEntrustDo> tradeEntrustDoList = tradeEntrustService.listNowRunEntruct(dealRo.getUserId(),
+        List<TradeEntrust> tradeEntrustDoList = tradeEntrustService.listNowRunEntrust(dealRo.getUserId(),
                 dealRo.getMockType());
         if(CollectionUtils.isEmpty(tradeEntrustDoList)){
             return ;
         }
         //进行处理.
-        for(TradeEntrustDo tradeEntrustDo : tradeEntrustDoList){
+        for(TradeEntrust tradeEntrustDo : tradeEntrustDoList){
             //获取当前的股票
             String code = tradeEntrustDo.getCode();
             //获取信息
             BigDecimal price = stockRedisUtil.getPrice(code);
             if(price.compareTo(SystemConst.DEFAULT_DEAL_PRICE)<=0){
                 //没有从缓存里面获取到价格
+                //todo 异常
                 return ;
             }
             if(DealType.BUY.getCode().equals(tradeEntrustDo.getDealType())){
@@ -121,10 +130,10 @@ public class DealServiceImpl implements DealService {
         //取消的话，改变这个记录的状态。
         tradeEntrustDo.setEntrustStatus(EntrustStatusType.SUCCESS.getCode());
         //更新
-        tradeEntrustService.updateById(tradeEntrustDo);
+        tradeEntrustDomainService.updateById(tradeEntrustDo);
         //成交了，金额不动。 动持仓信息
         //看持仓里面，是否有此信息.
-        TradePositionDo tradePositionDo = tradePositionService.getPositionByCode(
+        TradePosition tradePositionDo = tradePositionService.getPositionByCode(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType(),
                 tradeEntrustDo.getCode()
@@ -139,7 +148,7 @@ public class DealServiceImpl implements DealService {
             //说明全卖完了
             log.info("股票{}进行清仓成交", tradePositionDo.getName());
             //需要删除
-            tradePositionService.removeById(tradePositionDo.getId());
+           // tradePositionService.removeById(tradePositionDo.getId());
         }else{
             //修改成本价
             tradePositionDo.setAvgPrice(
@@ -156,11 +165,11 @@ public class DealServiceImpl implements DealService {
                             tradeEntrustDo.getEntrustNum()
             );
         }
-        tradePositionService.updateById(tradePositionDo);
+     //   tradePositionService.updateById(tradePositionAssembler.entityToDo(tradePositionDo));
 
         //对个人的资产，需要进行添加的操作.
 
-        TradeMoneyDo tradeMoneyDo = tradeMoneyService.getByUid(
+        TradeMoney tradeMoneyDo = tradeMoneyService.getByUserIdAndMockType(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType()
         );
@@ -193,7 +202,7 @@ public class DealServiceImpl implements DealService {
                         tradeEntrustDo.getHandMoney()
                 )
         );
-        tradeMoneyService.updateMoneyVoByid(tradeMoneyDo);
+        tradeMoneyService.updateMoney(tradeMoneyDo);
         //添加一条记录到成交表里面
         tradeDealService.addDealRecord(tradeEntrustDo);
         return OutputResult.buildSucc("成交卖的委托");
@@ -203,17 +212,17 @@ public class DealServiceImpl implements DealService {
         //取消的话，改变这个记录的状态。
         tradeEntrustDo.setEntrustStatus(EntrustStatusType.SUCCESS.getCode());
         //更新
-        tradeEntrustService.updateById(tradeEntrustDo);
+        tradeEntrustDomainService.updateById(tradeEntrustDo);
         //成交了，金额不动。 动持仓信息
         //看持仓里面，是否有此信息.
-        TradePositionDo tradePositionDo = tradePositionService.getPositionByCode(
+        TradePosition tradePositionDo = tradePositionService.getPositionByCode(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType(),
                 tradeEntrustDo.getCode()
         );
         if(null== tradePositionDo){
             //新添加持仓信息
-            tradePositionDo = new TradePositionDo();
+            tradePositionDo = new TradePosition();
             tradePositionDo.setCode(tradeEntrustDo.getCode());
             tradePositionDo.setName(tradeEntrustDo.getName());
             tradePositionDo.setAllAmount(tradeEntrustDo.getEntrustNum());
@@ -228,7 +237,7 @@ public class DealServiceImpl implements DealService {
             );
             tradePositionDo.setUserId(tradeEntrustDo.getUserId());
             tradePositionDo.setMockType(tradeEntrustDo.getMockType());
-            tradePositionService.save(tradePositionDo);
+           // tradePositionService.save(tradePositionAssembler.entityToDo(tradePositionDo));
         }else{
             //修改成本价
             tradePositionDo.setAvgPrice(
@@ -244,11 +253,11 @@ public class DealServiceImpl implements DealService {
                     tradePositionDo.getAllAmount()+
                             tradeEntrustDo.getEntrustNum()
             );
-            tradePositionService.updateById(tradePositionDo);
+           // tradePositionService.updateById(tradePositionAssembler.entityToDo(tradePositionDo));
         }
 
         //对个人的资产，需要进行减少的操作.
-        TradeMoneyDo tradeMoneyDo = tradeMoneyService.getByUid(
+        TradeMoney tradeMoneyDo = tradeMoneyService.getByUserIdAndMockType(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType()
         );
@@ -272,7 +281,7 @@ public class DealServiceImpl implements DealService {
                         tradeEntrustDo.getHandMoney()
                 )
         );
-        tradeMoneyService.updateById(tradeMoneyDo);
+      //  tradeMoneyService.updateById(tradeMoneyDo);
         //添加一条记录到成交表里面
         tradeDealService.addDealRecord(tradeEntrustDo);
         return OutputResult.buildSucc("成交买的委托");

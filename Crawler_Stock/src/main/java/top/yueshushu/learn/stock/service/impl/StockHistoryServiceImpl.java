@@ -8,7 +8,7 @@ import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.stock.assembler.StockHistoryAssembler;
-import top.yueshushu.learn.stock.common.ResultCode;
+import top.yueshushu.learn.stock.common.CrawlerResultCode;
 import top.yueshushu.learn.stock.crawler.CrawlerService;
 import top.yueshushu.learn.stock.domain.StockHistoryDo;
 import top.yueshushu.learn.stock.domainservice.StockHistoryDomainService;
@@ -49,7 +49,7 @@ public class StockHistoryServiceImpl implements StockHistoryService {
         if(CollectionUtils.isEmpty(stockHistoryCsvInfoList)){
             log.error("未获取到股票{} 的在 {} 和{} 之间的历史数据",
                     stockRo.getCode(),stockRo.getStartDate(),stockRo.getEndDate());
-            return OutputResult.buildFail(ResultCode.STOCK_HIS_ASYNC_FAIL);
+            return OutputResult.buildFail(CrawlerResultCode.STOCK_HIS_ASYNC_FAIL);
         }
         log.info(">>获取{}历史信息并转换使用时间:{},转换了{}条",
                 stockRo.getCode(),
@@ -79,6 +79,6 @@ public class StockHistoryServiceImpl implements StockHistoryService {
         );
         stockHistoryDomainService.saveBatch(stockHistoryDoList,500);
         log.info("同步股票{} 的历史数据信息到数据库共用时 {}",stockRo.getCode(),timer.intervalMs());
-        return OutputResult.buildSucc(ResultCode.STOCK_HIS_ASYNC_SUCCESS);
+        return OutputResult.buildSucc(CrawlerResultCode.STOCK_HIS_ASYNC_SUCCESS);
     }
 }

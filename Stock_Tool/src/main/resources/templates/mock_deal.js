@@ -1,5 +1,5 @@
 /*处理url跳转的问题*/
-
+var MOCK_TYPE = MOCK_MOCK_TYPE;
 $(function () {
     $("#mockDeal_table").init();
 })
@@ -26,14 +26,14 @@ var mockDeal_table_column=[
         title : '成交类型',
         field : 'dealType',
         align:"center",
-        width:"200px",
+        width:"60px",
         formatter: dealTypeFormatter,
     },
     {
         title : '成交数量',
         field : 'dealNum',
         align:"center",
-        width:"200px"
+        width:"60px"
     },
     {
         title : '成交价格',
@@ -58,6 +58,14 @@ var mockDeal_table_column=[
         width:"200px"
     },
     {
+        title : '成交方式',
+        field : 'entrustType',
+        align:"center",
+        width:"60px",
+        formatter: typeFormatter,
+    },
+
+    {
         title:"操作",
         field : 'operation',
         align:"center",
@@ -68,7 +76,7 @@ var mockDeal_table_column=[
 
 $('#mockDeal_table').bootstrapTable({
     method : 'post',
-    url : "tradeDeal/list",//请求路径
+    url : TRADE_DEAL_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -102,18 +110,21 @@ function queryParams(params) {
     let query= {
         "pageSize" : params.limit, // 每页显示数量
         "pageNum" : (params.offset / params.limit) + 1, //当前页码,
-        "mockType":1
+        "mockType":MOCK_TYPE
     }
    return query;
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return data;
 }
 
 function dealTypeFormatter(value){
     return value==1?"买":"卖";
+}
+function typeFormatter(value){
+    return value==1?"手动":"自动";
 }
 /* 给每一行增加操作按钮 */
 function operationFormatter(value, row, index) {
@@ -130,3 +141,4 @@ window.operationEvents={
 
     }
 };
+

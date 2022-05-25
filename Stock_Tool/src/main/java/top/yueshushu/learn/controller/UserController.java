@@ -3,18 +3,12 @@ package top.yueshushu.learn.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
 import top.yueshushu.learn.business.UserBusiness;
 import top.yueshushu.learn.common.ResultCode;
-import top.yueshushu.learn.mode.ro.IdRo;
 import top.yueshushu.learn.mode.ro.UserRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockStatRo;
-import top.yueshushu.learn.service.MenuService;
-import top.yueshushu.learn.service.UserService;
 import top.yueshushu.learn.util.SelectConditionUtil;
 
 import javax.annotation.Resource;
@@ -55,5 +49,11 @@ public class UserController extends BaseController {
     @ApiOperation("转换登录用户的密码")
     public OutputResult convertPassWord(String password) {
         return userBusiness.convertPassWord(password);
+    }
+
+    @GetMapping("/tradePassword")
+    @ApiOperation("转换交易用户的密码")
+    public OutputResult tradePassword(String password) {
+        return userBusiness.tradePassword(password);
     }
 }

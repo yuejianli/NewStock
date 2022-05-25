@@ -193,7 +193,7 @@ function queryYesParams(params) {
 }
 //处理机构返回数据
 function handleYesHistoryClientData(res){
-    let data= res.data;
+    let data= res.data || [];
     return {
         total: data.total,
         rows: data.list

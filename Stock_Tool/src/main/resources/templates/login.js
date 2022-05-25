@@ -16,6 +16,7 @@ $("#login").click(function(){
         let user = postResponse.data.currentUser;
         sessionStorage.setItem("loginUserId",user.id);
         sessionStorage.setItem("Authorization",user.token);
+        AUTHORIZATION = user.token;
         //进行跳转
         window.location.href = "tradelogin";
     }else{

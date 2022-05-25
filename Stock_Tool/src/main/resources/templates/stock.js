@@ -96,7 +96,10 @@ function handleClientData(res){
     if(data.list==null||data.list.length<1){
         //将其清空
         $("#codeSync").show();
-        return [];
+        return {
+            total: 0,
+            rows: []
+        };
     }else{
         $("#codeSync").hide();
     }
@@ -445,7 +448,7 @@ function queryHistoryParams(params) {
 }
 //处理机构返回数据
 function handleHistoryClientData(res){
-    let data= res.data;
+    let data= res.data ||[];
     return {
         total: data.total,
         rows: data.list

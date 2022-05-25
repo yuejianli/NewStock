@@ -1,18 +1,19 @@
 package top.yueshushu.learn.xxljob.user;
 
+import cn.hutool.core.date.DateUtil;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.handler.IJobHandler;
 import com.xxl.job.core.handler.annotation.JobHandler;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import top.yueshushu.learn.business.DealBusiness;
+import top.yueshushu.learn.enumtype.EntrustType;
 import top.yueshushu.learn.enumtype.MockType;
+import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.mode.ro.DealRo;
-import top.yueshushu.learn.service.DealService;
-import top.yueshushu.learn.service.TradeDealService;
-import top.yueshushu.learn.service.TradeEntrustService;
-import top.yueshushu.learn.service.TradePositionService;
+
+import javax.annotation.Resource;
 
 /**
  * @ClassName:MockEntrustHandler
@@ -25,16 +26,27 @@ import top.yueshushu.learn.service.TradePositionService;
 @JobHandler("mockDealHandler")
 @Slf4j
 public class MockDealHandler extends IJobHandler {
-    @Autowired
-    private DealService dealService;
+    @Value("${xxlJobTime}")
+    boolean xxlJobTime;
+    @Resource
+    private DealBusiness dealBusiness;
+    @Resource
+    private DateHelper dateHelper;
 
     @Override
     public ReturnT<String> execute(String s) throws Exception {
+        if (xxlJobTime){
+            if (!dateHelper.isTradeTime(DateUtil.date())) {
+                return ReturnT.SUCCESS;
+            }
+        }
+
         log.info(">>>扫描当前的用户id 为{}",s);
         DealRo dealRo = new DealRo();
         dealRo.setMockType(MockType.MOCK.getCode());
         dealRo.setUserId(Integer.parseInt(s));
-        dealService.mockDealXxlJob(dealRo);
+        dealRo.setEntrustType(EntrustType.AUTO.getCode());
+        dealBusiness.mockDealXxlJob(dealRo);
         return ReturnT.SUCCESS;
     }
 }

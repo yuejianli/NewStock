@@ -3,16 +3,17 @@ package top.yueshushu.learn.controller;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.yueshushu.learn.business.BuyBusiness;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.BuyRo;
-import top.yueshushu.learn.mode.ro.TradeEntrustRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.BuyService;
-import top.yueshushu.learn.service.TradeEntrustService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -26,13 +27,27 @@ import top.yueshushu.learn.service.TradeEntrustService;
 @RequestMapping("/buy")
 @ApiModel("买入股票处理")
 public class BuyController extends BaseController {
-    @Autowired
-    private BuyService buyService;
+    @Resource
+    private BuyBusiness buyBusiness;
     @PostMapping("/buy")
     @ApiOperation("买入股票信息")
     public OutputResult buy(@RequestBody BuyRo buyRo){
         buyRo.setUserId(getUserId());
-        return buyService.buy(buyRo);
+        if(!StringUtils.hasText(buyRo.getCode())){
+            return OutputResult.buildAlert(ResultCode.STOCK_CODE_IS_EMPTY);
+        }
+        if(buyRo.getAmount() ==null){
+            return OutputResult.buildAlert(ResultCode.TOOL_NUMBER_IS_EMPTY);
+        }
+        if (buyRo.getAmount()%100 !=0){
+            return OutputResult.buildAlert(
+                    ResultCode.TOOL_NUMBER_IS_HUNDREDS
+            );
+        }
+        if(buyRo.getPrice() ==null){
+            return OutputResult.buildAlert(ResultCode.TOOL_PRICE_IS_EMPTY);
+        }
+        return buyBusiness.buy(buyRo);
     }
 
 

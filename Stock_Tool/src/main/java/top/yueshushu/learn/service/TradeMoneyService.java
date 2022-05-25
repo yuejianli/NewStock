@@ -1,9 +1,8 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.entity.TradeMoney;
 import top.yueshushu.learn.mode.ro.TradeMoneyRo;
 import top.yueshushu.learn.mode.vo.TradeMoneyVo;
-import top.yueshushu.learn.domain.TradeMoneyDo;
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
 /**
@@ -14,31 +13,32 @@ import top.yueshushu.learn.response.OutputResult;
  * @author 两个蝴蝶飞
  * @since 2022-01-03
  */
-public interface TradeMoneyService extends IService<TradeMoneyDo> {
-    /**
-     * 查询资产信息
-     * @param tradeMoneyRo
-     * @return
-     */
-    OutputResult listMoney(TradeMoneyRo tradeMoneyRo);
+public interface TradeMoneyService{
 
     /**
      * 更新用户的资产信息
-     * @param tradeMoneyVo
+     * @param tradeMoney 携带着id的 money信息
      */
-    void updateMoneyVoByid(TradeMoneyVo tradeMoneyVo);
+    void updateMoney(TradeMoney tradeMoney);
 
     /**
      * 获取用户的资产信息
-     * @param userId
-     * @param mockType
-     * @return
+     * @param userId 用户编号
+     * @param mockType 股票类型
+     * @return 获取用户的资产信息
      */
-    TradeMoneyDo getByUid(Integer userId, Integer mockType);
+    TradeMoney getByUserIdAndMockType(Integer userId, Integer mockType);
 
     /**
-     * 更新用户的资产信息
-     * @param tradeMoneyDo
+     * 查询虚拟的股票当前的持仓记录信息
+     * @param tradeMoneyRo 股票持仓对象
+     * @return 查询虚拟的股票当前的持仓记录信息
      */
-    void updateMoneyVoByid(TradeMoneyDo tradeMoneyDo);
+    OutputResult <TradeMoneyVo> mockInfo(TradeMoneyRo tradeMoneyRo);
+    /**
+     * 查询真实的股票当前的持仓记录信息
+     * @param tradeMoneyRo 股票持仓对象
+     * @return 查询真实的股票当前的持仓记录信息
+     */
+    OutputResult<TradeMoneyVo> realInfo(TradeMoneyRo tradeMoneyRo);
 }

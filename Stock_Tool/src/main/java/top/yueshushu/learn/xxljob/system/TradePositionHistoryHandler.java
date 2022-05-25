@@ -7,8 +7,7 @@ import com.xxl.job.core.handler.annotation.JobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.enumtype.MockType;
-import top.yueshushu.learn.service.StockSelectedService;
-import top.yueshushu.learn.service.TradePositionHistoryService;
+import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.service.UserService;
 
@@ -30,9 +29,15 @@ public class TradePositionHistoryHandler extends IJobHandler {
     private TradePositionService tradePositionService;
     @Resource
     private UserService userService;
-
+    @Resource
+    private DateHelper dateHelper;
     @Override
     public ReturnT<String> execute(String s) throws Exception {
+
+        if (!dateHelper.isWorkingDay(DateUtil.date())){
+            log.info("当前时间{}不是交易日，不需要同步",DateUtil.now());
+            return ReturnT.SUCCESS;
+        }
         log.info(">>> {} 时,保存股票的当前持仓信息", DateUtil.now());
         List<Integer> userIdList =  userService.listUserId();
         //设置类型为虚拟

@@ -1,4 +1,5 @@
-/*处理url跳转的问题*/
+// 虚拟持仓信息
+var mockType = MOCK_MOCK_TYPE;
 /**
  * 处理资产的展示信息
  * @param mockType
@@ -8,11 +9,11 @@ function handlerMoneyShow(mockType) {
         "mockType":mockType
     }
   //进行提交
-    let postResponse = postAjax("../tradeMoney/list",info);
+    let postResponse = postAjax(TRADE_MONEY_INFO,info);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         //获取信息
-        let money = postResponse.data.result;
+        let money = postResponse.data;
         $("#totalMoney").text(money.totalMoney);
         $("#marketMoney").text(money.marketMoney);
         $("#useMoney").text(money.useMoney);
@@ -30,7 +31,7 @@ function handlerMoneyShow(mockType) {
 
 $(function () {
     //处理资产的信息
-    handlerMoneyShow(1);
+    handlerMoneyShow(mockType);
     $("#mockPosition_table").init();
 })
 var mockPosition_table_column=[
@@ -51,43 +52,43 @@ var mockPosition_table_column=[
         title : '总数量',
         field : 'allAmount',
         align:"center",
-        width:"240px"
+        width:"100px"
     },
     {
         title : '可用数量',
-        field : 'useAmont',
+        field : 'useAmount',
         align:"center",
-        width:"200px"
+        width:"100px"
     },
     {
         title : '成本价',
         field : 'avgPrice',
         align:"center",
-        width:"200px"
+        width:"100px"
     },
     {
         title : '当前价',
         field : 'price',
         align:"center",
-        width:"200px"
+        width:"100px"
     },
     {
         title : '总的市值',
         field : 'allMoney',
         align:"center",
-        width:"200px"
+        width:"150px"
     },
     {
         title : '浮动盈亏',
         field : 'floatMoney',
         align:"center",
-        width:"200px"
+        width:"100px"
     },
     {
-        title : '盈亏比例',
+        title : '盈亏比例 (%)',
         field : 'floatProportion',
         align:"center",
-        width:"200px"
+        width:"100px"
     },
     {
         title:"操作",
@@ -100,7 +101,7 @@ var mockPosition_table_column=[
 
 $('#mockPosition_table').bootstrapTable({
     method : 'post',
-    url : "tradePosition/list",//请求路径
+    url : TRADE_POSITION_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -133,16 +134,14 @@ $('#mockPosition_table').bootstrapTable({
 /* table查询时参数的方法 */
 function queryParams(params) {
     let query= {
-        "pageSize" : params.limit, // 每页显示数量
-        "pageNum" : (params.offset / params.limit) + 1, //当前页码
-        "mockType":1,
+        "mockType":mockType,
         "selectType":$("#selectType").val()
     }
    return query;
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return data;
 }
 /* 给每一行增加操作按钮 */
@@ -151,12 +150,12 @@ function operationFormatter(value, row, index) {
         '<a class="buy text-primary" href="javascript:void(0)" data-toggle="tooltip" title="买入">',
         '<i class="fa fa-info"></i>&nbsp;买入委托&nbsp;&nbsp;</a>',
         '<a class="sell text-primary" href="javascript:void(0)" data-toggle="tooltip" title="卖出">',
-        '<i class="fa fa-history"></i>&nbsp;卖出委托&nbsp;&nbsp;</a>'
+        '<i class="fa fa-history"></i>&nbsp;&nbsp;&nbsp;卖出委托&nbsp;&nbsp;</a>'
     ].join('');
 }
 
 function rowStyle(row, index) {
-    var style = {};
+    let style = {};
     if(row.selectType==1){
         style={css:{'color':'#EE0000'}};
     }else{
@@ -200,12 +199,13 @@ $("#buy_submit").click(function(){
     let buyInfo = {
         "code":clickRow.code,
         "name":clickRow.name,
-        "mockType":1,
+        "mockType":mockType,
         "amount":amount,
-        "price":price
+        "price":price,
+        "entrustType":1
     }
     //进行提交
-    let postResponse = postAjax("../buy/buy",buyInfo);
+    let postResponse = postAjax(TRADE_BUY,buyInfo);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         Flavr.falert("买入股票委托成功");
@@ -230,12 +230,13 @@ $("#sell_submit").click(function(){
     let sellInfo = {
         "code":clickRow.code,
         "name":clickRow.name,
-        "mockType":1,
+        "mockType":mockType,
         "amount":amount,
-        "price":price
+        "price":price,
+        "entrustType":1
     }
     //进行提交
-    let postResponse = postAjax("../sell/sell",sellInfo);
+    let postResponse = postAjax(TRADE_SELL,sellInfo);
     //如果成功，那么就是登录成功.
     if(postResponse.success){
         Flavr.falert("卖出股票委托成功");

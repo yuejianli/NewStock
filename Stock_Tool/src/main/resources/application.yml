@@ -23,6 +23,8 @@ CRAWLER_URL: http://localhost:8089/Crawler/stock/
 #xxl-job-admin 的相关配置信息
 XXL_JOB_IP: 127.0.0.1
 XXL_JOB_PORT: 8085
+# 是否开启xxl_job的相应时间验证
+xxlJobTime: true
 
 server:
   port: 8088

@@ -3,7 +3,7 @@ package top.yueshushu.learn.enumtype;
 import org.springframework.util.Assert;
 
 /**
- * 交易所的类型
+ * 交易方法类型
  * @author 两个蝴蝶飞
  */
 public enum TradeMethodType {

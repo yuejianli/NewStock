@@ -1,11 +1,11 @@
 package top.yueshushu.learn.service.impl;
 
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanMap;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
+import org.springframework.stereotype.Service;
 import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.AuthenticationRequest;
 import top.yueshushu.learn.api.response.AuthenticationResponse;
@@ -15,27 +15,20 @@ import top.yueshushu.learn.assembler.TradeUserAssembler;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.config.TradeClient;
+import top.yueshushu.learn.domain.TradeMethodDo;
 import top.yueshushu.learn.domainservice.TradeMethodDomainService;
 import top.yueshushu.learn.domainservice.TradeUserDomainService;
 import top.yueshushu.learn.entity.TradeMethod;
 import top.yueshushu.learn.entity.TradeUser;
-import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.mode.ro.TradeUserRo;
 import top.yueshushu.learn.mode.vo.TradeUserVo;
-import top.yueshushu.learn.domain.TradeMethodDo;
-import top.yueshushu.learn.domain.TradeUserDo;
-import top.yueshushu.learn.mapper.TradeUserDoMapper;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.service.TradeMethodService;
 import top.yueshushu.learn.service.TradeUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,8 +68,7 @@ public class TradeUserServiceImpl implements TradeUserService {
 
         //关联的用户
         AuthenticationRequest request = new AuthenticationRequest(tradeUser.getUserId());
-        //todo 密码不用前端输入形式
-        request.setPassword(tradeUserRo.getPassword());
+        request.setPassword(passwordEncry(tradeUser.getPassword()));
         request.setIdentifyCode(tradeUserRo.getIdentifyCode());
         request.setRandNumber(tradeUserRo.getRandNum());
         //获取登录验证的方法
@@ -88,40 +80,40 @@ public class TradeUserServiceImpl implements TradeUserService {
         TradeResultVo<AuthenticationResponse> resultVo = null;
         log.info("系统用户{}登录时成功构建了登录请求信息",tradeUser.getUserId());
         try {
-            //tradeClient.openSession();
-            //String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
-            //resultVo = defaultResponseParser.parse(content, new TypeReference<AuthenticationResponse>() {});
-            //if (resultVo.getSuccess()) {
-            //    log.info("系统用户{}登录请求成功",tradeUser.getUserId());
-            //    TradeMethodDo authCheckTradeMethodDo =
-            //            tradeMethodDomainService.getMethodByCode(TradeMethodType.AuthenticationCheckRequest.getCode());
-            //
-            //    String content2 = tradeClient.sendNewInstance(authCheckTradeMethodDo.getUrl(), new HashMap<>(2));
-            //    String validateKey = getValidateKey(content2);
-            //
-            //    AuthenticationResponse response = new AuthenticationResponse();
-            //    response.setCookie(tradeClient.getCurrentCookie());
-            //    response.setValidateKey(validateKey);
-            //    resultVo.setData(Arrays.asList(response));
-            //    log.info("系统用户{}响应数据成功",tradeUser.getUserId());
-            //}
-            resultVo = new TradeResultVo<AuthenticationResponse>();
-            resultVo.setSuccess(true);
+            tradeClient.openSession();
+            String content = tradeClient.sendNewInstance(tradeMethod.getUrl(), params);
+            resultVo = defaultResponseParser.parse(content, new TypeReference<AuthenticationResponse>() {});
+            if (resultVo.getSuccess()) {
+                log.info("系统用户{}登录请求成功",tradeUser.getUserId());
+                TradeMethodDo authCheckTradeMethodDo =
+                        tradeMethodDomainService.getMethodByCode(TradeMethodType.AuthenticationCheckRequest.getCode());
 
+                String content2 = tradeClient.sendNewInstance(authCheckTradeMethodDo.getUrl(), new HashMap<>(2));
+                String validateKey = getValidateKey(content2);
+
+                AuthenticationResponse response = new AuthenticationResponse();
+                response.setCookie(tradeClient.getCurrentCookie());
+                response.setValidateKey(validateKey);
+                resultVo.setData(Arrays.asList(response));
+                log.info("系统用户{}响应数据成功",tradeUser.getUserId());
+            }else{
+                log.error("系统用户{}登录请求失败",tradeUser.getUserId(),resultVo.getMessage());
+                return OutputResult.buildFail(ResultCode.EASY_MONEY_LOGIN_ERROR);
+            }
         } catch (Exception e){
             log.error("系统用户{}登录请求失败",tradeUser.getUserId(),e);
             return OutputResult.buildFail();
         }finally {
-           // tradeClient.destoryCurrentSession();
+           tradeClient.destoryCurrentSession();
         }
         TradeUserVo tradeUserVo = new TradeUserVo();
         if (!resultVo.getSuccess()) {
             log.info("系统用户{}未成功登录",tradeUser.getUserId());
             return OutputResult.buildFail();
         }
-        //AuthenticationResponse response = resultVo.getData().get(0);
-        //tradeUser.setCookie(response.getCookie());
-        //tradeUser.setValidateKey(response.getValidateKey());
+        AuthenticationResponse response = resultVo.getData().get(0);
+        tradeUser.setCookie(response.getCookie());
+        tradeUser.setValidateKey(response.getValidateKey());
         tradeUserDomainService.updateById(
                 tradeUserAssembler.entityToDo(
                         tradeUser
@@ -131,6 +123,20 @@ public class TradeUserServiceImpl implements TradeUserService {
         tradeUserVo.setUserId(tradeUserRo.getId());
         return OutputResult.buildSucc(tradeUserVo);
     }
+
+    /**
+     * 密码转换
+     * @param password 数据库密码
+     * @return 东方财富加密前的密码
+     */
+    private String passwordEncry(String password) {
+        byte[] key = Const.TRADE_PASSWORD_AES_KEY.getBytes();
+        SymmetricCrypto symmetricCrypto = new SymmetricCrypto(SymmetricAlgorithm.AES,key);
+        //加密
+        String originPassword = new String(symmetricCrypto.decrypt(password));
+        return originPassword;
+    }
+
     /**
      * 组装参数
      * @param request

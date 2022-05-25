@@ -4,19 +4,15 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.domain.TradePositionHistoryDo;
-import top.yueshushu.learn.domain.UserDo;
 import top.yueshushu.learn.domainservice.TradePositionHistoryDomainService;
-import top.yueshushu.learn.domainservice.UserDomainService;
 import top.yueshushu.learn.mapper.TradePositionHistoryDoMapper;
-import top.yueshushu.learn.mapper.UserDoMapper;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * @Description TODO
+ * @Description 持仓历史
  * @Author yuejianli
  * @Date 2022/5/20 23:23
  **/

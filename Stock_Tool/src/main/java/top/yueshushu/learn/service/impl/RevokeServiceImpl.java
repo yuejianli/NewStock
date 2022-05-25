@@ -4,18 +4,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import top.yueshushu.learn.assembler.TradePositionAssembler;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domainservice.TradeEntrustDomainService;
+import top.yueshushu.learn.entity.TradeMoney;
+import top.yueshushu.learn.entity.TradePosition;
 import top.yueshushu.learn.enumtype.DealType;
 import top.yueshushu.learn.enumtype.EntrustStatusType;
 import top.yueshushu.learn.mode.ro.RevokeRo;
-import top.yueshushu.learn.domain.TradeEntrustDo;
-import top.yueshushu.learn.domain.TradeMoneyDo;
-import top.yueshushu.learn.domain.TradePositionDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.RevokeService;
 import top.yueshushu.learn.service.TradeEntrustService;
 import top.yueshushu.learn.service.TradeMoneyService;
 import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.util.BigDecimalUtil;
+
+import javax.annotation.Resource;
 
 /**
  * @ClassName:RevokeServiceImpl
@@ -34,13 +38,18 @@ public class RevokeServiceImpl implements RevokeService {
     private TradeEntrustService tradeEntrustService;
     @Autowired
     private TradePositionService tradePositionService;
+    @Resource
+    private TradePositionAssembler tradePositionAssembler;
+    @Resource
+    private TradeEntrustDomainService tradeEntrustDomainService;
+
     @Override
     public OutputResult revoke(RevokeRo revokeRo) {
         if(revokeRo.getId()==null){
             return OutputResult.buildAlert("请选择要撤销的委托单信息");
         }
         //查询单号信息
-        TradeEntrustDo tradeEntrustDo = tradeEntrustService.getById(revokeRo.getId());
+        TradeEntrustDo tradeEntrustDo = tradeEntrustDomainService.getById(revokeRo.getId());
         if(null== tradeEntrustDo){
             return OutputResult.buildAlert("传入的委托编号id不正确");
         }
@@ -63,22 +72,22 @@ public class RevokeServiceImpl implements RevokeService {
         //取消的话，改变这个记录的状态。
         tradeEntrustDo.setEntrustStatus(EntrustStatusType.REVOKE.getCode());
         //更新
-        tradeEntrustService.updateById(tradeEntrustDo);
+        tradeEntrustDomainService.updateById(tradeEntrustDo);
 
-        TradePositionDo tradePositionDo = tradePositionService.getPositionByCode(
+        TradePosition tradePosition = tradePositionService.getPositionByCode(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType(),
                 tradeEntrustDo.getCode()
         );
-        if(tradePositionDo ==null){
+        if(tradePosition ==null){
             return OutputResult.buildAlert("没有持仓信息，出现了异常");
         }
-        tradePositionDo.setUseAmount(
-                tradePositionDo.getUseAmount()
+        tradePosition.setUseAmount(
+                tradePosition.getUseAmount()
                         + tradeEntrustDo.getEntrustNum()
         );
         //更新
-        tradePositionService.updateById(tradePositionDo);
+      //  tradePositionService.update(tradePositionAssembler.entityToDo(tradePosition));
         return OutputResult.buildSucc("撤销卖出委托成功");
     }
 
@@ -86,10 +95,10 @@ public class RevokeServiceImpl implements RevokeService {
         //取消的话，改变这个记录的状态。
         tradeEntrustDo.setEntrustStatus(EntrustStatusType.REVOKE.getCode());
         //更新
-        tradeEntrustService.updateById(tradeEntrustDo);
+        tradeEntrustDomainService.updateById(tradeEntrustDo);
 
         //将金额回滚
-       TradeMoneyDo tradeMoneyDo =  tradeMoneyService.getByUid(
+       TradeMoney tradeMoneyDo =  tradeMoneyService.getByUserIdAndMockType(
                 tradeEntrustDo.getUserId(),
                 tradeEntrustDo.getMockType()
         );
@@ -109,8 +118,9 @@ public class RevokeServiceImpl implements RevokeService {
                         tradeEntrustDo.getTakeoutMoney()
                 )
         );
-        tradeMoneyService.updateMoneyVoByid(
-                tradeMoneyDo
+        tradeMoneyService.updateMoney(
+               // tradeMoneyDo
+                null
         );
         return OutputResult.buildSucc("撤销买的委托成功");
     }

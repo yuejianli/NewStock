@@ -2,7 +2,10 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.digest.MD5;
+import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
+import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.assembler.UserAssembler;
 import top.yueshushu.learn.common.Const;
@@ -10,10 +13,8 @@ import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.domainservice.UserDomainService;
 import top.yueshushu.learn.entity.User;
 import top.yueshushu.learn.mode.ro.UserRo;
-import top.yueshushu.learn.domain.UserDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.UserService;
-import org.springframework.stereotype.Service;
 import top.yueshushu.learn.service.cache.UserCacheService;
 import top.yueshushu.learn.util.JwtUtils;
 
@@ -86,7 +87,13 @@ public class UserServiceImpl implements UserService {
         String encryPs = md5.digestHex16(password.getBytes());
         return OutputResult.buildSucc(encryPs);
     }
-
+    @Override
+    public OutputResult tradePassword(String password) {
+         byte[] key = Const.TRADE_PASSWORD_AES_KEY.getBytes();
+         SymmetricCrypto symmetricCrypto = new SymmetricCrypto(SymmetricAlgorithm.AES,key);
+         //加密
+         return OutputResult.buildSucc(symmetricCrypto.encryptHex(password));
+    }
     @Override
     public OutputResult validateUserRo(UserRo userRo) {
 

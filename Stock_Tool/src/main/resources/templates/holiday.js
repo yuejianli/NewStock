@@ -70,7 +70,10 @@ function handleClientData(res){
     if(data.list==null||data.list.length<1){
         //将其清空
         $("#holidaySync").show();
-        return [];
+        return {
+            total: 0,
+            rows: []
+        };
     }else{
         $("#holidaySync").hide();
     }

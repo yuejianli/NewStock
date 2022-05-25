@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.exception.ServiceException;
 import top.yueshushu.learn.util.HttpUtil;
+
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,7 +49,10 @@ public class TradeClient {
     public String sendNewInstance(String url, Map<String, Object> params) {
         ClientWrapper clientWrapper = threadLocal.get();
         assertOpened(clientWrapper);
-        return HttpUtil.sendPost(clientWrapper.httpClient, url, params);
+        Map<String,String> headerMap = new HashMap<>();
+        headerMap.put("Referer","https://jywg.18.cn/Login?el=1&clear=1");
+        headerMap.put("Origin","https://jywg.18.cn");
+        return HttpUtil.sendPost(clientWrapper.httpClient, url, params,null);
     }
 
     public String getCurrentCookie() {

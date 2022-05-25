@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.yueshushu.learn.mapper.TradeEntrustMapper">
+<mapper namespace="top.yueshushu.learn.mapper.TradeEntrustDoMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="top.yueshushu.learn.domain.TradeEntrustDo">
@@ -32,5 +32,39 @@
         total_money,user_id,
         entrust_type,mock_type, flag
     </sql>
+    <select id="listByQuery" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from trade_entrust
+        where user_id=#{tradeEntrustQueryDto.userId}
+        and mock_type =#{tradeEntrustQueryDto.mockType}
+        <if test="tradeEntrustQueryDto.entrustDate != null">
+            and date_format(entrust_date,'%Y%m%d') = date_format(
+            #{tradeEntrustQueryDto.entrustDate,jdbcType=TIMESTAMP},'%Y%m%d')
+        </if>
+        <if test="tradeEntrustQueryDto.entrustStatus != null">
+            and entrust_status =#{tradeEntrustQueryDto.entrustStatus}
+        </if>
+        order by entrust_date desc
+    </select>
+    <delete id="deleteToDayByQuery">
+        delete from trade_entrust
+        where user_id=#{tradeEntrustQueryDto.userId}
+        and mock_type =#{tradeEntrustQueryDto.mockType}
+        and date_format(entrust_date,'%Y%m%d') =date_format(
+        #{tradeEntrustQueryDto.entrustDate,jdbcType=TIMESTAMP},'%Y%m%d')
+    </delete>
+    <select id="listHistoryByQuery" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from trade_entrust
+        where user_id=#{tradeEntrustQueryDto.userId}
+        and mock_type =#{tradeEntrustQueryDto.mockType}
+        <if test="tradeEntrustQueryDto.startEntrustDate != null">
+            and entrust_date >= #{tradeEntrustQueryDto.startEntrustDate}
+        </if>
+        <if test="tradeEntrustQueryDto.endEntrustDate != null">
+            and entrust_date &lt; #{tradeEntrustQueryDto.endEntrustDate}
+        </if>
+        order by entrust_date desc
+    </select>
 
 </mapper>

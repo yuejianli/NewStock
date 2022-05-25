@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
+import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.model.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
@@ -35,6 +36,8 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
 
     @Resource
     private StockCacheService  stockCacheService;
+    @Resource
+    private DateHelper dateHelper;
 
     @Value("${restHost.crawlerUrl}")
     private String crawlerUrl;
@@ -180,23 +183,43 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
 
     @Override
     public void updateCodePrice(String code) {
-        StockRo stockRo = new StockRo();
-        //获取当前的股票
-        String fullCode = StockUtil.getFullCode(code);
-        stockRo.setCode(fullCode);
+        //生成真实数据。
+        generateRealPriceData(code);
+    }
+    /**
+     * 生成虚拟的股票信息  P(t) = P(t-1) + random(0,1)*1 - 0.5
+     * @param code 股票编码
+     * @return 返回生成的虚拟的股票价格
+     */
+    private void generateMockPriceData(String code) {
         //获取当前的价格
-        String url= crawlerUrl+"getStockPrice";
-        OutputResult outputResult = restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
-        //获取信息
-       String priceReturn = (String) outputResult.getData();
-       //将这个信息进行转换，转换成对应的 BigDecimal
-        BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
-
+        BigDecimal nowCachePrice = stockCacheService.getNowCachePrice(code);
+        BigDecimal randPrice = BigDecimalUtil.toBigDecimal(Math.random()*1-0.5);
+        BigDecimal newPrice = BigDecimalUtil.addBigDecimal(nowCachePrice,randPrice);
         stockCacheService.setNowCachePrice(
-                code,price
-        );
+                code,newPrice
+         );
+    }
+
+    private void generateRealPriceData(String code){
+         StockRo stockRo = new StockRo();
+         //获取当前的股票
+         String fullCode = StockUtil.getFullCode(code);
+         stockRo.setCode(fullCode);
+         //获取当前的价格
+         String url= crawlerUrl+"getStockPrice";
+         OutputResult outputResult = restTemplate.postForEntity(
+                 url,stockRo,
+                 OutputResult.class
+         ).getBody();
+         //获取信息
+        String priceReturn = (String) outputResult.getData();
+        //将这个信息进行转换，转换成对应的 BigDecimal
+         BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
+
+         stockCacheService.setNowCachePrice(
+                 code,price
+         );
+
     }
 }

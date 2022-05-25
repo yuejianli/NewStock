@@ -1,40 +1,45 @@
 package top.yueshushu.learn.service.impl;
 
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.TypeReference;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import top.yueshushu.learn.api.TradeResultVo;
 import top.yueshushu.learn.api.request.GetDealDataRequest;
 import top.yueshushu.learn.api.request.GetHisDealDataRequest;
 import top.yueshushu.learn.api.response.GetDealDataResponse;
 import top.yueshushu.learn.api.response.GetHisDealDataResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
+import top.yueshushu.learn.assembler.TradeDealAssembler;
+import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.config.TradeClient;
+import top.yueshushu.learn.domain.TradeDealDo;
+import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.domainservice.TradeDealDomainService;
 import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.MockType;
+import top.yueshushu.learn.mode.dto.TradeDealQueryDto;
 import top.yueshushu.learn.mode.ro.TradeDealRo;
 import top.yueshushu.learn.mode.vo.TradeDealVo;
-import top.yueshushu.learn.domain.TradeDealDo;
-import top.yueshushu.learn.mapper.TradeDealMapper;
-import top.yueshushu.learn.domain.TradeEntrustDo;
+import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeDealService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
 import top.yueshushu.learn.util.BigDecimalUtil;
+import top.yueshushu.learn.util.PageUtil;
 import top.yueshushu.learn.util.StockUtil;
 import top.yueshushu.learn.util.TradeUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -46,31 +51,17 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDealDo> implements TradeDealService {
-    @Autowired
-    private TradeDealMapper tradeDealMapper;
+public class TradeDealServiceImpl implements TradeDealService {
+    @Resource
+    private TradeDealDomainService tradeDealDomainService;
+    @Resource
+    private TradeDealAssembler tradeDealAssembler;
     @Resource
     private DefaultResponseParser defaultResponseParser;
-    @Autowired
+    @Resource
     private TradeUtil tradeUtil;
-    @Autowired
+    @Resource
     private TradeClient tradeClient;
-    @Override
-    public OutputResult listDeal(TradeDealRo tradeDealRo) {
-        if(null==tradeDealRo.getMockType()){
-            return OutputResult.buildAlert("请传入交易盘的类型");
-        }
-        MockType mockType = MockType.getMockType(tradeDealRo.getMockType());
-        if(null==mockType){
-            return OutputResult.buildAlert("不支持的交易盘的类型");
-        }
-        if(MockType.MOCK.getCode().equals(mockType.getCode())){
-            return mockList(tradeDealRo);
-        }
-        //接下来，是正式盘的处理方式
-        return realList(tradeDealRo);
-
-    }
 
     @Override
     public void addDealRecord(TradeEntrustDo tradeEntrustDo) {
@@ -93,38 +84,23 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
                 StockUtil.generateDealCode()
         );
         tradeDealDo.setEntrustCode(tradeEntrustDo.getEntrustCode());
+        tradeDealDo.setEntrustType(tradeEntrustDo.getEntrustType());
         tradeDealDo.setUserId(tradeEntrustDo.getUserId());
         tradeDealDo.setMockType(tradeEntrustDo.getMockType());
         tradeDealDo.setFlag(DataFlagType.NORMAL.getCode());
-        tradeDealMapper.insert(tradeDealDo);
+        tradeDealDomainService.save(tradeDealDo);
     }
-
-    @Override
-    public OutputResult history(TradeDealRo tradeDealRo) {
-        if(null==tradeDealRo.getMockType()){
-            return OutputResult.buildAlert("请传入交易盘的类型");
-        }
-        MockType mockType = MockType.getMockType(tradeDealRo.getMockType());
-        if(null==mockType){
-            return OutputResult.buildAlert("不支持的交易盘的类型");
-        }
-        if(MockType.MOCK.getCode().equals(mockType.getCode())){
-            return mockHistoryList(tradeDealRo);
-        }
-        //接下来，是正式盘的处理方式
-        return realHistoryList(tradeDealRo);
-    }
-
     /**
      * 正式盘的处理方式
      * @param tradeDealRo
      * @return
      */
-    private OutputResult realList(TradeDealRo tradeDealRo) {
+    @Override
+    public OutputResult<List<TradeDealVo>> realList(TradeDealRo tradeDealRo) {
         //获取响应信息
         TradeResultVo<GetDealDataResponse> tradeResultVo = getDealDataResponse(tradeDealRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.buildAlert("查询我的持仓失败");
+            return OutputResult.buildAlert(ResultCode.TRADE_DEAL_FAIL);
         }
         List<GetDealDataResponse> data = tradeResultVo.getData();
 
@@ -157,33 +133,24 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
                 new TypeReference<GetDealDataResponse>(){});
         return result;
     }
-
-    /**
-     * 查询虚拟盘的信息
-     * @param tradeDealRo
-     * @return
-     */
-    private OutputResult mockList(TradeDealRo tradeDealRo) {
+    @Override
+    public OutputResult mockList(TradeDealRo tradeDealRo) {
         Date now = DateUtil.date();
-        Date beginNow = DateUtil.beginOfDay(now);
-        QueryWrapper<TradeDealDo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",tradeDealRo.getUserId());
-        queryWrapper.eq("mock_type",tradeDealRo.getMockType());
-        queryWrapper.gt("deal_date",beginNow);
-        queryWrapper.orderByDesc("id");
+        DateTime beginNow = DateUtil.beginOfDay(now);
+
+
+        TradeDealQueryDto tradeDealQueryDto = new TradeDealQueryDto();
+        tradeDealQueryDto.setUserId(tradeDealRo.getUserId());
+        tradeDealQueryDto.setMockType(tradeDealRo.getMockType());
+        tradeDealQueryDto.setDealDate(beginNow);
         //根据用户去查询信息
-        List<TradeDealDo> tradeDealDoList = tradeDealMapper.selectList(queryWrapper);
+        List<TradeDealDo> tradeDealDoList = tradeDealDomainService.listByQuery(tradeDealQueryDto);
         if (CollectionUtils.isEmpty(tradeDealDoList)) {
-            return OutputResult.buildSucc(new ArrayList<TradeDealVo>());
+            return OutputResult.buildSucc(Collections.emptyList());
         }
-        List<TradeDealVo> tradeDealVoList = new ArrayList<>();
-        tradeDealDoList.stream().forEach(
-                n->{
-                    TradeDealVo tradeDealVo = new TradeDealVo();
-                    BeanUtils.copyProperties(n,tradeDealVo);
-                    tradeDealVoList.add(tradeDealVo);
-                }
-        );
+        List<TradeDealVo> tradeDealVoList = tradeDealDoList.stream().map(
+                n-> tradeDealAssembler.entityToVo(tradeDealAssembler.doToEntity(n))
+        ).collect(Collectors.toList());
         return OutputResult.buildSucc(tradeDealVoList);
     }
 
@@ -193,21 +160,48 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
      * @param tradeDealRo
      * @return
      */
-    private OutputResult realHistoryList(TradeDealRo tradeDealRo) {
+    @Override
+    public OutputResult realHistoryList(TradeDealRo tradeDealRo) {
         //获取响应信息
         TradeResultVo<GetHisDealDataResponse> tradeResultVo = getHisDealDataResponse(tradeDealRo.getUserId());
         if (!tradeResultVo.getSuccess()) {
-            return OutputResult.buildAlert("查询我的持仓失败");
+            return OutputResult.buildAlert(ResultCode.TRADE_DEAL_HISTORY_FAIL);
         }
         List<GetHisDealDataResponse> data = tradeResultVo.getData();
-
         List<TradeDealVo> tradeDealVoList = new ArrayList<>();
         for(GetHisDealDataResponse getDealDataResponse:data){
             TradeDealVo tradeDealVo = new TradeDealVo();
             tradeDealVo.setCode(getDealDataResponse.getCjbh());
             tradeDealVoList.add(tradeDealVo);
         }
-        return OutputResult.buildSucc(tradeDealVoList);
+        List<TradeDealVo> list = PageUtil.startPage(tradeDealVoList, tradeDealRo.getPageNum(),
+                tradeDealRo.getPageSize());
+        return OutputResult.buildSucc(new PageResponse<>((long) list.size(),
+                list));
+    }
+
+    @Override
+    public void syncRealDealByUserId(Integer userId, List<TradeDealVo> tradeDealVoList) {
+        //先将当前用户的今日委托信息全部删除
+        TradeDealQueryDto tradeDealQueryDto = new TradeDealQueryDto();
+        tradeDealQueryDto.setUserId(userId);
+        tradeDealQueryDto.setMockType(MockType.REAL.getCode());
+        DateTime now = DateUtil.date();
+        tradeDealQueryDto.setDealDate(now);
+        tradeDealDomainService.deleteToDayByQuery(tradeDealQueryDto);
+        if (CollectionUtils.isEmpty(tradeDealVoList)) {
+            return ;
+        }
+        List<TradeDealDo> entrustDoList = tradeDealVoList.stream().map(
+                n -> {
+                    TradeDealDo tradeDealDo=
+                            tradeDealAssembler.entityToDo(tradeDealAssembler.voToEntity(n));
+                    tradeDealDo.setUserId(userId);
+                    tradeDealDo.setMockType(MockType.REAL.getCode());
+                    return tradeDealDo;
+                }
+        ).collect(Collectors.toList());
+        tradeDealDomainService.saveBatch(entrustDoList);
     }
 
     /**
@@ -239,30 +233,45 @@ public class TradeDealServiceImpl extends ServiceImpl<TradeDealMapper, TradeDeal
      * @param tradeDealRo
      * @return
      */
-    private OutputResult mockHistoryList(TradeDealRo tradeDealRo) {
-        Date now = DateUtil.date();
-        Date beginNow = DateUtil.beginOfDay(now);
-        //获取14天前的日期
-        Date before14Day = DateUtil.offsetDay(beginNow,-14);
-        QueryWrapper<TradeDealDo> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("user_id",tradeDealRo.getUserId());
-        queryWrapper.eq("mock_type",tradeDealRo.getMockType());
-        queryWrapper.gt("deal_date",before14Day);
-        queryWrapper.lt("deal_date",now);
-        queryWrapper.orderByDesc("id");
-        //根据用户去查询信息
-        List<TradeDealDo> tradeDealDoList = tradeDealMapper.selectList(queryWrapper);
-        if (CollectionUtils.isEmpty(tradeDealDoList)) {
-            return OutputResult.buildSucc(new ArrayList<TradeDealVo>());
+    @Override
+    public OutputResult mockHistoryList(TradeDealRo tradeDealRo) {
+        Page<Object> pageGithubResult = PageHelper.startPage(tradeDealRo.getPageNum(), tradeDealRo.getPageSize());
+        DateTime now = DateUtil.date();
+        //不包含今天
+        DateTime beginNow = DateUtil.beginOfDay(now);
+        TradeDealQueryDto tradeDealQueryDto = new TradeDealQueryDto();
+        tradeDealQueryDto.setUserId(tradeDealRo.getUserId());
+        tradeDealQueryDto.setMockType(tradeDealRo.getMockType());
+        tradeDealQueryDto.setDealType(tradeDealRo.getDealType());
+        tradeDealQueryDto.setCode(tradeDealRo.getCode());
+        if (!StringUtils.hasText(tradeDealRo.getStartDate())){
+            //获取14天前的日期
+            DateTime before14Day = DateUtil.offsetDay(beginNow,-14);
+            tradeDealQueryDto.setStartDealDate(before14Day);
+        }else{
+            tradeDealQueryDto.setStartDealDate(DateUtil.parse(tradeDealRo.getStartDate(), Const.SIMPLE_DATE_FORMAT));
         }
-        List<TradeDealVo> tradeDealVoList = new ArrayList<>();
-        tradeDealDoList.stream().forEach(
-                n->{
-                    TradeDealVo tradeDealVo = new TradeDealVo();
-                    BeanUtils.copyProperties(n,tradeDealVo);
-                    tradeDealVoList.add(tradeDealVo);
-                }
-        );
-        return OutputResult.buildSucc(tradeDealVoList);
+
+        if (!StringUtils.hasText(tradeDealRo.getEndDate())){
+            tradeDealQueryDto.setEndDealDate(beginNow);
+        }else{
+            tradeDealQueryDto.setEndDealDate(
+                    DateUtil.parse(tradeDealRo.getEndDate(), Const.SIMPLE_DATE_FORMAT)
+            );
+        }
+        //根据用户去查询信息
+        List<TradeDealDo> tradeDealDoList = tradeDealDomainService.listHistoryByQuery(tradeDealQueryDto);
+        if (CollectionUtils.isEmpty(tradeDealDoList)){
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+        List<TradeDealVo> pageResultList = tradeDealDoList.stream().map(
+                n-> tradeDealAssembler.entityToVo(tradeDealAssembler.doToEntity(n))
+        ).collect(Collectors.toList());
+        PageInfo pageInfo=new PageInfo<>(pageResultList);
+        return OutputResult.buildSucc(new PageResponse<>(
+                pageGithubResult.getTotal(),pageInfo.getList()
+        ));
     }
 }

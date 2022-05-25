@@ -7,27 +7,28 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import top.yueshushu.learn.assembler.StockSelectedAssembler;
 import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domain.StockSelectedDo;
 import top.yueshushu.learn.domainservice.StockSelectedDomainService;
 import top.yueshushu.learn.entity.StockSelected;
 import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.IdRo;
-import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.mode.ro.StockSelectedRo;
+import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.page.PageResponse;
-import top.yueshushu.learn.domain.StockSelectedDo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.service.*;
-import org.springframework.stereotype.Service;
+import top.yueshushu.learn.service.StockCrawlerService;
+import top.yueshushu.learn.service.StockHistoryService;
+import top.yueshushu.learn.service.StockSelectedService;
 import top.yueshushu.learn.service.cache.StockCacheService;
 
 import javax.annotation.Resource;
@@ -288,10 +289,10 @@ public class StockSelectedServiceImpl implements StockSelectedService {
                     SyncStockHistoryType.SELF.getCode()
             );
             Date now = DateUtil.date();
-            //获取上一天的记录
-            Date beforeOne = DateUtil.offsetDay(now, -1);
+            //获取当天的记录
+            Date beforeDay = DateUtil.beginOfDay(now);
             stockRo.setStartDate(
-                    DateUtil.format(beforeOne, "yyyy-MM-dd hh:mm:ss")
+                    DateUtil.format(beforeDay, "yyyy-MM-dd hh:mm:ss")
             );
             stockRo.setEndDate(
                     DateUtil.format(now, "yyyy-MM-dd hh:mm:ss")
@@ -317,6 +318,9 @@ public class StockSelectedServiceImpl implements StockSelectedService {
             return;
         }
         for (StockPriceCacheDto priceCacheDto : priceCacheDtoList) {
+            if (priceCacheDto.getPrice()==null){
+                continue;
+            }
             stockCacheService.setYesterdayCloseCachePrice(priceCacheDto.getCode(), priceCacheDto.getPrice());
         }
     }

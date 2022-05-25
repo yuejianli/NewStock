@@ -78,7 +78,10 @@ function queryParams(params) {
 function handleClientData(res){
     let data= res.data ||[];
     if(data.list==null||data.list.length<1){
-        return [];
+        return {
+            total: 0,
+            rows: []
+        };
     }
     return {
         total: data.total,

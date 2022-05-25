@@ -1,4 +1,7 @@
 var contextPath ="";
+var MOCK_REAL_TYPE = 0;
+var MOCK_MOCK_TYPE = 1;
+var AUTHORIZATION = "authorization";
 /*********************登录的请求接口****************************/
 //用户登录
 var LOGIN_URL = contextPath+"user/login";
@@ -104,3 +107,26 @@ var RULE_DISABLE =contextPath +"tradeRule/disable";
 //配置股票展示
 var RULE_STOCK_APPLYLIST = "tradeRuleStock/applyList";
 var RULE_STOCK_APPLY = "tradeRuleStock/apply";
+
+/*********************交易信息***************************/
+//持仓信息
+var TRADE_POSITION_LIST = "tradePosition/list";
+//金额信息
+var TRADE_MONEY_INFO = "tradeMoney/info";
+//查询今日委托信息
+var TRADE_ENTRUST_LIST = "tradeEntrust/list";
+//查询历史委托信息
+var TRADE_ENTRUST_HIS_LIST = "tradeEntrust/history";
+//委托买入
+var TRADE_BUY = "buy/buy";
+// 委托卖出
+var TRADE_SELL = "sell/sell";
+// 撤消委托
+var TRADE_REVOKE = "revoke/revoke";
+//成交买入
+var TRADE_DEAL = "deal/deal";
+
+//查询今日成交信息
+var TRADE_DEAL_LIST = "tradeDeal/list";
+//查询历史成交信息
+var TRADE_DEAL_HIS_LIST = "tradeDeal/history";
