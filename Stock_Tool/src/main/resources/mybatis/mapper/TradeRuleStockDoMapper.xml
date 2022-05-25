@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.yueshushu.learn.mapper.TradeRuleStockMapper">
+<mapper namespace="top.yueshushu.learn.mapper.TradeRuleStockDoMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="top.yueshushu.learn.domain.TradeRuleStockDo">
@@ -32,7 +32,7 @@
             </if>
         </where>
     </delete>
-    <select id="listNoRid" resultType="top.yueshushu.learn.domain.TradeRuleStockDo">
+    <select id="listNotInRuleId" resultType="top.yueshushu.learn.domain.TradeRuleStockDo">
          select s.id,s.rule_id,s.stock_code,s.create_time from trade_rule_stock s,trade_rule r
          where s.rule_id = r.id
          and r.user_id =#{tradeRuleStockQueryDto.userId}

@@ -24,7 +24,7 @@ import top.yueshushu.learn.service.RevokeService;
  */
 @RestController
 @RequestMapping("/revoke")
-@ApiModel("撤销委托单")
+@ApiModel("成交委托单")
 public class DealController extends BaseController {
     @Autowired
     private DealService dealService;

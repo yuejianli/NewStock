@@ -66,4 +66,9 @@ public class StockSelectedDomainServiceImpl extends ServiceImpl<StockSelectedDoM
                         .count()
         ).orElse(0);
     }
+
+    @Override
+    public List<String> findCodeList(Integer userId) {
+        return stockSelectedDoMapper.findCodeList(userId);
+    }
 }

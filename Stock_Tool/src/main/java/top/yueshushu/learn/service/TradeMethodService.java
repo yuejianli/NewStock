@@ -1,8 +1,11 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.entity.TradeMethod;
 import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.domain.TradeMethodDo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.yueshushu.learn.mode.ro.TradeMethodRo;
+import top.yueshushu.learn.response.OutputResult;
 
 /**
  * <p>
@@ -18,12 +21,14 @@ public interface TradeMethodService{
       * @param tradeMethodType
      * @return
      */
-    TradeMethodDo getMethod(TradeMethodType tradeMethodType);
+    TradeMethod getMethod(TradeMethodType tradeMethodType);
 
     /**
      * 根据方法的code 获取对应的信息
      * @param methodCode
      * @return
      */
-    TradeMethodDo getMethodByCode(String methodCode);
+    TradeMethod getMethodByCode(String methodCode);
+
+    OutputResult pageList(TradeMethodRo tradeMethodRo);
 }

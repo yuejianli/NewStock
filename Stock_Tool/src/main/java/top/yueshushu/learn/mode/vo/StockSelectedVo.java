@@ -21,6 +21,8 @@ public class StockSelectedVo implements Serializable {
     private String stockCode;
     @ApiModelProperty("股票名称")
     private String stockName;
+    @ApiModelProperty("股票自选笔记")
+    private String notes;
     @ApiModelProperty("添加日期")
     private Date createTime;
 }

@@ -6,10 +6,16 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import top.yueshushu.learn.business.TradeMethodBusiness;
+import top.yueshushu.learn.entity.TradeMethod;
 import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.domain.TradeMethodDo;
+import top.yueshushu.learn.mode.ro.TradeMethodRo;
+import top.yueshushu.learn.page.PageRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeMethodService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -23,16 +29,24 @@ import top.yueshushu.learn.service.TradeMethodService;
 @RequestMapping("/tradeMethod")
 @Api("交易相关方法的处理")
 public class TradeMethodController {
-    @Autowired
-    private TradeMethodService tradeMethodService;
+
+    @Resource
+    private TradeMethodBusiness tradeMethodBusiness;
+
+    @PostMapping("/list")
+    @ApiOperation("查询提供的交易方法")
+    public OutputResult list(@RequestBody TradeMethodRo tradeMethodRo){
+        return tradeMethodBusiness.list(tradeMethodRo);
+    }
+
     @GetMapping("/yzm")
     @ApiOperation("获取验证码")
     public OutputResult yzm(){
-        TradeMethodDo tradeMethodDo = tradeMethodService.getMethod(
+        TradeMethod tradeMethod = tradeMethodBusiness.getMethod(
                 TradeMethodType.yzm
         );
         //获取方法的 url
-        String url = tradeMethodDo.getUrl();
+        String url = tradeMethod.getUrl();
         return OutputResult.buildSucc(
                url
         );

@@ -5,21 +5,29 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import top.yueshushu.learn.assembler.StockSelectedAssembler;
+import top.yueshushu.learn.common.Const;
 import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.domainservice.StockSelectedDomainService;
 import top.yueshushu.learn.entity.StockSelected;
 import top.yueshushu.learn.enumtype.DataFlagType;
+import top.yueshushu.learn.enumtype.SyncStockHistoryType;
+import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.IdRo;
 import top.yueshushu.learn.mode.vo.StockSelectedVo;
 import top.yueshushu.learn.mode.ro.StockSelectedRo;
 import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.domain.StockSelectedDo;
 import top.yueshushu.learn.response.OutputResult;
+import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.*;
 import org.springframework.stereotype.Service;
+import top.yueshushu.learn.service.cache.StockCacheService;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -41,6 +49,18 @@ public class StockSelectedServiceImpl implements StockSelectedService {
     private StockSelectedAssembler stockSelectedAssembler;
     @Resource
     private StockSelectedDomainService stockSelectedDomainService;
+    @Resource
+    private StockCacheService stockCacheService;
+    @Resource
+    private StockHistoryService stockHistoryService;
+
+    @Resource
+    private StockCrawlerService stockCrawlerService;
+
+    @SuppressWarnings("all")
+    @Resource(name = Const.ASYNC_SERVICE_EXECUTOR_BEAN_NAME)
+    private AsyncTaskExecutor executor;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public StockSelected add(StockSelectedRo stockSelectedRo,String stockName) {
@@ -204,6 +224,47 @@ public class StockSelectedServiceImpl implements StockSelectedService {
     }
 
     @Override
+    public void updateSelectedCodePrice(String code) {
+        if (StringUtils.hasText(code)){
+            executor.submit(
+                    ()->{
+                        stockCrawlerService.updateCodePrice(code);
+                    }
+            );
+
+            return ;
+        }
+        //查询出所有的自选表里面的股票编码
+        List<String> codeList = stockSelectedDomainService.findCodeList(null);
+        for (String selectedCode : codeList){
+            executor.submit(
+                    ()->{
+                        stockCrawlerService.updateCodePrice(selectedCode);
+                    }
+            );
+        }
+    }
+
+    @Override
+    public OutputResult editNotes(StockSelectedRo stockSelectedRo) {
+        StockSelected stockSelected = stockSelectedAssembler.doToEntity(
+                stockSelectedDomainService.getById(
+                        stockSelectedRo.getId()
+                )
+        );
+        if (stockSelected == null){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_SELECTED_NO_RECORD
+            );
+        }
+        stockSelected.setNotes(stockSelectedRo.getNotes());
+        stockSelectedDomainService.updateById(
+                stockSelectedAssembler.entityToDo(stockSelected)
+        );
+        return OutputResult.buildSucc();
+    }
+
+    @Override
     public OutputResult deleteByCode(StockSelectedRo stockSelectedRo) {
        StockSelected stockSelected = stockSelectedAssembler.doToEntity(
                stockSelectedDomainService.getByUserIdAndCodeAndStatus(
@@ -218,44 +279,45 @@ public class StockSelectedServiceImpl implements StockSelectedService {
     @Override
     public void syncDayHistory() {
         //查询出所有的自选表里面的股票记录信息
-        //List<String> codeList = stockSelectedDoMapper.findCodeList(null);
-        //for (String code : codeList) {
-        //    //对股票进行同步
-        //    StockRo stockRo = new StockRo();
-        //    stockRo.setType(
-        //            SyncStockHistoryType.SELF.getCode()
-        //    );
-        //    Date now = DateUtil.date();
-        //    //获取上一天的记录
-        //    Date beforeOne = DateUtil.offsetDay(now, -1);
-        //    stockRo.setStartDate(
-        //            DateUtil.format(beforeOne, "yyyy-MM-dd hh:mm:ss")
-        //    );
-        //    stockRo.setEndDate(
-        //            DateUtil.format(now, "yyyy-MM-dd hh:mm:ss")
-        //    );
-        //    stockRo.setCode(code);
-        //    stockRo.setExchange(ExchangeType.SH.getCode());
-        //    stockCrawlerService.stockHistoryAsync(
-        //            stockRo
-        //    );
-        //}
+        List<String> codeList = stockSelectedDomainService.findCodeList(null);
+        for (String code : codeList) {
+            //对股票进行同步
+            StockRo stockRo = new StockRo();
+            stockRo.setType(
+                    SyncStockHistoryType.SELF.getCode()
+            );
+            Date now = DateUtil.date();
+            //获取上一天的记录
+            Date beforeOne = DateUtil.offsetDay(now, -1);
+            stockRo.setStartDate(
+                    DateUtil.format(beforeOne, "yyyy-MM-dd hh:mm:ss")
+            );
+            stockRo.setEndDate(
+                    DateUtil.format(now, "yyyy-MM-dd hh:mm:ss")
+            );
+            stockRo.setCode(code);
+            // 传入 1 ,1 表示股票
+            stockRo.setExchange(1);
+            stockCrawlerService.stockHistoryAsync(
+                    stockRo
+            );
+        }
     }
 
     @Override
     public void cacheClosePrice() {
         ////查询出所有的自选表里面的股票记录信息
-        //List<String> codeList = stockSelectedDoMapper.findCodeList(null);
-        ////获取相关的信息，进行处理。
-        //List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
-        ////循环设置缓存信息
-        //if (CollectionUtils.isEmpty(priceCacheDtoList)) {
-        //    log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}", codeList);
-        //    return;
-        //}
-        //for (StockPriceCacheDto priceCacheDto : priceCacheDtoList) {
-        //    stockRedisUtil.setYesPrice(priceCacheDto.getCode(), priceCacheDto.getPrice());
-        //}
+        List<String> codeList = stockSelectedDomainService.findCodeList(null);
+        //获取相关的信息，根据历史记录查询。
+        List<StockPriceCacheDto> priceCacheDtoList = stockHistoryService.listClosePrice(codeList);
+        //循环设置缓存信息
+        if (CollectionUtils.isEmpty(priceCacheDtoList)) {
+            log.error(">>>未查询出昨天的价格记录，对应的股票信息是:{}", codeList);
+            return;
+        }
+        for (StockPriceCacheDto priceCacheDto : priceCacheDtoList) {
+            stockCacheService.setYesterdayCloseCachePrice(priceCacheDto.getCode(), priceCacheDto.getPrice());
+        }
     }
 
     @Override

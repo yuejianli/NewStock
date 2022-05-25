@@ -4,8 +4,6 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.common.Const;
@@ -15,6 +13,7 @@ import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockCrawlerService;
+import top.yueshushu.learn.service.cache.StockCacheService;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockUtil;
 
@@ -23,8 +22,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * @ClassName:StockServiceImpl
- * @Description TODO
+ * @ClassName:StockCrawlerServiceImpl
+ * @Description 股票爬虫时使用
  * @Author 岳建立
  * @Date 2021/11/12 23:07
  * @Version 1.0
@@ -34,9 +33,8 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Resource
     private RestTemplate restTemplate;
 
-    @SuppressWarnings("all")
-    @Resource(name = Const.ASYNC_SERVICE_EXECUTOR_BEAN_NAME)
-    private AsyncTaskExecutor executor;
+    @Resource
+    private StockCacheService  stockCacheService;
 
     @Value("${restHost.crawlerUrl}")
     private String crawlerUrl;
@@ -196,10 +194,9 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
        String priceReturn = (String) outputResult.getData();
        //将这个信息进行转换，转换成对应的 BigDecimal
         BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
-        //放置进去
-       // stockRedisUtil.setPrice(
-        //        code,
-        //        price
-        //);
+
+        stockCacheService.setNowCachePrice(
+                code,price
+        );
     }
 }

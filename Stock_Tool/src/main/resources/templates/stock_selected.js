@@ -25,6 +25,13 @@ let stockSelected_table_column=[
         width:"240px"
     },
     {
+        title : '自选笔记',
+        field : 'notes',
+        align:"center",
+        width:"240px",
+        formatter: notesFormatter,
+    },
+    {
         title : '添加自选时间',
         field : 'createTime',
         align:"center",
@@ -88,14 +95,21 @@ function handleClientData(res){
         rows: data.list
     };
 }
+
+/* 展示笔记按钮 */
+function notesFormatter(value, row, index) {
+   return value;
+}
 /* 给每一行增加操作按钮 */
 function operationFormatter(value, row, index) {
     return [
         '<a class="delSelected text-primary" href="javascript:void(0)" data-toggle="tooltip" title="移除自选表">',
         '<i class="fa fa-info"></i>&nbsp;移除自选&nbsp;&nbsp;</a>',
+        '<a class="editNotes text-primary" href="javascript:void(0)" data-toggle="tooltip" title="编辑笔记">',
+        '<i class="fa fa-edit"></i>&nbsp;编辑笔记&nbsp;&nbsp;</a>',
     ].join('');
 }
-
+var selectedId = "";
 ///* 给操作按钮增加点击事件 */
 window.operationEvents={
     //查询基金具体信息
@@ -109,8 +123,35 @@ window.operationEvents={
                 delSelfSelect(row.stockCode);
             }
         });
+    },
+    'click .editNotes' : function(e, value, row, index) {
+        //处理信息，并展示.
+        selectedCode=row.code;
+        selectedId = row.id;
+       //弹出添加笔记的框
+        $("#stockNoteName").val(row.stockName);
+        $("#notes").val(row.notes);
+        $("#notes_popup").modal('show');
+
     }
 };
+
+$("#notes_submit").click(function(){
+    let postResponse = postAjax(STOCK_SELECTED_EDIT_NOTES_URL,
+        {
+            "id":selectedId,
+            "notes": $("#notes").val()
+        });
+    //如果成功，那么就是登录成功.
+    if(postResponse.success){
+        Flavr.falert("编辑笔记成功");
+        $("#stockSelected_table").bootstrapTable('refresh', '{silent: true}');
+        $("#notes_popup").modal('hide');
+    }else{
+        Flavr.falert(postResponse.message);
+    }
+})
+
 
 $("#keywords").blur(function(){
     $("#stockSelected_table").bootstrapTable('refresh', '{silent: true}');

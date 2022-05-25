@@ -9,10 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
+import top.yueshushu.learn.business.TradeRuleStockBusiness;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.TradeRuleRo;
 import top.yueshushu.learn.mode.ro.TradeRuleStockRo;
+import top.yueshushu.learn.mode.vo.TradeRuleStockVo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeRuleStockService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -25,27 +30,36 @@ import top.yueshushu.learn.service.TradeRuleStockService;
 @RestController
 @RequestMapping("/tradeRuleStock")
 @Api("规则配置的股票信息")
-public class TradeRuleStockController extends BaseController{
-    @Autowired
-    private TradeRuleStockService tradeRuleStockService;
+public class TradeRuleStockController extends BaseController {
+    @Resource
+    private TradeRuleStockBusiness tradeRuleStockBusiness;
+
     @PostMapping("/applyList")
     @ApiOperation("查询该规则适用的股票信息")
-    public OutputResult applyList(@RequestBody TradeRuleStockRo tradeRuleStockRo){
+    public OutputResult applyList(@RequestBody TradeRuleStockRo tradeRuleStockRo) {
         tradeRuleStockRo.setUserId(getUserId());
-        return tradeRuleStockService.applyList(tradeRuleStockRo);
+        //根据id 去查询
+        if(tradeRuleStockRo.getId()==null){
+            return OutputResult.buildSucc(new TradeRuleStockVo());
+        }
+        return tradeRuleStockBusiness.applyList(tradeRuleStockRo);
     }
 
     @PostMapping("/apply")
     @ApiOperation("规则配置股票信息")
-    public OutputResult apply(@RequestBody TradeRuleStockRo tradeRuleStockRo){
+    public OutputResult apply(@RequestBody TradeRuleStockRo tradeRuleStockRo) {
         tradeRuleStockRo.setUserId(getUserId());
-        return tradeRuleStockService.apply(tradeRuleStockRo);
+        //根据id 去查询
+        if(tradeRuleStockRo.getId()==null){
+            return OutputResult.buildAlert(ResultCode.ID_IS_EMPTY);
+        }
+        return tradeRuleStockBusiness.apply(tradeRuleStockRo);
     }
 
     @PostMapping("/stockRuleList")
     @ApiOperation("查询股票配置的规则信息")
-    public OutputResult stockRuleList(@RequestBody TradeRuleStockRo tradeRuleStockRo){
+    public OutputResult stockRuleList(@RequestBody TradeRuleStockRo tradeRuleStockRo) {
         tradeRuleStockRo.setUserId(getUserId());
-        return tradeRuleStockService.stockRuleList(tradeRuleStockRo);
+        return tradeRuleStockBusiness.stockRuleList(tradeRuleStockRo);
     }
 }

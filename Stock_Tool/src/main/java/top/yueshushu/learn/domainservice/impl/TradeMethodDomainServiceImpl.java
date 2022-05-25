@@ -3,6 +3,7 @@ package top.yueshushu.learn.domainservice.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import top.yueshushu.learn.domain.TradeMethodDo;
 import top.yueshushu.learn.domain.TradeUserDo;
 import top.yueshushu.learn.domainservice.TradeMethodDomainService;
@@ -30,5 +31,13 @@ public class TradeMethodDomainServiceImpl extends ServiceImpl<TradeMethodDoMappe
             return null;
         }
         return list.get(0);
+    }
+
+    @Override
+    public List<TradeMethodDo> listByName(String name) {
+        return this.lambdaQuery()
+                .like(
+                        !StringUtils.isEmpty(name),TradeMethodDo::getName,name
+                ).list();
     }
 }

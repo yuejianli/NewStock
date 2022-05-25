@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="top.yueshushu.learn.mapper.TradeRuleMapper">
+<mapper namespace="top.yueshushu.learn.mapper.TradeRuleDoMapper">
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="top.yueshushu.learn.domain.TradeRuleDo">
@@ -26,7 +26,7 @@
     <sql id="Base_Column_List">
         id,name, condition_code, condition_type, rule_value_type, rule_value, trade_num, trade_value_type, trade_price, rule_type, status, user_id, mock_type, create_time, update_time, flag
     </sql>
-    <select id="getRuleByQuery" resultType="top.yueshushu.learn.mode.dto.StockRuleDto">
+    <select id="listRuleByQuery" resultType="top.yueshushu.learn.mode.dto.StockRuleDto">
         select trs.stock_code as stockCode,
         tr.id as ruleId,tr.name as ruleName,
         trs.create_time as createTime,

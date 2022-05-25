@@ -69,7 +69,8 @@ public class ResultCode extends BaseResultCode {
             new ResultCode(true, 10013004, "选中的记录不存在,请刷新后再操作");
     public static final ResultCode STOCK_SELECTED_HAVE_DISABLE =
             new ResultCode(true, 10013005, "选中的记录已经被移除自选了");
-
+    public static final ResultCode STOCK_SELECTED_NOTES_EMPTY =
+            new ResultCode(true, 10013006, "编辑的笔记不能是空");
 
     /**
      * 假期：  100 14 （编排）+ 001 (三位随机)
@@ -135,6 +136,16 @@ public class ResultCode extends BaseResultCode {
             new ResultCode(true, 10017001, "缓存类型是空");
     public static final ResultCode CACHE_KEY_IS_EMPTY =
             new ResultCode(true, 10017002, "缓存的值必须指定");
+
+    /**
+     * 交易规则和条件列表  100 18（编排）+ 001 (三位随机)
+     */
+    public static final ResultCode RULE_CONDITION_ID_NOT_EXIST =
+            new ResultCode(true, 10018001, "交易规则条件关键字不存在,请刷新后重试");
+    public static final ResultCode RULE_ID_NOT_EXIST =
+            new ResultCode(true, 10018002, "交易规则条件不存在,请刷新后重试");
+    public static final ResultCode NO_AUTH =
+            new ResultCode(true, 10018003, "没有权限操作");
 
 
 

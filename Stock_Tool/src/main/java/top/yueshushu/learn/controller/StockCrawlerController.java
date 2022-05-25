@@ -67,11 +67,8 @@ public class StockCrawlerController {
                     ResultCode.STOCK_CODE_IS_EMPTY
             );
         }
-        if (stockRo.getExchange() == null){
-            return OutputResult.buildAlert(
-                    ResultCode.STOCK_EXCHANGE_IS_EMPTY
-            );
-        }
+        //设置 是股票同步
+        stockRo.setExchange(1);
         return stockCrawlerBusiness.stockHistoryAsync(stockRo);
     }
 }

@@ -81,7 +81,8 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
         );
         // 对定时任务进行处理
         if (null == stockSelected.getJobId()){
-           Integer jobId = addJob(stockSelected.getUserId(),stockSelected.getStockCode());
+          // Integer jobId = addJob(stockSelected.getUserId(),stockSelected.getStockCode());
+           Integer jobId = 1;
            if ( jobId == null){
                throw new RuntimeException();
            }
@@ -92,9 +93,9 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
             );
         }else{
             //定时任务开启
-            xxlJobService.enableJob(
-                    stockSelected.getJobId()
-            );
+//            xxlJobService.enableJob(
+//                    stockSelected.getJobId()
+//            );
         }
         // 处理缓存信息
         return OutputResult.buildSucc(
@@ -114,7 +115,8 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
         // 获取定时任务编号
         Integer jobId = (Integer) deleteResult.getData();
         if (jobId !=null){
-            xxlJobService.disableJob(jobId);
+            // 不对自选的定时任务进行处理
+            // xxlJobService.disableJob(jobId);
         }
         return OutputResult.buildSucc();
     }
@@ -131,7 +133,8 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
         // 获取定时任务编号
         Integer jobId = (Integer) deleteResult.getData();
         if (jobId !=null){
-            xxlJobService.disableJob(jobId);
+            // 不对自选的定时任务进行处理
+            // xxlJobService.disableJob(jobId);
         }
         return OutputResult.buildSucc();
     }
@@ -191,6 +194,13 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
         return OutputResult.buildSucc(
                 new PageResponse((long) stockList.size(),
                         stockHistoryVoList)
+        );
+    }
+
+    @Override
+    public OutputResult editNotes(StockSelectedRo stockSelectedRo) {
+        return stockSelectedService.editNotes(
+                stockSelectedRo
         );
     }
     /**

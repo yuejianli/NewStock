@@ -58,7 +58,7 @@ var stockrule_table2_column=[
 
 $('#stockrule2_table').bootstrapTable({
     method : 'post',
-    url : "tradeRuleStock/stockRuleList",//请求路径
+    url : RULE_STOCK_RULE_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -100,7 +100,7 @@ function queryParams(params) {
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return data;
 }
 

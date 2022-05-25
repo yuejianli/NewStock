@@ -5,9 +5,9 @@ var totalConditionList = [];
 
 function initCondition() {
     //获取相关的条件参数信息
-    let postResponse = postAjax("../tradeRuleCondition/list",{});
+    let postResponse = postAjax(RULE_CONDITION_LIST,{});
     if(postResponse.success){
-        totalConditionList= postResponse.data.result;
+        totalConditionList= postResponse.data;
     }
     bind_bootstrap_select_data(totalConditionList,$("#add_conditionCode"),"code","name");
     bind_bootstrap_select_data(totalConditionList,$("#update_conditionCode"),"code","name");
@@ -99,7 +99,7 @@ var sellrule_table_column=[
 
 $('#sellrule_table').bootstrapTable({
     method : 'post',
-    url : "tradeRule/list",//请求路径
+    url : RULE_LIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -140,7 +140,7 @@ function queryParams(params) {
 }
 //处理机构返回数据
 function handleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     return {
         total: data.total,
         rows: data.list
@@ -238,7 +238,7 @@ function disableRule(id){
     }
     //进行请求
     let postResponse = postAjax(
-        "../tradeRule/disable",
+        RULE_DISABLE,
         {"id":id}
     );
     //如果成功，那么就是登录成功.
@@ -256,7 +256,7 @@ function enableRule(id){
     }
     //进行请求
     let postResponse = postAjax(
-        "../tradeRule/enable",
+        RULE_ENABLE,
         {"id":id}
     );
     //如果成功，那么就是登录成功.
@@ -274,7 +274,7 @@ function deleteRule(id){
     }
     //进行请求
     let postResponse = postAjax(
-        "../tradeRule/delete",
+        RULE_DELETE,
         {"id":id}
     );
     //如果成功，那么就是登录成功.
@@ -352,7 +352,7 @@ $("#add_submit").click(function(){
         "mockType":mockType
     }
 
-    let postResponse = postAjax("../tradeRule/add",
+    let postResponse = postAjax(RULE_ADD,
         addInfo
         );
     //如果成功，那么就是登录成功.
@@ -434,7 +434,7 @@ $("#update_submit").click(function(){
         "mockType":mockType
     }
 
-    let postResponse = postAjax("../tradeRule/update",
+    let postResponse = postAjax(RULE_UPDATE,
         updateInfo
     );
     //如果成功，那么就是登录成功.
@@ -474,7 +474,7 @@ var rulestock_table_column=[
 
 $('#rulestock_table').bootstrapTable({
     method : 'post',
-    url : "tradeRuleStock/applyList",//请求路径
+    url : RULE_STOCK_APPLYLIST,//请求路径
     striped : true, //是否显示行间隔色
     pageNumber : 1, //初始化加载第一页
     pagination : true,//是否分页
@@ -516,7 +516,7 @@ var responseStockData ={
     "otherApplyList":[]
 };
 function stockHandleClientData(res){
-    let data= res.data.result ||[];
+    let data= res.data ||[];
     responseStockData = data;
     //对数据进行处理.
     let applyList = responseStockData.applyList ||[];
@@ -622,7 +622,7 @@ $("#config_submit").click(function(){
         "removeCodeList": removeCodeList
     };
     let postResponse = postAjax(
-        "../tradeRuleStock/apply",
+        RULE_STOCK_APPLY,
         info
     );
     //如果成功，那么就是登录成功.

@@ -6,9 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import top.yueshushu.learn.business.TradeRuleBusiness;
 import top.yueshushu.learn.mode.ro.TradeRuleRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeRuleService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -22,47 +25,48 @@ import top.yueshushu.learn.service.TradeRuleService;
 @RequestMapping("/tradeRule")
 @Api("交易规则处理")
 public class TradeRuleController extends BaseController{
-    @Autowired
-    private TradeRuleService tradeRuleService;
+
+    @Resource
+    private TradeRuleBusiness tradeRuleBusiness;
 
     @PostMapping("/list")
     @ApiOperation("查询交易规则")
     public OutputResult list(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.listRule(tradeRuleRo);
+        return tradeRuleBusiness.listRule(tradeRuleRo);
     }
 
     @PostMapping("/add")
     @ApiOperation("添加交易规则")
     public OutputResult add(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.addRule(tradeRuleRo);
+        return tradeRuleBusiness.addRule(tradeRuleRo);
     }
     @PostMapping("/update")
     @ApiOperation("修改交易规则")
     public OutputResult update(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.updateRule(tradeRuleRo);
+        return tradeRuleBusiness.updateRule(tradeRuleRo);
     }
 
     @PostMapping("/delete")
     @ApiOperation("删除交易规则")
     public OutputResult delete(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.deleteRule(tradeRuleRo);
+        return tradeRuleBusiness.deleteRule(tradeRuleRo);
     }
 
     @PostMapping("/enable")
     @ApiOperation("启用交易规则")
     public OutputResult enable(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.enableRule(tradeRuleRo);
+        return tradeRuleBusiness.enableRule(tradeRuleRo);
     }
 
     @PostMapping("/disable")
     @ApiOperation("禁用交易规则")
     public OutputResult disable(@RequestBody TradeRuleRo tradeRuleRo){
         tradeRuleRo.setUserId(getUserId());
-        return tradeRuleService.disableRule(tradeRuleRo);
+        return tradeRuleBusiness.disableRule(tradeRuleRo);
     }
 }

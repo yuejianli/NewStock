@@ -28,8 +28,7 @@ public class StockSelected implements Serializable {
     private Integer userId;
     private Date createTime;
     private Integer jobId;
+    private String notes;
     private Integer status;
     private Integer flag;
-
-
 }

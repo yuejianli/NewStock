@@ -1,16 +1,19 @@
 package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
+import top.yueshushu.learn.assembler.TradeRuleConditionAssembler;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domainservice.TradeRuleConditionDomainService;
+import top.yueshushu.learn.entity.TradeRuleCondition;
 import top.yueshushu.learn.mode.ro.TradeRuleConditionRo;
 import top.yueshushu.learn.domain.TradeRuleConditionDo;
-import top.yueshushu.learn.mapper.TradeRuleConditionMapper;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeRuleConditionService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -21,8 +24,11 @@ import java.util.List;
  * @since 2022-01-26
  */
 @Service
-public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditionMapper, TradeRuleConditionDo> implements TradeRuleConditionService {
-
+public class TradeRuleConditionServiceImpl  implements TradeRuleConditionService {
+    @Resource
+    private TradeRuleConditionDomainService tradeRuleConditionDomainService;
+    @Resource
+    private TradeRuleConditionAssembler tradeRuleConditionAssembler;
     @Override
     public OutputResult listCondition() {
         return OutputResult.buildSucc(listAll());
@@ -32,13 +38,10 @@ public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditio
     public OutputResult updateCondition(TradeRuleConditionRo tradeRuleConditionRo) {
         //根据id 查询信息
         Integer id = tradeRuleConditionRo.getId();
-        if(id==null){
-            return OutputResult.buildAlert(ResultCode.ALERT);
-        }
         //查询是否有此信息
-        TradeRuleConditionDo dbCondtion = getById(id);
+        TradeRuleConditionDo dbCondtion = tradeRuleConditionDomainService.getById(id);
         if(dbCondtion==null){
-            return OutputResult.buildAlert("传入的Id编号有误");
+            return OutputResult.buildAlert(ResultCode.RULE_CONDITION_ID_NOT_EXIST);
         }
         //进行修改
        dbCondtion.setName(
@@ -50,13 +53,16 @@ public class TradeRuleConditionServiceImpl extends ServiceImpl<TradeRuleConditio
         dbCondtion.setUpdateTime(
                 DateUtil.date()
         );
-        updateById(dbCondtion);
+        tradeRuleConditionDomainService.updateById(dbCondtion);
         return OutputResult.buildSucc();
     }
 
     @Override
-    public List<TradeRuleConditionDo> listAll() {
-        return this.lambdaQuery()
-                        .list();
+    public List<TradeRuleCondition> listAll() {
+        List<TradeRuleConditionDo> tradeRuleConditionDoList = tradeRuleConditionDomainService.list();
+        return tradeRuleConditionDoList.stream().
+                map(
+                        n-> tradeRuleConditionAssembler.doToEntity(n)
+                ).collect(Collectors.toList());
     }
 }

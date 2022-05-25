@@ -153,9 +153,9 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public OutputResult getCrawlerPrice(String code) {
+    public OutputResult getCrawlerPrice(String fullCode) {
         return OutputResult.buildSucc(
-                crawlerService.sinaGetPrice(code)
+                crawlerService.sinaGetPrice(fullCode)
         );
     }
 }

@@ -48,4 +48,11 @@ public interface StockSelectedDomainService extends IService<StockSelectedDo> {
      * @return 根据用户信息和状态，获取相应的数量
      */
     int countByUserIdAndStatus(Integer userId, Integer status);
+
+    /**
+     * 查询该用户下的自选股票编码信息
+     * @param userId 用户编号，可为空
+     * @return 查询该用户下的自选股票编码信息
+     */
+    List<String> findCodeList(Integer userId);
 }

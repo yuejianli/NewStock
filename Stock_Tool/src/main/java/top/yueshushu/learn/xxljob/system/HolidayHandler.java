@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.yueshushu.learn.service.HolidayCalendarService;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName:HolidayHandler
  * @Description 每年1月1日时，同步假期数据
@@ -21,7 +23,7 @@ import top.yueshushu.learn.service.HolidayCalendarService;
 @JobHandler("holidayHandler")
 @Slf4j(topic = "HolidayHandler")
 public class HolidayHandler extends IJobHandler {
-    @Autowired
+    @Resource
     private HolidayCalendarService holidayCalendarService;
 
     @Override

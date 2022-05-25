@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
+import top.yueshushu.learn.business.TradeRuleConditionBusiness;
+import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.StockSelectedRo;
 import top.yueshushu.learn.mode.ro.TradeRuleConditionRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeRuleConditionService;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -26,18 +30,21 @@ import top.yueshushu.learn.service.TradeRuleConditionService;
 @RequestMapping("/tradeRuleCondition")
 @Api("交易规则使用的关键字表")
 public class TradeRuleConditionController extends BaseController{
-    @Autowired
-    private TradeRuleConditionService tradeRuleConditionService;
+    @Resource
+    private TradeRuleConditionBusiness tradeRuleConditionBusiness;
 
     @PostMapping("/list")
     @ApiOperation("查询规则使用的关键字信息")
     public OutputResult list(){
-        return tradeRuleConditionService.listCondition();
+        return tradeRuleConditionBusiness.list();
     }
 
     @PostMapping("/update")
     @ApiOperation("更新规则关键字信息")
     public OutputResult update(@RequestBody TradeRuleConditionRo tradeRuleConditionRo){
-        return tradeRuleConditionService.updateCondition(tradeRuleConditionRo);
+        if(tradeRuleConditionRo.getId()==null){
+            return OutputResult.buildAlert(ResultCode.ID_IS_EMPTY);
+        }
+        return tradeRuleConditionBusiness.updateCondition(tradeRuleConditionRo);
     }
 }

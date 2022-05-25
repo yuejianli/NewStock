@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 两个蝴蝶飞  自定义的
  * @since 2022-01-26
  */
-public interface TradeRuleConditionMapper extends BaseMapper<TradeRuleConditionDo> {
+public interface TradeRuleConditionDoMapper extends BaseMapper<TradeRuleConditionDo> {
 
 }

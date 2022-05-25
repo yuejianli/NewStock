@@ -10,12 +10,13 @@
         <result column="user_id" property="userId"/>
         <result column="create_time" property="createTime"/>
         <result column="job_id" property="jobId"/>
+        <result column="code_notes" property="notes"/>
         <result column="status" property="status"/>
         <result column="flag" property="flag"/>
     </resultMap>
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, stock_code,stock_name, user_id, create_time,job_id,flag
+        id, stock_code,stock_name, user_id, create_time,job_id,code_notes,status,flag
     </sql>
     <select id="listByUserIdAndKeyword" resultMap="BaseResultMap">
         select

@@ -200,10 +200,13 @@ public class DefaultCrawlerServiceImpl implements CrawlerService {
     public String sinaGetPrice(String fullCode) {
         //处理，拼接成信息
         String url = MessageFormat.format(defaultProperties.getShowDayUrl(), fullCode);
-        log.info(">>>访问地址:" + url);
+      //  log.info(">>>访问地址:" + url);
         try {
             //获取内容
-            String content = HttpUtil.sendGet(httpClient, url, "gbk");
+            //获取内容
+            Map<String, String> header = new HashMap<>();
+            header.put("Referer","https://finance.sina.com.cn");
+            String content = HttpUtil.sendGet(httpClient, url, header,"gbk");
             //将内容直接按照 ,号进行拆分
             return content.split("\\,")[3];
         } catch (Exception e) {

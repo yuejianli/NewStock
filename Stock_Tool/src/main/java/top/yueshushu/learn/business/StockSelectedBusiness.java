@@ -48,4 +48,11 @@ public interface StockSelectedBusiness {
      * @return 查询自选表里面的昨日历史记录的信息
      */
     OutputResult yesHistory(StockSelectedRo stockSelectedRo);
+
+    /**
+     * 编辑笔记
+     * @param stockSelectedRo 笔记对象
+     * @return 编辑笔记
+     */
+    OutputResult editNotes(StockSelectedRo stockSelectedRo);
 }

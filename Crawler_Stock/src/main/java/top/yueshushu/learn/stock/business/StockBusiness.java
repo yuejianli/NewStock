@@ -36,8 +36,8 @@ public interface StockBusiness {
     /**
      * 获取股票的价格
      *
-     * @param code 股票的编码
+     * @param fullCode 股票的全编码
      * @return 获取股票的价格
      */
-    OutputResult getStockPrice(String code);
+    OutputResult getStockPrice(String fullCode);
 }

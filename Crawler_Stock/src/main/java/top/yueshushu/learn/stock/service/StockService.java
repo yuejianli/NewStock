@@ -37,8 +37,8 @@ public interface StockService{
 
     /**
      * 获取股票的当前价格
-     * @param code 股票的编码
+     * @param fullCode 股票的编码
      * @return 获取股票的当前价格
      */
-    OutputResult getCrawlerPrice(String code);
+    OutputResult getCrawlerPrice(String fullCode);
 }

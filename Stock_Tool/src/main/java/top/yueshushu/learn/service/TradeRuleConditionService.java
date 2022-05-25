@@ -1,5 +1,6 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.entity.TradeRuleCondition;
 import top.yueshushu.learn.mode.ro.TradeRuleConditionRo;
 import top.yueshushu.learn.domain.TradeRuleConditionDo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -15,12 +16,11 @@ import java.util.List;
  * @author 两个蝴蝶飞
  * @since 2022-01-26
  */
-public interface TradeRuleConditionService extends IService<TradeRuleConditionDo> {
+public interface TradeRuleConditionService{
     /**
      * 全部查询 条件表信息
      * @date 2022/1/26 14:30
      * @author zk_yjl
-     * @param
      * @return top.yueshushu.learn.response.OutputResult
      */
     OutputResult listCondition();
@@ -28,7 +28,7 @@ public interface TradeRuleConditionService extends IService<TradeRuleConditionDo
      * 更新信息
      * @date 2022/1/26 14:30
      * @author zk_yjl
-     * @param tradeRuleConditionRo
+     * @param tradeRuleConditionRo 条件规则关键字对象
      * @return top.yueshushu.learn.response.OutputResult
      */
     OutputResult updateCondition(TradeRuleConditionRo tradeRuleConditionRo);
@@ -36,8 +36,7 @@ public interface TradeRuleConditionService extends IService<TradeRuleConditionDo
      * 查询所有的规则条件信息
      * @date 2022/1/28 9:48
      * @author zk_yjl
-     * @param
      * @return java.util.List<top.yueshushu.learn.pojo.TradeRuleCondition>
      */
-    List<TradeRuleConditionDo> listAll();
+    List<TradeRuleCondition> listAll();
 }

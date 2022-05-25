@@ -15,7 +15,7 @@ import java.util.List;
  * @author 两个蝴蝶飞  自定义的
  * @since 2022-01-26
  */
-public interface TradeRuleStockMapper extends BaseMapper<TradeRuleStockDo> {
+public interface TradeRuleStockDoMapper extends BaseMapper<TradeRuleStockDo> {
     /**
      * 查询同一个类型的 其它配置的股票信息
      *
@@ -24,17 +24,15 @@ public interface TradeRuleStockMapper extends BaseMapper<TradeRuleStockDo> {
      * @date 2022/1/27 15:14
      * @author zk_yjl
      */
-    List<TradeRuleStockDo> listNoRid(@Param("tradeRuleStockQueryDto") TradeRuleStockQueryDto tradeRuleStockQueryDto);
+    List<TradeRuleStockDo> listNotInRuleId(@Param("tradeRuleStockQueryDto") TradeRuleStockQueryDto tradeRuleStockQueryDto);
+
 
     /**
      * 移除之前的配置
-     *
-     * @param userId
-     * @param mockType
-     * @param removeCodeList
-     * @return void
-     * @date 2022/1/27 16:39
-     * @author zk_yjl
+     * @param userId 用户编号
+     * @param mockType 类型
+     * @param removeCodeList 要删除的股票编码
      */
-    void removeOtherStock(@Param("userId") Integer userId, @Param("mockType") Integer mockType, @Param("removeCodeList") List<String> removeCodeList);
+    void removeOtherStock(@Param("userId") Integer userId, @Param("mockType") Integer mockType,
+                          @Param("removeCodeList") List<String> removeCodeList);
 }

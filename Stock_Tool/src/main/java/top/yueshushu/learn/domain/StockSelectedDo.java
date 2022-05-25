@@ -60,6 +60,12 @@ public class StockSelectedDo implements Serializable {
     private Integer jobId;
 
     /**
+     * 笔记
+     */
+    @TableField("code_notes")
+    private String notes;
+
+    /**
      * 是否启用，禁用  1为启用,0为禁用
      */
     @TableField("status")

@@ -41,9 +41,9 @@ public class StockBusinessImpl implements StockBusiness {
     }
 
     @Override
-    public OutputResult getStockPrice(String code) {
+    public OutputResult getStockPrice(String fullCode) {
         return stockService.getCrawlerPrice(
-                code
+                fullCode
         );
     }
 }

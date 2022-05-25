@@ -3,6 +3,8 @@ package top.yueshushu.learn.domainservice;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.domain.TradeMethodDo;
 
+import java.util.List;
+
 /**
  * @Description 交易方法的操作
  * @Author yuejianli
@@ -15,4 +17,11 @@ public interface TradeMethodDomainService extends IService<TradeMethodDo> {
      * @return 返回请求的方法信息
      */
     TradeMethodDo getMethodByCode(String methodCode);
+
+    /**
+     * 根据名称模糊匹配查询
+     * @param name 名称
+     * @return 根据名称模糊匹配查询
+     */
+    List<TradeMethodDo> listByName(String name);
 }

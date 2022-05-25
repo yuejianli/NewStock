@@ -23,4 +23,8 @@ public class StockSelectedRo extends PageRo implements Serializable {
     private Integer userId;
     @ApiModelProperty("搜索的关键字")
     private String keyword;
+    @ApiModelProperty("记录id")
+    private Integer id;
+    @ApiModelProperty("笔记")
+    private String notes;
 }

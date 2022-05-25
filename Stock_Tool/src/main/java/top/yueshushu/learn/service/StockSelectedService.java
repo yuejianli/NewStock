@@ -89,4 +89,17 @@ public interface StockSelectedService {
      * @return 根据用户获取当前正常可用的股票编码集合
      */
     Map<String, String> listStockCodeByUserId(Integer userId);
+
+    /**
+     * 更新自选表里面的股票代码的价格
+     * @param code 股票编码
+     */
+    void updateSelectedCodePrice( String code);
+
+    /**
+     * 编辑笔记
+     * @param stockSelectedRo 笔记对象
+     * @return 编辑笔记
+     */
+    OutputResult editNotes(StockSelectedRo stockSelectedRo);
 }

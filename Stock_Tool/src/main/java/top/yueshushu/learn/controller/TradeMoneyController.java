@@ -30,7 +30,7 @@ public class TradeMoneyController extends BaseController{
     private TradeMoneyService tradeMoneyService;
 
     @PostMapping("/list")
-    @ApiOperation("查询自选表信息")
+    @ApiOperation("查询资金信息")
     public OutputResult list(@RequestBody TradeMoneyRo tradeMoneyRo){
         tradeMoneyRo.setUserId(getUserId());
         return tradeMoneyService.listMoney(tradeMoneyRo);

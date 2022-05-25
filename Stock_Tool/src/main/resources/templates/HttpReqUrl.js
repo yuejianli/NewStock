@@ -24,8 +24,6 @@ var STOCK_KLINE_URL =contextPath +"stockCrawler/getStockKline";
 var STOCK_ASYNC_URL =contextPath +"stockCrawler/stockAsync";
 //股票历史同步
 var STOCK_HISTORY_ASYNC_URL =contextPath +"stockCrawler/stockHistoryAsync";
-//股票加入自选
-var STOCK_SELECTED_ADD_URL =contextPath +"stockSelected/add";
 
 
 /*********************股票自选功能***************************/
@@ -34,6 +32,7 @@ var STOCK_SELECTED_LIST_URL =contextPath +"stockSelected/list";
 var STOCK_SELECTED_DELETE_URL =contextPath +"stockSelected/deleteByCode";
 var STOCK_SELECTED_BATCH_DELETE_URL =contextPath +"stockSelected/delete";
 var STOCK_SELECTED_ADD_URL =contextPath +"stockSelected/add";
+var STOCK_SELECTED_EDIT_NOTES_URL =contextPath +"stockSelected/editNotes";
 
 /*********************股票查看历史功能***************************/
 //展示股票历史列表
@@ -78,3 +77,28 @@ var TOOL_MONEY_REDUCE =contextPath +"money/reduceMoney";
 var STAT_WEEK_URL =contextPath +"stat/getWeekStat";
 //图表统计
 var STAT_CHAR_URL =contextPath +"stat/getCharStat";
+
+/*********************交易配置***************************/
+//交易方法list 查询
+var TRADE_METHOD_LIST_URL =contextPath +"tradeMethod/list";
+
+/*********************股票规则***************************/
+// 查询股票对应的交易规则
+var RULE_STOCK_RULE_LIST =contextPath +"tradeRuleStock/stockRuleList";
+// 查询交易的条件
+var RULE_CONDITION_LIST =contextPath +"tradeRuleCondition/list";
+//查询配置的规则列表
+var RULE_LIST =contextPath +"tradeRule/list";
+//添加
+var RULE_ADD =contextPath +"tradeRule/add";
+//更新
+var RULE_UPDATE =contextPath +"tradeRule/update";
+//删除
+var RULE_DELETE =contextPath +"tradeRule/delete";
+//启用
+var RULE_ENABLE =contextPath +"tradeRule/enable";
+//禁用
+var RULE_DISABLE =contextPath +"tradeRule/disable";
+//配置股票展示
+var RULE_STOCK_APPLYLIST = "tradeRuleStock/applyList";
+var RULE_STOCK_APPLY = "tradeRuleStock/apply";

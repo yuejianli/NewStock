@@ -48,6 +48,41 @@
         </div>
     </div>
 </div>
+
+<!-- 编辑笔记的对话框 -->
+<div class="modal fade" id="notes_popup" data-cache-form="true">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">×</button>
+                <h4 class="modal-title text-semibold text-primary text-center">编辑笔记</h4>
+            </div>
+            <div class="modal-body mar-hor">
+                <div class="row" style="margin-left:150px;margin-top:30px;">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">股票名称:</label>
+                        <div class="col-sm-6">
+                            <input type="text" class="underline_input" id="stockNoteName" value=""/>
+                        </div>
+                    </div>
+                    <div class="form-group"  style="margin-top: 30px;">
+                        <label class="col-sm-4 control-label">笔记:</label>
+                        <div class="col-sm-6">
+                            <textarea id="notes" class="form-control" rows="10" cols="200"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="notes_submit">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div>
     <div>
         <form class="form-inline">

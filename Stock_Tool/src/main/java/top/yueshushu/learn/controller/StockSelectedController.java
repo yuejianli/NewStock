@@ -83,4 +83,25 @@ public class StockSelectedController extends BaseController{
         }
         return stockSelectedBusiness.deleteByCode(stockSelectedRo);
     }
+
+    @PostMapping("/editNotes")
+    @ApiOperation("根据自选记录，编辑笔记")
+    public OutputResult editNotes(@RequestBody StockSelectedRo stockSelectedRo){
+        stockSelectedRo.setUserId(getUserId());
+        if (stockSelectedRo.getId() == null){
+            return OutputResult.buildAlert(
+                    ResultCode.ID_IS_EMPTY
+            );
+        }
+        if (!StringUtils.hasText(stockSelectedRo.getNotes())){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_SELECTED_NOTES_EMPTY
+            );
+        }
+        return stockSelectedBusiness.editNotes(stockSelectedRo);
+    }
+
+
+
+
 }
