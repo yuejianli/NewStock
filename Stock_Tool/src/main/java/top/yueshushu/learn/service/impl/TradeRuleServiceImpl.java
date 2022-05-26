@@ -1,6 +1,6 @@
 package top.yueshushu.learn.service.impl;
 import cn.hutool.core.date.DateUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +64,7 @@ public class TradeRuleServiceImpl implements TradeRuleService {
     public OutputResult listRule(TradeRuleRo tradeRuleRo) {
 
 
-        PageHelper.startPage(tradeRuleRo.getPageNum(),tradeRuleRo.getPageSize());
+        Page<Object> pageGithubResult = PageHelper.startPage(tradeRuleRo.getPageNum(), tradeRuleRo.getPageSize());
         List<TradeRuleDo> tradeRuleDoList = tradeRuleDomainService.listByQuery(
                 tradeRuleRo.getUserId(),
                 tradeRuleRo.getMockType(),
@@ -79,7 +79,7 @@ public class TradeRuleServiceImpl implements TradeRuleService {
         List<TradeRuleVo> pageResultList = convertVo(tradeRuleDoList);
 
         PageInfo pageInfo=new PageInfo<>(pageResultList);
-        return OutputResult.buildSucc(new PageResponse<TradeRuleVo>(pageInfo.getTotal(),
+        return OutputResult.buildSucc(new PageResponse<TradeRuleVo>(pageGithubResult.getTotal(),
                 pageInfo.getList()));
     }
 

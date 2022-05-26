@@ -1,5 +1,6 @@
 package top.yueshushu.learn.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public OutputResult pageStock(StockRo stockRo) {
-        PageHelper.startPage(stockRo.getPageNum(),stockRo.getPageSize());
+        Page<Object> pageGithubResult = PageHelper.startPage(stockRo.getPageNum(), stockRo.getPageSize());
         List<StockDo> stockDoInfoList = stockDomainService.selectByKeyword(stockRo.getKeyword());
         if (CollectionUtils.isEmpty(stockDoInfoList)){
             return OutputResult.buildSucc(
@@ -60,7 +61,7 @@ public class StockServiceImpl implements StockService {
                 }
         );
         PageInfo pageInfo=new PageInfo<StockVo>(pageResultList);
-        return OutputResult.buildSucc(new PageResponse<StockVo>(pageInfo.getTotal(),
+        return OutputResult.buildSucc(new PageResponse<StockVo>(pageGithubResult.getTotal(),
                 pageInfo.getList()));
     }
     @Override

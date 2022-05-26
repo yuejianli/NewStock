@@ -8,7 +8,7 @@ import top.yueshushu.learn.mode.vo.HolidayCalendarVo;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2022-05-25T10:42:46+0800",
+    date = "2022-05-25T11:30:44+0800",
     comments = "version: 1.5.0.Beta1, compiler: javac, environment: Java 1.8.0_102 (Oracle Corporation)"
 )
 @Component

@@ -3,6 +3,8 @@ package top.yueshushu.learn.domainservice;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.domain.UserDo;
 
+import java.util.List;
+
 /**
  * @Description 用户的操作
  * @Author yuejianli
@@ -21,4 +23,10 @@ public interface UserDomainService extends IService<UserDo> {
      * @param userDo 传递过来的用户对象
      */
     void updateUser(UserDo userDo);
+
+    /**
+     * 查询所有的用户id 集合
+     * @return 查询所有的用户id 集合
+     */
+    List<Integer> listUserId();
 }

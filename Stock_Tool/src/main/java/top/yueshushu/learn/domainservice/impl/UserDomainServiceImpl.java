@@ -11,6 +11,7 @@ import top.yueshushu.learn.service.UserService;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description TODO
@@ -42,5 +43,14 @@ public class UserDomainServiceImpl extends ServiceImpl<UserDoMapper, UserDo>
         userDoMapper.updateById(
                 userDo
         );
+    }
+
+    @Override
+    public List<Integer> listUserId() {
+        return this.lambdaQuery()
+                .list()
+                .stream().map(
+                        UserDo::getId
+                ).collect(Collectors.toList());
     }
 }

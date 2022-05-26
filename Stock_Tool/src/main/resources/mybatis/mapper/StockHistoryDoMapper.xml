@@ -81,4 +81,22 @@
         </if>
         order by t.curr_date asc
     </select>
+    <select id="listDayRange" resultType="top.yueshushu.learn.domain.StockHistoryDo">
+        select <include refid="baseSql"/> from stock_history t
+        where t.code=#{stockHistoryQueryDto.code}
+        <if test="stockHistoryQueryDto.startDate!=null">
+            and curr_date > #{stockHistoryQueryDto.startDate}
+        </if>
+        <if test="stockHistoryQueryDto.endDate!=null">
+            and curr_date &lt; #{stockHistoryQueryDto.endDate}
+        </if>
+        <if test="stockHistoryQueryDto.startDayNum != null">
+           and date_format(curr_date,'%d') &gt;= #{stockHistoryQueryDto.startDayNum}
+        </if>
+        <if test="stockHistoryQueryDto.endDayNum != null">
+            and date_format(curr_date,'%d') &lt;= #{stockHistoryQueryDto.endDayNum}
+        </if>
+        order by date_format(t.curr_date,'%Y') asc,date_format(t.curr_date,'%m') asc,
+        date_format(t.curr_date,'%d') asc
+    </select>
 </mapper>

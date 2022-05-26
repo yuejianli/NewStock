@@ -1,5 +1,6 @@
 package top.yueshushu.learn.business;
 
+import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
@@ -17,4 +18,10 @@ public interface StockHistoryBusiness {
      * @return 查询股票的历史记录信息
      */
     OutputResult listHistory(StockRo stockRo);
+    /**
+     * 查询股票的天范围的历史记录信息
+     * @param stockDayStatRo 股票历史的搜索对象
+     * @return 查询股票的历史记录信息
+     */
+    OutputResult listDayRange(StockDayStatRo stockDayStatRo);
 }

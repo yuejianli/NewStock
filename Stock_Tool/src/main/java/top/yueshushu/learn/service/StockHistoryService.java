@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.domain.StockHistoryDo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
@@ -59,4 +60,11 @@ public interface StockHistoryService{
      * @return 根据股票的编码和时间范围，获取这期间内的股票历史记录数据
      */
     List<StockHistoryVo> getStockHistoryByCodeAndRangeDate(String code, DateTime startDate, DateTime endDate);
+
+    /**
+     * 查询股票天范围内的历史记录信息
+     * @param stockDayStatRo 天范围股票对象
+     * @return 查询股票天范围内的历史记录信息
+     */
+    OutputResult pageDayRange(StockDayStatRo stockDayStatRo);
 }

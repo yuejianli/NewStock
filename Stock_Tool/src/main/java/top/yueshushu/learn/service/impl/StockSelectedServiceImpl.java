@@ -2,6 +2,7 @@ package top.yueshushu.learn.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -159,7 +160,7 @@ public class StockSelectedServiceImpl implements StockSelectedService {
     }
     @Override
     public OutputResult pageSelected(StockSelectedRo stockSelectedRo) {
-        PageHelper.startPage(stockSelectedRo.getPageNum(), stockSelectedRo.getPageSize());
+        Page<Object> pageGithubResult = PageHelper.startPage(stockSelectedRo.getPageNum(), stockSelectedRo.getPageSize());
         List<StockSelectedVo> pageResultList = listSelf(
                 stockSelectedRo.getUserId(),
                 stockSelectedRo.getKeyword()
@@ -171,7 +172,7 @@ public class StockSelectedServiceImpl implements StockSelectedService {
         }
         PageInfo pageInfo = new PageInfo<>(pageResultList);
         return OutputResult.buildSucc(new PageResponse<>(
-                pageInfo.getTotal(), pageInfo.getList()
+                pageGithubResult.getTotal(), pageInfo.getList()
         ));
     }
 

@@ -1,4 +1,6 @@
 package top.yueshushu.learn.service.impl;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import top.yueshushu.learn.api.response.GetStockListResponse;
 import top.yueshushu.learn.api.responseparse.DefaultResponseParser;
 import top.yueshushu.learn.config.TradeClient;
 import top.yueshushu.learn.domain.StockSelectedDo;
+import top.yueshushu.learn.domainservice.TradePositionHistoryDomainService;
 import top.yueshushu.learn.entity.StockSelected;
 import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.enumtype.SelectedType;
@@ -30,6 +33,7 @@ import top.yueshushu.learn.util.*;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -57,6 +61,9 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
     private StockRedisUtil stockRedisUtil;
     @Autowired
     private StockSelectedDoMapper stockSelectedDoMapper;
+
+    @Resource
+    private TradePositionHistoryDomainService tradePositionHistoryDomainService;
     @Override
     public OutputResult listPosition(TradePositionRo tradePositionRo) {
         if(null==tradePositionRo.getMockType()){
@@ -159,6 +166,22 @@ public class TradePositionServiceImpl extends ServiceImpl<TradePositionMapper, T
     public void syncUseAmountByXxlJob() {
         //更新所有的数据
         tradePositionMapper.syncUseAmountByXxlJob();
+    }
+
+    @Override
+    public void savePositionHistory(Integer userId, MockType mock) {
+        //1. 将今天的记录删除掉
+        DateTime now = DateUtil.date();
+        tradePositionHistoryDomainService.deleteByUserIdAndMockTypeAndDate(
+                userId,mock.getCode(),now
+        );
+
+        //查看当前的持仓信息
+
+        // 进行保存
+
+
+
     }
 
     /**

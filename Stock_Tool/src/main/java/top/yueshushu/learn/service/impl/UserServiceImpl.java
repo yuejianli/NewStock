@@ -19,6 +19,7 @@ import top.yueshushu.learn.util.JwtUtils;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -111,5 +112,10 @@ public class UserServiceImpl implements UserService {
         return userAssembler.doToEntity(
                 userDomainService.getByAccount(account)
         );
+    }
+
+    @Override
+    public List<Integer> listUserId() {
+        return userDomainService.listUserId();
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.business.StockHistoryBusiness;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
@@ -44,4 +46,36 @@ public class StockHistoryController {
         }
         return stockHistoryBusiness.listHistory(stockRo);
     }
+    @ApiOperation("查看天范围统计的历史记录")
+    @PostMapping("/listDayRange")
+    public OutputResult listDayRange(@RequestBody StockDayStatRo stockDayStatRo){
+        if (!StringUtils.hasText(stockDayStatRo.getCode())){
+            return OutputResult.buildSucc(
+                    PageResponse.emptyPageResponse()
+            );
+        }
+        if (!StringUtils.hasText(stockDayStatRo.getStartDate())){
+            return OutputResult.buildAlert(
+                    ResultCode.HISTORY_START_DATE
+            );
+        }
+        if (!StringUtils.hasText(stockDayStatRo.getEndDate())){
+            return OutputResult.buildAlert(
+                    ResultCode.HISTORY_END_DATE
+            );
+        }
+        if (stockDayStatRo.getStartNum()== null){
+            return OutputResult.buildAlert(
+                    ResultCode.HISTORY_START_DAY_NUM
+            );
+        }
+        if (stockDayStatRo.getEndDayNum()== null){
+            return OutputResult.buildAlert(
+                    ResultCode.HISTORY_END_DAY_NUM
+            );
+        }
+        return stockHistoryBusiness.listDayRange(stockDayStatRo);
+    }
+
+
 }

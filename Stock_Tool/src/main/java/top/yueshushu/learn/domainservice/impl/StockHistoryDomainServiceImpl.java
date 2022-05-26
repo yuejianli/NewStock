@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.domainservice.StockHistoryDomainService;
 import top.yueshushu.learn.mapper.StockHistoryDoMapper;
+import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 
 import javax.annotation.Resource;
@@ -57,6 +58,13 @@ public class StockHistoryDomainServiceImpl extends ServiceImpl<StockHistoryDoMap
     public List<StockHistoryDo> listStockHistoryAndDateAsc(String code, DateTime startDate, DateTime endDate) {
         return stockHistoryDoMapper.listStockHistoryAndDateAsc(
                 code,startDate,endDate
+        );
+    }
+
+    @Override
+    public List<StockHistoryDo> listDayRange(StockHistoryQueryDto stockHistoryQueryDto) {
+        return stockHistoryDoMapper.listDayRange(
+                stockHistoryQueryDto
         );
     }
 }

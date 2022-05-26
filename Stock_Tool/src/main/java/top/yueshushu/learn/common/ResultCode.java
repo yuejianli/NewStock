@@ -55,6 +55,17 @@ public class ResultCode extends BaseResultCode {
     public static final ResultCode STOCK_EXCHANGE_IS_EMPTY =
             new ResultCode(true, 10012004, "股票交易所类型不能为空");
 
+    public static final ResultCode HISTORY_START_DATE =
+            new ResultCode(true, 10012005, "开始的时间范围不能为空");
+    public static final ResultCode HISTORY_END_DATE =
+            new ResultCode(true, 10012006, "结束的时间范围不能为空");
+
+    public static final ResultCode HISTORY_START_DAY_NUM =
+            new ResultCode(true, 10012007, "开始的天不能为空");
+
+    public static final ResultCode HISTORY_END_DAY_NUM =
+            new ResultCode(true, 10012008, "结束的天不能为空");
+
     /**
      * 股票自选提示信息：  100 13 （编排）+ 001 (三位随机)
      */

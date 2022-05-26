@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.domain.StockDo;
 import top.yueshushu.learn.domain.StockHistoryDo;
+import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 
 import java.util.Date;
@@ -55,4 +56,11 @@ public interface StockHistoryDomainService extends IService<StockHistoryDo> {
      * @return 根据股票的编码和时间范围搜索对应的历史记录
      */
     List<StockHistoryDo> listStockHistoryAndDateAsc(String code, DateTime startDate, DateTime endDate);
+
+    /**
+     * 查询历史按照天范围统计的记录
+     * @param stockHistoryQueryDto 历史天范围对象
+     * @return 查询历史按照天范围统计的记录
+     */
+    List<StockHistoryDo> listDayRange(StockHistoryQueryDto stockHistoryQueryDto);
 }

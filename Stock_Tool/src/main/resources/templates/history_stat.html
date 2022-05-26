@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票历史记录分析</title>
+
+    <link rel="StyleSheet" href="static/plugins/bootstrap/css/bootstrap.css" type="text/css">
+    <link rel="StyleSheet" href="static/plugins/bootstrap-table/bootstrap-table.min.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/plugins/flavr/flavr.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/css/common/common.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/css/my.css" type="text/css"/>
+    <link rel="StyleSheet" href="static/plugins/font-awesome/css/font-awesome.min.css" type="text/css">
+    <link rel="StyleSheet" href="static/plugins/bootstrap-daterangepicker/daterangepicker.css" type="text/css"/>
+</head>
+<body class="page-bg container">
+<p class="mar-hor">
+<div style="text-align: center;"><h2 style="color:#EC7C00">股票历史记录统计查询</h2></div>
+<hr/>
+
+<div class="row mar45">
+    <div class="col-md-12 column">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                    <label class="col-sm-4  control-label">股票编号：</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="underline_input" id="searchCode" value="" placeholder="股票的6位数字代码"/>
+                    </div>
+            </div>
+
+            <!--放置日期-->
+            <div class="form-group">
+                <label class="col-sm-4  control-label">开始和结束范围：</label>
+                <div class="col-sm-6">
+                    <input type="text" id="historyDateRange" class="form-control">
+                    <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                    <div>
+                        <input type="hidden" id="historyStartDate">
+                        <input type="hidden" id="historyEndDate">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4  control-label">开始天：</label>
+                <div class="col-sm-6">
+                    <input type="text" class="underline_input" id="startDayNum" value="1" placeholder="开始天日期"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4  control-label">结束天：</label>
+                <div class="col-sm-6">
+                    <input type="text" class="underline_input" id="endDayNum" value="31" placeholder="结束天日期"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-8">
+                    <button id="stockHistorySearch" type="button" class="btn btn-info"
+                            data-toggle="tooltip" data-placement="top" title="查询">
+                        <i class="fa fa-search"></i>&nbsp;&nbsp;&nbsp;&nbsp;查询&nbsp;&nbsp;&nbsp;
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div>
+        <!-- 表格-开始  -->
+        <table id="stock_history_table" data-toggle="table"
+               class="table-striped table-bordered table-hover">
+        </table>
+    </div>
+</div>
+<script type="text/javascript" src="static/plugins/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap-table/bootstrap-table.js"></script>
+<script type="text/javascript" src="static/plugins/flavr/flavr.min.js"></script>
+<script type="text/javascript" src="HttpReqUrl.js"></script>
+<script type="text/javascript" src="static/myjs/myjs.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap-daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="static/plugins/bootstrap-daterangepicker/daterangepicker.zh-CN.js"></script>
+<script type="text/javascript" src="history_stat.js"></script>
+
+</body>
+</html>

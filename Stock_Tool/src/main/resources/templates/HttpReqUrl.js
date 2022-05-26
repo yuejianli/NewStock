@@ -77,6 +77,8 @@ var TOOL_MONEY_REDUCE =contextPath +"money/reduceMoney";
 var STAT_WEEK_URL =contextPath +"stat/getWeekStat";
 //图表统计
 var STAT_CHAR_URL =contextPath +"stat/getCharStat";
+//历史记录天范围统计
+var STAT_HISTORY_DAY_RANGE_URL =contextPath +"stockHistory/listDayRange";
 
 /*********************交易配置***************************/
 //交易方法list 查询

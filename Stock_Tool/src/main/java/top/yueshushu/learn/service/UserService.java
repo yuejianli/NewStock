@@ -6,6 +6,8 @@ import top.yueshushu.learn.domain.UserDo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.response.OutputResult;
 
+import java.util.List;
+
 /**
  * <p>
  * 登录用户表 自定义的
@@ -43,5 +45,9 @@ public interface UserService  {
      */
     User getUserByAccount(String account);
 
-
+    /**
+     * 查询所有的用户id信息
+     * @return 返回所有的用户id集合
+     */
+    List<Integer> listUserId();
 }

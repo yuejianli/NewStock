@@ -3,6 +3,7 @@ package top.yueshushu.learn.mapper;
 import cn.hutool.core.date.DateTime;
 import org.apache.ibatis.annotations.Param;
 import top.yueshushu.learn.entity.StockHistory;
+import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.domain.StockHistoryDo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -41,6 +42,7 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
     List<StockHistoryDo> listStockHistoryAndDateDesc(@Param("code") String code,
                                                      @Param("startDate") DateTime startDate,
                                                      @Param("endDate") DateTime endDate);
+
     /**
      * 查询股票的历史交易记录,按照时间升序.
      *
@@ -50,8 +52,9 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
      * @return 查询股票的历史交易记录
      */
     List<StockHistoryDo> listStockHistoryAndDateAsc(@Param("code") String code,
-                                                 @Param("startDate") DateTime startDate,
-                                                 @Param("endDate") DateTime endDate);
+                                                    @Param("startDate") DateTime startDate,
+                                                    @Param("endDate") DateTime endDate);
+
     /**
      * 获取股票那一天的信息
      *
@@ -79,4 +82,12 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
      * @return 根据股票的编码和日期，获取距离这一天最近的股票历史记录数据。
      */
     StockHistoryDo getRecentyHistoryBeforeDate(@Param("code") String code, @Param("endDate") DateTime endDate);
+
+    /**
+     * 查询天范围统计的历史记录对象
+     *
+     * @param stockHistoryQueryDto 天范围历史记录
+     * @return 查询天范围统计的历史记录对象
+     */
+    List<StockHistoryDo> listDayRange(@Param("stockHistoryQueryDto") StockHistoryQueryDto stockHistoryQueryDto);
 }

@@ -3,9 +3,13 @@ package top.yueshushu.learn.business.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.business.StockHistoryBusiness;
+import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.domainservice.StockDomainService;
+import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.ro.stock.StockRo;
 import top.yueshushu.learn.service.StockHistoryService;
+import top.yueshushu.learn.service.StockService;
 
 import javax.annotation.Resource;
 
@@ -19,9 +23,26 @@ import javax.annotation.Resource;
 public class StockHistoryBusinessImpl implements StockHistoryBusiness {
     @Resource
     private StockHistoryService stockHistoryService;
+    @Resource
+    private StockService stockService;
 
     @Override
     public OutputResult listHistory(StockRo stockRo) {
+        if (stockService.selectByCode(stockRo.getCode()) == null){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_CODE_NO_EXIST
+            );
+        }
         return stockHistoryService.pageHistory(stockRo);
+    }
+
+    @Override
+    public OutputResult listDayRange(StockDayStatRo stockDayStatRo) {
+        if (stockService.selectByCode(stockDayStatRo.getCode()) == null){
+            return OutputResult.buildAlert(
+                    ResultCode.STOCK_CODE_NO_EXIST
+            );
+        }
+        return stockHistoryService.pageDayRange(stockDayStatRo);
     }
 }

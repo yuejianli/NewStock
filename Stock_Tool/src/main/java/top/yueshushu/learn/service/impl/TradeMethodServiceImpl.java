@@ -1,6 +1,7 @@
 package top.yueshushu.learn.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +63,7 @@ public class TradeMethodServiceImpl implements TradeMethodService {
     @Override
     public OutputResult pageList(TradeMethodRo tradeMethodRo) {
 
-        PageHelper.startPage(tradeMethodRo.getPageNum(),tradeMethodRo.getPageSize());
+        Page<Object> pageGithubResult = PageHelper.startPage(tradeMethodRo.getPageNum(), tradeMethodRo.getPageSize());
         List<TradeMethodDo> tradeMethodDoList = tradeMethodDomainService.listByName(tradeMethodRo.getKeyword());
         if (CollectionUtils.isEmpty(tradeMethodDoList)){
             return OutputResult.buildSucc(
@@ -81,7 +82,7 @@ public class TradeMethodServiceImpl implements TradeMethodService {
                 }
         );
         PageInfo pageInfo=new PageInfo<>(pageResultList);
-        return OutputResult.buildSucc(new PageResponse<TradeMethod>(pageInfo.getTotal(),
+        return OutputResult.buildSucc(new PageResponse<TradeMethod>(pageGithubResult.getTotal(),
                 pageInfo.getList()));
     }
 }

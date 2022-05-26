@@ -29,7 +29,7 @@ public class TradePositionController extends BaseController{
     private TradePositionService tradePositionService;
 
     @PostMapping("/list")
-    @ApiOperation("查询持仓")
+    @ApiOperation("查询当前我的持仓")
     public OutputResult list(@RequestBody TradePositionRo tradePositionRo){
         tradePositionRo.setUserId(getUserId());
         return tradePositionService.listPosition(tradePositionRo);

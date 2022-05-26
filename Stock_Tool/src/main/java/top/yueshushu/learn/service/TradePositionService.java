@@ -1,5 +1,6 @@
 package top.yueshushu.learn.service;
 
+import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.domain.TradePositionDo;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -35,4 +36,11 @@ public interface TradePositionService extends IService<TradePositionDo> {
      * 同步可用数量
      */
     void syncUseAmountByXxlJob();
+
+    /**
+     * 保存持仓记录的历史信息
+     * @param userId 用户编号
+     * @param mock 类型
+     */
+    void savePositionHistory(Integer userId, MockType mock);
 }
