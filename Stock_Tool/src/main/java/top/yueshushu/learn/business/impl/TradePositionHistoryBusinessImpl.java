@@ -2,6 +2,7 @@ package top.yueshushu.learn.business.impl;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import top.yueshushu.learn.business.TradePositionHistoryBusiness;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.response.OutputResult;
@@ -15,7 +16,7 @@ import javax.annotation.Resource;
  * @author Yue Jianli
  * @date 2022-05-26
  */
-@Data
+@Service
 @Slf4j
 public class TradePositionHistoryBusinessImpl implements TradePositionHistoryBusiness {
     @Resource

@@ -96,7 +96,7 @@
         <if test="stockHistoryQueryDto.endDayNum != null">
             and date_format(curr_date,'%d') &lt;= #{stockHistoryQueryDto.endDayNum}
         </if>
-        order by date_format(t.curr_date,'%Y') asc,date_format(t.curr_date,'%m') asc,
+        order by date_format(t.curr_date,'%Y') desc,date_format(t.curr_date,'%m') asc,
         date_format(t.curr_date,'%d') asc
     </select>
 </mapper>
