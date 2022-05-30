@@ -1,6 +1,9 @@
 package top.yueshushu.learn.assembler;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import top.yueshushu.learn.crawler.entity.StockHistoryCsvInfo;
 import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.entity.StockHistory;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
@@ -32,4 +35,15 @@ public interface StockHistoryAssembler {
      * @return 股票历史 entity 转换成 vo
      */
     StockHistoryVo entityToVo(StockHistory stockHistory);
+
+    /**
+     * 股票历史 stockHistoryCsvInfo 转换成 domain
+     *
+     * @param stockHistoryCsvInfo 股票历史csv记录
+     * @return 股票历史 stockHistoryCsvInfo 转换成 domain
+     */
+    @Mappings({
+            @Mapping(target = "currDate",ignore = true),
+    })
+    StockHistoryDo csvInfoToDo(StockHistoryCsvInfo stockHistoryCsvInfo);
 }

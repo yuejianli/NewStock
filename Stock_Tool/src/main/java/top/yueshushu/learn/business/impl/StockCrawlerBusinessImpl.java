@@ -41,18 +41,6 @@ public class StockCrawlerBusinessImpl implements StockCrawlerBusiness {
         return stockCrawlerService.stockHistoryAsync(stockRo);
     }
 
-
-    @Override
-    public OutputResult getWeekStat(StockStatRo stockStatRo) {
-        return stockCrawlerService.getWeekStat(stockStatRo);
-    }
-
-    @Override
-    public OutputResult getCharStat(StockStatRo stockStatRo) {
-        return stockCrawlerService.getCharStat(stockStatRo);
-    }
-
-
     @Override
     public void updateCodePrice(String code) {
         stockCrawlerService.updateCodePrice(code);

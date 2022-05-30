@@ -63,4 +63,12 @@ public interface StockHistoryDomainService extends IService<StockHistoryDo> {
      * @return 查询历史按照天范围统计的记录
      */
     List<StockHistoryDo> listDayRange(StockHistoryQueryDto stockHistoryQueryDto);
+
+    /**
+     * 删除该股票这期间内的历史数据
+     * @param code 股票编码
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     */
+    void deleteAsyncRangeDateData(String code, String startDate, String endDate);
 }

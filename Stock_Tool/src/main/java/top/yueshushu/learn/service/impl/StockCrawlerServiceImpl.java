@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import top.yueshushu.learn.common.Const;
+import top.yueshushu.learn.crawler.business.CrawlerStockBusiness;
+import top.yueshushu.learn.crawler.business.CrawlerStockHistoryBusiness;
 import top.yueshushu.learn.enumtype.SyncStockHistoryType;
 import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.model.info.StockShowInfo;
@@ -32,41 +34,26 @@ import java.util.Date;
 @Service
 public class StockCrawlerServiceImpl implements StockCrawlerService {
     @Resource
-    private RestTemplate restTemplate;
-
-    @Resource
     private StockCacheService  stockCacheService;
     @Resource
-    private DateHelper dateHelper;
+    private CrawlerStockBusiness crawlerStockBusiness;
+    @Resource
+    private CrawlerStockHistoryBusiness crawlerStockHistoryBusiness;
 
-    @Value("${restHost.crawlerUrl}")
-    private String crawlerUrl;
 
     @Override
     public OutputResult<StockShowInfo> getStockInfo(StockRo stockRo) {
-        String url= crawlerUrl+"getStockInfo";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
+        return crawlerStockBusiness.getStockInfo(stockRo.getCode());
     }
 
     @Override
     public OutputResult<String> getStockKline(StockRo stockRo) {
-        String url= crawlerUrl+"getStockKline";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
+        return crawlerStockBusiness.getStockKline(stockRo);
     }
 
     @Override
     public OutputResult<String> stockAsync(StockRo stockRo) {
-        String url= crawlerUrl+"stockAsync";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
+        return crawlerStockBusiness.stockAsync(stockRo);
     }
 
     @Override
@@ -76,37 +63,8 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
         if(null!=handlerResult){
             return handlerResult;
         }
-        String url= crawlerUrl+"stockHistoryAsync";
-        return restTemplate.postForEntity(
-                url,stockRo,
-                OutputResult.class
-        ).getBody();
+        return crawlerStockHistoryBusiness.stockHistoryAsync(stockRo);
     }
-
-    @Override
-    public OutputResult getWeekStat(StockStatRo stockStatRo) {
-        if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.buildSucc();
-        }
-        String url= crawlerUrl+"getWeekStat";
-        return restTemplate.postForEntity(
-                url,stockStatRo,
-                OutputResult.class
-        ).getBody();
-    }
-
-    @Override
-    public OutputResult getCharStat(StockStatRo stockStatRo) {
-        if(StringUtils.isBlank(stockStatRo.getCode())){
-            return OutputResult.buildSucc();
-        }
-        String url= crawlerUrl+"getCharStat";
-        return restTemplate.postForEntity(
-                url,stockStatRo,
-                OutputResult.class
-        ).getBody();
-    }
-
     /**
      * 历史交易信息同步时，处理日期.
      * @param stockRo
@@ -207,13 +165,9 @@ public class StockCrawlerServiceImpl implements StockCrawlerService {
          String fullCode = StockUtil.getFullCode(code);
          stockRo.setCode(fullCode);
          //获取当前的价格
-         String url= crawlerUrl+"getStockPrice";
-         OutputResult outputResult = restTemplate.postForEntity(
-                 url,stockRo,
-                 OutputResult.class
-         ).getBody();
+        OutputResult outputResult= crawlerStockBusiness.getStockPrice(fullCode);
          //获取信息
-        String priceReturn = (String) outputResult.getData();
+        String priceReturn = (String) (outputResult.getData());
         //将这个信息进行转换，转换成对应的 BigDecimal
          BigDecimal price = BigDecimalUtil.toBigDecimal(priceReturn);
 

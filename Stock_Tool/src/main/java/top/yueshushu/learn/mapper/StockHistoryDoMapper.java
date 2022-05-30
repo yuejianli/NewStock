@@ -90,4 +90,15 @@ public interface StockHistoryDoMapper extends BaseMapper<StockHistoryDo> {
      * @return 查询天范围统计的历史记录对象
      */
     List<StockHistoryDo> listDayRange(@Param("stockHistoryQueryDto") StockHistoryQueryDto stockHistoryQueryDto);
+
+    /**
+     * 删除该股票这期间内的历史数据
+     *
+     * @param code      股票编码
+     * @param startDate 开始日期
+     * @param endDate   结束日期
+     */
+    void deleteAsyncRangeDateData(@Param("code") String code,
+                                  @Param("startDate") Date startDate,
+                                  @Param("endDate") Date endDate);
 }

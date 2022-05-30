@@ -1,6 +1,7 @@
 package top.yueshushu.learn.domainservice.impl;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,19 @@ public class StockHistoryDomainServiceImpl extends ServiceImpl<StockHistoryDoMap
     public List<StockHistoryDo> listDayRange(StockHistoryQueryDto stockHistoryQueryDto) {
         return stockHistoryDoMapper.listDayRange(
                 stockHistoryQueryDto
+        );
+    }
+
+    @Override
+    public void deleteAsyncRangeDateData(String code, String startDate, String endDate) {
+        stockHistoryDoMapper.deleteAsyncRangeDateData(
+                code,
+                DateUtil.parse(
+                        startDate,"yyyyMMdd"
+                ),
+                DateUtil.parse(
+                        endDate,"yyyyMMdd"
+                )
         );
     }
 }

@@ -99,4 +99,11 @@
         order by date_format(t.curr_date,'%Y') desc,date_format(t.curr_date,'%m') asc,
         date_format(t.curr_date,'%d') asc
     </select>
+
+    <delete id="deleteAsyncRangeDateData">
+        delete from stock_history where code=#{code}
+        and date_format(curr_date,'%Y%m%d') &gt;=date_format( #{startDate,jdbcType=TIMESTAMP},'%Y%m%d')
+        and date_format(curr_date,'%Y%m%d') &lt;=date_format( #{endDate,jdbcType=TIMESTAMP},'%Y%m%d')
+        <!--        <![CDATA[ when t.curr_date >=#{startDate} and t.curr_date <=#{endDate} ]]>-->
+    </delete>
 </mapper>

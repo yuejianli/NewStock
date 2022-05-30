@@ -1,6 +1,7 @@
 package top.yueshushu.learn.assembler;
 
 import org.mapstruct.Mapper;
+import top.yueshushu.learn.crawler.entity.DownloadStockInfo;
 import top.yueshushu.learn.domain.StockDo;
 import top.yueshushu.learn.entity.Stock;
 import top.yueshushu.learn.mode.vo.StockVo;
@@ -33,4 +34,11 @@ public interface StockAssembler {
      */
     StockVo entityToVo(Stock stock);
 
+    /**
+     * 同步的股票信息 转换成 domain
+     *
+     * @param downloadStockInfo 同步的股票对象
+     * @return 返回 domain
+     */
+    StockDo downInfoToDO(DownloadStockInfo downloadStockInfo);
 }

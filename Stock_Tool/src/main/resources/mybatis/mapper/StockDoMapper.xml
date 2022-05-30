@@ -40,4 +40,7 @@
         </where>
         order by t.code+0 asc
     </select>
+    <select id="listAllCode" resultType="java.lang.String">
+        select code from stock order by code
+    </select>
 </mapper>

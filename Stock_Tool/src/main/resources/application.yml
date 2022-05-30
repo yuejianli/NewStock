@@ -17,9 +17,6 @@ REDIS_DATABASE: 8
 SWAGGER_USERNAME: admin
 SWAGGER_PASSWORD: yuezelin
 
-# 配置爬虫的请求地址:
-CRAWLER_URL: http://localhost:8089/Crawler/stock/
-
 #xxl-job-admin 的相关配置信息
 XXL_JOB_IP: 127.0.0.1
 XXL_JOB_PORT: 8085
@@ -32,6 +29,8 @@ server:
     context-path: /Stock
   #设置头的大小
   max-http-header-size: 102400
+# 指定目录
+uploadFilePath: /usr/app
 # 引入 数据库的相关配置
 spring:
   main:
@@ -104,7 +103,7 @@ mybatis-plus:
     # 关闭mybatis一级缓存，防止事务和缓存同时打开引起的查询异常
     local-cache-scope: STATEMENT
     #查看mybatis的SQL, 线上服务器关闭
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-delete-field: flag   # 逻辑删除的字段
@@ -167,3 +166,22 @@ strategy:
       url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/start
     disable:
       url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/stop
+# 默认的查询接口配置
+default:
+  # 展示今天的股票信息
+  show_day_url: https://hq.sinajs.cn/list={0}
+  # 展示所有的股票信息
+  all_stock_url: >
+    https://20.push2.eastmoney.com/api/qt/clist/get?pn=1&pz=10000000&np=1&fid=f3&fields={0}&fs=m:0+t:6,m:0+t:13,m:0+t:80,m:1+t:2,m:1+t:23,b:MK0021,b:MK0022,b:MK0023,b:MK0024
+  # 查询这个股票的历史信息
+  stock_history_url: >
+    http://push2his.eastmoney.com/api/qt/stock/kline/get?
+    fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5%2Cf6&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58%2Cf59%2Cf60%2Cf61
+    &klt=101&fqt=1&secid={}&beg={}&end={}
+  stock_history_download_url: >
+    http://quotes.money.163.com/service/chddata.html?code={0}&start={1}&end={2}&fields=TCLOSE;HIGH;LOW;TOPEN;LCLOSE;CHG;PCHG;TURNOVER;VOTURNOVER;VATURNOVER;TCAP;MCAP
+  #k线图
+  min_url: http://image.sinajs.cn/newchart/min/n/{0}.gif
+  daily_url: http://image.sinajs.cn/newchart/daily/n/{0}.gif
+  weekly_url: http://image.sinajs.cn/newchart/weekly/n/{0}.gif
+  monthly_url: http://image.sinajs.cn/newchart/monthly/n/{0}.gif

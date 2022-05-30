@@ -38,4 +38,19 @@ public class StockDomainServiceImpl extends ServiceImpl<StockDoMapper, StockDo>
         }
         return list.get(0);
     }
+    @Override
+    public StockDo getByFullCode(String fullCode) {
+        List<StockDo> list = this.lambdaQuery()
+                .eq(
+                        StockDo::getFullCode, fullCode
+                ).list();
+        if (CollectionUtils.isEmpty(list)){
+            return null;
+        }
+        return list.get(0);
+    }
+    @Override
+    public List<String> listAllCode() {
+        return stockDoMapper.listAllCode();
+    }
 }

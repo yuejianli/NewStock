@@ -6,8 +6,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.yueshushu.learn.crawler.util.HttpUtil;
 import top.yueshushu.learn.exception.ServiceException;
-import top.yueshushu.learn.util.HttpUtil;
 
 import java.io.IOException;
 import java.util.HashMap;

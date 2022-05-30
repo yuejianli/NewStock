@@ -36,4 +36,11 @@ public interface StockDoMapper extends BaseMapper<StockDo> {
      * @return
      */
     List<StockDo> selectByKeyword(@Param("keyword") String keyword);
+
+    /**
+     * 查询所有的股票编码列表集合
+     *
+     * @return 查询所有的股票编码列表集合
+     */
+    List<String> listAllCode();
 }
