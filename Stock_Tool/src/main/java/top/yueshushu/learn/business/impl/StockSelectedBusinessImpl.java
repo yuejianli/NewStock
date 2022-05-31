@@ -43,8 +43,6 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
     @Resource
     private StockService stockService;
     @Resource
-    private XxlJobService xxlJobService;
-    @Resource
     private StockHistoryService stockHistoryService;
     @Resource
     private DateHelper dateHelper;
@@ -201,26 +199,6 @@ public class StockSelectedBusinessImpl implements StockSelectedBusiness {
     public OutputResult editNotes(StockSelectedRo stockSelectedRo) {
         return stockSelectedService.editNotes(
                 stockSelectedRo
-        );
-    }
-    /**
-     *Integer addJob(String cron, String jobDesc, Integer group,
-     * String jobHandler, String creator, Integer executorParam);
-     */
-    /**
-     * 添加自选定时任务
-     * @param userId 系统用户编号
-     * @param stockCode 股票编码
-     * @return 返回添加后的定时任务编号
-     */
-    private Integer addJob(Integer userId,String stockCode) {
-        return xxlJobService.addJob(
-                XxlJobConst.SELECTED_SCAN_CRON,
-                userId + "_自选股票" + stockCode,
-                XxlJobConst.JOB_SELECTED_GROUP,
-                XxlJobConst.SELECTED_SCAN_HANDLER,
-                userId + "",
-                stockCode
         );
     }
 }

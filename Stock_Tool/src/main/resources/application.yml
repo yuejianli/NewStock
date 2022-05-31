@@ -17,9 +17,6 @@ REDIS_DATABASE: 8
 SWAGGER_USERNAME: admin
 SWAGGER_PASSWORD: yuezelin
 
-#xxl-job-admin 的相关配置信息
-XXL_JOB_IP: 127.0.0.1
-XXL_JOB_PORT: 8085
 # 是否开启xxl_job的相应时间验证
 xxlJobTime: true
 
@@ -131,41 +128,6 @@ swagger:
 # 支持上传文件
 multipart:
   enabled: true
-# 配置日志信息
-mylog:
-  exc-full-show: false
-  run-time: 0
-  result-length: 500
-
-# 配置爬虫地址请求
-restHost:
-  crawlerUrl: ${CRAWLER_URL}
-# 配置 xxl-job的信息
-xxl:
-  job:
-    admin:
-      addresses: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin
-      username: admin
-      password: 123456
-    executor:
-      appname: xxl-job-executor-strategy
-      port: 6666
-      logpath: /data/applogs/xxl-job/jobhandler
-      logretentiondays: 1
-      ip:
-    accessToken:
-strategy:
-  job:
-    add:
-      url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/add
-    update:
-      url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/update
-    remove:
-      url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/remove
-    enable:
-      url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/start
-    disable:
-      url: http://${XXL_JOB_IP}:${XXL_JOB_PORT}/xxl-job-admin/jobinfo/stop
 # 默认的查询接口配置
 default:
   # 展示今天的股票信息

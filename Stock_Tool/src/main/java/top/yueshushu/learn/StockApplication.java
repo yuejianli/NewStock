@@ -6,8 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
-import top.yueshushu.log.EnableMyLog;
-
+import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * @ClassName:StockApplication
  * @Description 股票小工具
@@ -18,13 +17,12 @@ import top.yueshushu.log.EnableMyLog;
 @SpringBootApplication
 @MapperScan("top.yueshushu.learn.mapper")
 @Slf4j
-@EnableMyLog
 //开启缓存
 @EnableCaching
 @EnableAsync
+@EnableScheduling
 public class StockApplication {
     public static void main(String[] args) {
         SpringApplication.run(StockApplication.class,args);
-        log.info(">>>股票小工具启动成功");
     }
 }
