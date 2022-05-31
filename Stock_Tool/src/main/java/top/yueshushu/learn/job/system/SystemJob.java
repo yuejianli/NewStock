@@ -1,4 +1,4 @@
-package top.yueshushu.learn.xxljob.system;
+package top.yueshushu.learn.job.system;
 
 import cn.hutool.core.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;

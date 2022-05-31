@@ -13,8 +13,8 @@ import top.yueshushu.learn.domainservice.ConfigDomainService;
 import top.yueshushu.learn.enumtype.ConfigCodeType;
 import top.yueshushu.learn.mode.ro.ConfigRo;
 import top.yueshushu.learn.mode.vo.ConfigVo;
-import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.service.ConfigService;
 import top.yueshushu.learn.util.PageUtil;
 

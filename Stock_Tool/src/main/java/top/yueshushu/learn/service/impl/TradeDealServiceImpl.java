@@ -28,7 +28,7 @@ import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.dto.TradeDealQueryDto;
 import top.yueshushu.learn.mode.ro.TradeDealRo;
 import top.yueshushu.learn.mode.vo.TradeDealVo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeDealService;
 import top.yueshushu.learn.util.BigDecimalUtil;

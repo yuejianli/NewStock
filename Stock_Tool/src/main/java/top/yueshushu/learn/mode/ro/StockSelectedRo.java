@@ -3,7 +3,7 @@ package top.yueshushu.learn.mode.ro;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import top.yueshushu.learn.page.PageRo;
+import top.yueshushu.learn.response.PageRo;
 
 import java.io.Serializable;
 

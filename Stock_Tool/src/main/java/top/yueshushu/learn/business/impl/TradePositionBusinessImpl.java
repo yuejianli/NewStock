@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import top.yueshushu.learn.business.TradePositionBusiness;
+import top.yueshushu.learn.common.SystemConst;
 import top.yueshushu.learn.enumtype.SelectedType;
 import top.yueshushu.learn.enumtype.TradeRealValueType;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
@@ -14,7 +15,6 @@ import top.yueshushu.learn.service.StockSelectedService;
 import top.yueshushu.learn.service.TradePositionService;
 import top.yueshushu.learn.service.cache.StockCacheService;
 import top.yueshushu.learn.service.cache.TradeCacheService;
-import top.yueshushu.learn.system.SystemConst;
 import top.yueshushu.learn.util.StockUtil;
 
 import javax.annotation.Resource;

@@ -16,7 +16,7 @@ import top.yueshushu.learn.crawler.parse.StockShowInfoParse;
 import top.yueshushu.learn.crawler.properties.DefaultProperties;
 import top.yueshushu.learn.crawler.util.HttpUtil;
 import top.yueshushu.learn.crawler.util.ImageUtil;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
 
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;

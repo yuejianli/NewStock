@@ -1,8 +1,8 @@
 package top.yueshushu.learn.business;
-import top.yueshushu.learn.model.info.StockShowInfo;
+
+import top.yueshushu.learn.mode.info.StockShowInfo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 
 /**
  * @Description 爬虫的编排层

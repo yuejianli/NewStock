@@ -7,14 +7,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.business.StockBusiness;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.mode.info.StockInfo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.mode.vo.StockVo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
 
 import javax.annotation.Resource;
 

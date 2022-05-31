@@ -3,10 +3,9 @@ package top.yueshushu.learn.business.impl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.business.StockCrawlerBusiness;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 import top.yueshushu.learn.service.StockCrawlerService;
 
 import javax.annotation.Resource;

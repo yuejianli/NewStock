@@ -13,7 +13,7 @@ import top.yueshushu.learn.crawler.service.CrawlerStockHistoryService;
 import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.domainservice.StockHistoryDomainService;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

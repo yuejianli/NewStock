@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.business.StockCrawlerBusiness;
 import top.yueshushu.learn.common.ResultCode;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 import javax.annotation.Resource;
 

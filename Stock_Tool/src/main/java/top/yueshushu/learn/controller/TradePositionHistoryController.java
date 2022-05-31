@@ -13,9 +13,9 @@ import top.yueshushu.learn.business.TradePositionHistoryBusiness;
 import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.StockDayStatRo;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 import javax.annotation.Resource;
 

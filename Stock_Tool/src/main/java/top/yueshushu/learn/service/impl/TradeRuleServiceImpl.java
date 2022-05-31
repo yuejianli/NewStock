@@ -22,7 +22,7 @@ import top.yueshushu.learn.mode.dto.TradeRuleStockQueryDto;
 import top.yueshushu.learn.mode.ro.TradeRuleRo;
 import top.yueshushu.learn.mode.vo.StockVo;
 import top.yueshushu.learn.mode.vo.TradeRuleVo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.domain.TradeRuleDo;
 import top.yueshushu.learn.mapper.TradeRuleDoMapper;
 import top.yueshushu.learn.domain.TradeRuleConditionDo;

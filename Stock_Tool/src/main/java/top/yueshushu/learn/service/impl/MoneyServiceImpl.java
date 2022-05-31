@@ -1,22 +1,20 @@
 package top.yueshushu.learn.service.impl;
 
-import com.fasterxml.jackson.datatype.jsr310.DecimalUtils;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import top.yueshushu.learn.common.SystemConst;
 import top.yueshushu.learn.enumtype.ExchangeType;
 import top.yueshushu.learn.enumtype.NameOperationType;
 import top.yueshushu.learn.enumtype.TradingAreaType;
+import top.yueshushu.learn.mode.dto.PoundageCalcDto;
+import top.yueshushu.learn.mode.dto.PoundageDto;
 import top.yueshushu.learn.mode.ro.MoneyRo;
 import top.yueshushu.learn.mode.vo.CalcBuyMoneyVo;
 import top.yueshushu.learn.mode.vo.CalcMoneyVo;
 import top.yueshushu.learn.mode.vo.CalcSellMoneyVo;
 import top.yueshushu.learn.mode.vo.MoneyVo;
-import top.yueshushu.learn.model.dto.PoundageCalcDto;
-import top.yueshushu.learn.model.dto.PoundageDto;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.MoneyService;
-import top.yueshushu.learn.system.SystemConst;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.MathUtil;
 import top.yueshushu.learn.util.PoundageCalcUtil;
@@ -68,7 +66,7 @@ public class MoneyServiceImpl implements MoneyService {
 
 
         //计算总的买入费用
-        BigDecimal totalBuyCharge=SystemConst.DEFAULT_EMPTY;
+        BigDecimal totalBuyCharge= SystemConst.DEFAULT_EMPTY;
         BigDecimal totalSellCharge=SystemConst.DEFAULT_EMPTY;
         BigDecimal totalCharge=SystemConst.DEFAULT_EMPTY;
         int totalNum=0;

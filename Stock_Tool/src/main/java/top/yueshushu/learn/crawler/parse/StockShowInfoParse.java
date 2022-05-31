@@ -1,6 +1,6 @@
 package top.yueshushu.learn.crawler.parse;
 import org.jsoup.select.Elements;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
 
 /**
  * @Description 股票元素数据处理

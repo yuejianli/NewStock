@@ -94,7 +94,7 @@ public class DateHelper {
             return false;
         }
         //验证一下，是不是在 9点半到11点半， 1点到 3点之间
-        return between930To1130(date) && between13To15(date);
+        return between930To1130(date) || between13To15(date);
     }
 
     /**

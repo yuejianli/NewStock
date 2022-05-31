@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.business.BuyBusiness;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.common.SystemConst;
 import top.yueshushu.learn.domain.TradeEntrustDo;
 import top.yueshushu.learn.domainservice.TradeEntrustDomainService;
 import top.yueshushu.learn.entity.Stock;
@@ -20,7 +21,6 @@ import top.yueshushu.learn.service.ConfigService;
 import top.yueshushu.learn.service.StockService;
 import top.yueshushu.learn.service.TradeEntrustService;
 import top.yueshushu.learn.service.TradeMoneyService;
-import top.yueshushu.learn.system.SystemConst;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockUtil;
 

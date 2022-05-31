@@ -2,14 +2,11 @@ package top.yueshushu.learn.service;
 
 import cn.hutool.core.date.DateTime;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
-import top.yueshushu.learn.domain.StockHistoryDo;
-import com.baomidou.mybatisplus.extension.service.IService;
 import top.yueshushu.learn.mode.ro.StockDayStatRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
 
-import java.util.Date;
 import java.util.List;
 
 /**

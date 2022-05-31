@@ -17,7 +17,7 @@ import top.yueshushu.learn.service.ConfigService;
 import top.yueshushu.learn.service.SellService;
 import top.yueshushu.learn.service.TradeEntrustService;
 import top.yueshushu.learn.service.TradePositionService;
-import top.yueshushu.learn.system.SystemConst;
+import top.yueshushu.learn.common.SystemConst;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.StockUtil;
 

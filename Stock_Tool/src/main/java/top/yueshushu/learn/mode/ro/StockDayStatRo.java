@@ -2,7 +2,7 @@ package top.yueshushu.learn.mode.ro;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import top.yueshushu.learn.page.PageRo;
+import top.yueshushu.learn.response.PageRo;
 
 /**
  * @ClassName:StockRo

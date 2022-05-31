@@ -10,9 +10,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>top.yueshushu</groupId>
-    <artifactId>Stock_Tool</artifactId>
+    <artifactId>StockApi</artifactId>
     <version>1.0</version>
-    <name>Stock_Tool</name>
+    <name>StockApi</name>
     <description>两个蝴蝶飞-股票小工具</description>
     <properties>
         <java.version>1.8</java.version>
@@ -128,11 +128,6 @@
             <version>${swagger.bootstrapui.version}</version>
         </dependency>
         <dependency>
-            <groupId>top.yueshushu</groupId>
-            <artifactId>Stock_Common</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>
@@ -216,6 +211,11 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
 
         <!-- ********************** plugin ********************** -->
         <!-- groovy-all -->
@@ -232,10 +232,16 @@
             <version>${javax.annotation-api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--获取注解所需要的依赖-->
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
     </dependencies>
     <build>
         <!--将该目录下的文件全部打包成类的路径-->
-        <finalName>Stock_Tool</finalName>
+        <finalName>StockApi</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

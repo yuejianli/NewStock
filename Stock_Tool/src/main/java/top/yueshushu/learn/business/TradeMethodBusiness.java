@@ -4,10 +4,7 @@ import top.yueshushu.learn.domain.TradeMethodDo;
 import top.yueshushu.learn.entity.TradeMethod;
 import top.yueshushu.learn.enumtype.TradeMethodType;
 import top.yueshushu.learn.mode.ro.TradeMethodRo;
-import top.yueshushu.learn.mode.vo.StockVo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
 
 /**
  * @Description 股票交易方法的编排层处理

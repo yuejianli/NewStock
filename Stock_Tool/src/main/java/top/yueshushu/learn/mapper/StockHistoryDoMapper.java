@@ -1,13 +1,11 @@
 package top.yueshushu.learn.mapper;
 
 import cn.hutool.core.date.DateTime;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
-import top.yueshushu.learn.entity.StockHistory;
+import top.yueshushu.learn.domain.StockHistoryDo;
 import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
-import top.yueshushu.learn.domain.StockHistoryDo;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import top.yueshushu.learn.vo.stock.StockHistoryVo;
 
 import java.util.Date;
 import java.util.List;

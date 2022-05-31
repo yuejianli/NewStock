@@ -15,10 +15,10 @@ import top.yueshushu.learn.helper.DateHelper;
 import top.yueshushu.learn.mode.dto.StockHistoryQueryDto;
 import top.yueshushu.learn.mode.dto.StockPriceCacheDto;
 import top.yueshushu.learn.mode.ro.StockDayStatRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
-import top.yueshushu.learn.page.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.service.StockHistoryService;
 
 import javax.annotation.Resource;

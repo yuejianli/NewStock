@@ -6,7 +6,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import top.yueshushu.learn.crawler.parse.StockShowInfoParse;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
 import top.yueshushu.learn.util.BigDecimalUtil;
 import top.yueshushu.learn.util.MyDateUtil;
 

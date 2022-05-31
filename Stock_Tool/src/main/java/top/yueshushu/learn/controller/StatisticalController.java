@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.business.StatBusiness;
 import top.yueshushu.learn.common.ResultCode;
+import top.yueshushu.learn.mode.ro.StockStatRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 
 import javax.annotation.Resource;
 

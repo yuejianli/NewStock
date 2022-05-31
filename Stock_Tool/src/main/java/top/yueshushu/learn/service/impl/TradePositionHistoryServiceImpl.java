@@ -15,7 +15,7 @@ import top.yueshushu.learn.domainservice.TradePositionHistoryDomainService;
 import top.yueshushu.learn.mode.ro.TradePositionRo;
 import top.yueshushu.learn.mode.vo.StockHistoryVo;
 import top.yueshushu.learn.mode.vo.TradePositionHistoryVo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradePositionHistoryService;
 

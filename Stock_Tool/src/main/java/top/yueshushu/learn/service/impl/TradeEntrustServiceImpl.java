@@ -28,7 +28,7 @@ import top.yueshushu.learn.enumtype.MockType;
 import top.yueshushu.learn.mode.dto.TradeEntrustQueryDto;
 import top.yueshushu.learn.mode.ro.TradeEntrustRo;
 import top.yueshushu.learn.mode.vo.TradeEntrustVo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeEntrustService;
 import top.yueshushu.learn.util.TradeUtil;

@@ -17,7 +17,7 @@ import top.yueshushu.learn.domain.TradeMethodDo;
 import top.yueshushu.learn.mapper.TradeMethodDoMapper;
 import top.yueshushu.learn.mode.ro.TradeMethodRo;
 import top.yueshushu.learn.mode.vo.StockVo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
 import top.yueshushu.learn.service.TradeMethodService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;

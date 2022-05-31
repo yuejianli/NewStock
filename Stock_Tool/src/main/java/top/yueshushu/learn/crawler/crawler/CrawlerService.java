@@ -2,7 +2,8 @@ package top.yueshushu.learn.crawler.crawler;
 
 import top.yueshushu.learn.crawler.entity.DownloadStockInfo;
 import top.yueshushu.learn.crawler.entity.StockHistoryCsvInfo;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
+
 import java.util.Collections;
 import java.util.List;
 

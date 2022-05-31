@@ -1,9 +1,8 @@
 package top.yueshushu.learn.service;
-import top.yueshushu.learn.model.info.StockInfo;
-import top.yueshushu.learn.model.info.StockShowInfo;
+
+import top.yueshushu.learn.mode.info.StockShowInfo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
-import top.yueshushu.learn.ro.stock.StockStatRo;
 
 /**
  * @ClassName:StockService

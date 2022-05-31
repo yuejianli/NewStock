@@ -1,10 +1,10 @@
 package top.yueshushu.learn.service;
 
 import top.yueshushu.learn.entity.Stock;
+import top.yueshushu.learn.mode.info.StockInfo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.mode.vo.StockVo;
-import top.yueshushu.learn.model.info.StockInfo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
 
 /**
  * <p>

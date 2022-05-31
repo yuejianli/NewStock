@@ -1,7 +1,7 @@
 package top.yueshushu.learn.crawler.business;
 
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 /**
  * @Description stock 股票历史 的编排层处理

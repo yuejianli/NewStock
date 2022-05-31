@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import top.yueshushu.learn.business.StockHistoryBusiness;
 import top.yueshushu.learn.common.ResultCode;
 import top.yueshushu.learn.mode.ro.StockDayStatRo;
-import top.yueshushu.learn.page.PageResponse;
+import top.yueshushu.learn.response.PageResponse;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 import top.yueshushu.learn.service.StockHistoryService;
 
 import javax.annotation.Resource;

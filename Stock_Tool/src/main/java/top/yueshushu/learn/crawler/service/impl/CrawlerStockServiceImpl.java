@@ -15,9 +15,9 @@ import top.yueshushu.learn.domainservice.StockDomainService;
 import top.yueshushu.learn.entity.Stock;
 import top.yueshushu.learn.enumtype.DataFlagType;
 import top.yueshushu.learn.enumtype.KType;
-import top.yueshushu.learn.model.info.StockShowInfo;
+import top.yueshushu.learn.mode.info.StockShowInfo;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

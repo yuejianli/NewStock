@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import top.yueshushu.learn.crawler.business.CrawlerStockBusiness;
 import top.yueshushu.learn.crawler.service.CrawlerStockService;
 import top.yueshushu.learn.response.OutputResult;
-import top.yueshushu.learn.ro.stock.StockRo;
+import top.yueshushu.learn.mode.ro.StockRo;
 
 import javax.annotation.Resource;
 
